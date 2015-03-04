@@ -35,12 +35,24 @@ ArrayList<Theme> themeArray= new ArrayList<Theme>();
 void setup() {
   size(1280, 720);
   background(255);
-  //lastTimeCheck = second();
   
   Theme forest = new Theme("forest.png");
   Theme city = new Theme("city.png");
   Theme farm = new Theme("farm.png");
   Theme mountain = new Theme("mountain.png");
+  
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_sky.png", 0, 0, 0, int(8000/6.25), int(4500/6.25))); //image, parallax, x, y, w, h
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_gate.png", 0, 0, height-350, int(4113/3.2), int(1087/3.2))); 
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_grass.png", 0, 0, height-int(1384/6.25)+75, 1280, int(1384/6.25)));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree1.png", 0, 0, height-400, int(1700/6.25), int(1825/6.25)));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree2.png", 0, 800, height-500, int(2180/6.25), int(2384/6.25)));
+  
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_ground.png", 0, 0, 0, 1500, 200));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree1.png", 0, 0, 0, 300, 280));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", 0, 0, 0, 350, 350));
+  
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud1.png", 0, 0, 0, 0, 0));
+  
   
   themeArray.add(forest);
   themeArray.add(city);
@@ -68,7 +80,7 @@ void setup() {
 void draw() {
   // KINECT STUFF
   noFill();
-  //image(kinect.getBodyTrackImage(), 0, 0);
+  image(kinect.getBodyTrackImage(), 0, 0);
     //change contour extraction from bodyIndexImg or to PointCloudDepth
   if (contourBodyIndex)
     image(kinect.getBodyTrackImage(), 0, 0);
