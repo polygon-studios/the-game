@@ -103,7 +103,7 @@ class Bird {
   void render() {
     // Draw a triangle rotated in the direction of velocity
     float theta = vel.heading2D() + radians(90);
-    fill(175);
+    /*fill(175);
     stroke(0);
     pushMatrix();
     translate(loc.x,loc.y);
@@ -113,10 +113,11 @@ class Bird {
     vertex(-r, r*2);
     vertex(r, r*2);
     endShape();
-    popMatrix();
+    popMatrix();*/
     currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
     int offset = 0;
-    image(images[(currentFrame+offset) % numFrames], 0, 0);
+    //rotate(theta);
+    image(images[(currentFrame+offset) % numFrames], loc.x, loc.y);
     offset+=1;
   }
 
