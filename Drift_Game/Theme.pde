@@ -2,6 +2,7 @@ class Theme{
   
   //DisplayImage[] bgImages = new DisplayImage[0];
   PImage fullImg;
+  PImage skyImg;
   float transOut, transIn;
   
   ArrayList<DisplayImage> bgImgs; //background
@@ -9,10 +10,12 @@ class Theme{
   ArrayList<DisplayImage> fgImgs; //foreground
   
   
-  Theme(String imgLoc){
+  Theme(String imgLoc, PImage skyBg){
     fullImg = loadImage(imgLoc);
     transOut = 255;  
     transIn = 0;
+    
+    skyImg = skyBg;
     
     bgImgs = new ArrayList<DisplayImage>();
     mgImgs = new ArrayList<DisplayImage>();
@@ -37,6 +40,8 @@ class Theme{
   }
   
   void drawThemeImages(){
+    image(skyImg, 0, 0);
+    
     for(int i = 0; i < bgImgs.size(); i++){
       DisplayImage temp = bgImgs.get(i);
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
@@ -44,6 +49,13 @@ class Theme{
     
     for(int i = 0; i < mgImgs.size(); i++){
       DisplayImage temp = mgImgs.get(i);
+      temp.updateForParallax();
+      image(temp.image, temp.x, temp.y, temp.w, temp.h);
+    }
+    
+    for(int i = 0; i < fgImgs.size(); i++){
+      DisplayImage temp = fgImgs.get(i);
+      temp.updateForParallax();
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
     }
   }
