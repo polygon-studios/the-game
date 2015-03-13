@@ -1,11 +1,13 @@
 import gab.opencv.*;
-import KinectPV2.*;
+//import KinectPV2.*;
 import SimpleOpenNI.*;
 
-KinectPV2 kinect;
-KinectPV2 kinectBall;
+//KinectPV2 kinect;
+//KinectPV2 kinectBall;
 OpenCV opencvBody;
 OpenCV opencvBalloon;
+
+Flock flock;
 
 float polygonFactor = 1;
 
@@ -35,7 +37,7 @@ ArrayList<Theme> themeArray= new ArrayList<Theme>();
 
 void setup() {
   size(1280, 720);
-  skyImg = loadImage("sky.png");
+  skyImg = loadImage("City/background/city_bg_sky.png");
   background(skyImg);
   
   Theme forest = new Theme("forest.png", skyImg);
@@ -56,7 +58,13 @@ void setup() {
   player = minim.loadFile("Music.mp3", 2048);
   player.loop();
   
-   // Kinect related setup
+  flock = new Flock();
+  for (int i = 0; i < 3; i++) {
+    flock.addBird(new Bird(new PVector(width/2,height/2), random(1.0, 6.0) ,0.03));
+  }
+  smooth();
+  
+ /*   // Kinect related setup
     opencvBody = new OpenCV(this, 512, 424);
     kinect = new KinectPV2(this); 
     
@@ -66,11 +74,12 @@ void setup() {
     kinect.enableColorImg(true);
     kinect.enableDepthImg(true);
     
-    kinect.init();
+    kinect.init(); */
 }
 
 void draw() {
   // KINECT STUFF
+  /*
   noFill();
   image(kinect.getBodyTrackImage(), 0, 0);
     //change contour extraction from bodyIndexImg or to PointCloudDepth
@@ -93,7 +102,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours();
+  ArrayList<Contour> contours = opencvBody.findContours(); */
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     firstRun = false;
     println("normal");
@@ -104,32 +113,9 @@ void draw() {
     //temp.fullImg.loadPixels();
     //image(temp.fullImg, 0, 0, 1280, 720);
     temp.drawFullImg();
-    if (contours.size() > 0) {
-      for (Contour contour : contours) {
-        
-        contour.setPolygonApproximationFactor(polygonFactor);
-        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
-          stroke(150, 150, 0);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2, point.y * 2 );
-          }
-          endShape();
-        }
-        if (contour.numPoints() > 150) {
-          stroke(0, 155, 155);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2, point.y * 2);
-          }
-          endShape();
-          //print(contour.numPoints() + '\n');
-        }
-        
-      }
-    }
+    
+    //drawContours(contours);
+    
     if(themeCounter == 3)
       themeCounter = 0;
     else
@@ -150,6 +136,7 @@ void draw() {
   }*/else{
     Theme temp = themeArray.get(themeCounter);
     temp.drawFullImg();
+    /*
     if (contours.size() > 0) {
       for (Contour contour : contours) {
         
@@ -177,15 +164,19 @@ void draw() {
         
       }
     }
+    */
   }
   
-  kinect.setLowThresholdPC(minD);
-  kinect.setHighThresholdPC(maxD);
+  //kinect.setLowThresholdPC(minD);
+  //kinect.setHighThresholdPC(maxD);
+  flock.run();
 }
 
 void getForestImages(){
   //append(forest.bgImages,loadImage("forest_bg_gate.png") );
 }
+
+// Kinect related
 
 void keyPressed() {
   //change contour finder from contour body to depth-PC
@@ -198,6 +189,48 @@ void keyPressed() {
   }
 
 }
+
+void drawCountours(ArrayList<Contour> contours){
+   if (contours.size() > 0) {
+      for (Contour contour : contours) {
+        
+        contour.setPolygonApproximationFactor(polygonFactor);
+        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
+          stroke(150, 150, 0);
+          beginShape();
+  
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2, point.y * 2 );
+          }
+          endShape();
+        }
+        if (contour.numPoints() > 150) {
+          stroke(0, 155, 155);
+          beginShape();
+  
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2, point.y * 2);
+          }
+          endShape();
+          //print(contour.numPoints() + '\n');
+        }
+        
+      }
+    }
+}
+
+// Add a new boid into the System
+void mousePressed() {
+  flock.addBird(new Bird(new PVector(mouseX,mouseY),random(1.0, 6.0),0.05f));
+}
+
+// Add a new boid into the System
+void mouseMoved() {
+  flock.addTarget(new PVector(mouseX,mouseY));
+}
+
+
+
 
 /////imagery
 
