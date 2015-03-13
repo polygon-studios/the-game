@@ -6,7 +6,12 @@ class Bird {
   float r;
   float maxforce;    // Maximum steering force
   float maxspeed;    // Maximum speed
+  boolean loaded = false;
 
+  int numFrames = 10;  // The number of frames in the animation
+  int currentFrame = 0;
+  PImage[] images = new PImage[numFrames];
+  
   Bird(PVector l, float ms, float mf) {
     acc = new PVector(0,0);
     vel = new PVector(random(-1,1),random(-1,1));
@@ -15,8 +20,22 @@ class Bird {
     maxspeed = ms;
     maxforce = mf;
   }
-
+  
+  boolean isLoaded(){
+    return loaded;
+  }
+  
+  void loadImages() {
+    frameRate(12);
+    for (int i = 0; i < numFrames; i++) {
+      String imageName = "Bird/birdCycle_step" + (i+1) + ".png";
+      images[i] = loadImage(imageName);
+    }
+    loaded  = true;
+  }
+  
   void run(ArrayList Birds) {
+    
     flock(Birds);
     update();
     borders();
@@ -95,6 +114,10 @@ class Bird {
     vertex(r, r*2);
     endShape();
     popMatrix();
+    currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
+    int offset = 0;
+    image(images[(currentFrame+offset) % numFrames], 0, 0);
+    offset+=1;
   }
 
   // Wraparound
