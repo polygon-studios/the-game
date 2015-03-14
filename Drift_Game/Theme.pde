@@ -3,7 +3,8 @@ class Theme{
   //DisplayImage[] bgImages = new DisplayImage[0];
   PImage fullImg;
   PImage skyImg;
-  float transOut, transIn;
+  boolean fadeOutBg = false;
+  boolean incomingScene = true;
   
   ArrayList<DisplayImage> bgImgs; //background
   ArrayList<DisplayImage> mgImgs; //midground
@@ -12,8 +13,6 @@ class Theme{
   
   Theme(String imgLoc, PImage skyBg){
     fullImg = loadImage(imgLoc);
-    transOut = 255;  
-    transIn = 0;
     
     skyImg = skyBg;
     
@@ -23,58 +22,120 @@ class Theme{
 }
   
   void drawFullImg(){
-   
-    /*if(fadeOut){
-      transparency -= 0.05;
-      tint(255, 255, 255, transparency);
-    }
-    else{
-      println("NO");
-      transparency = 1;
-    }*/
     
-   if(bgImgs.size() > 0)
-      drawThemeImages();
-    else
+   if(bgImgs.size() > 0){
+      drawBgImgs();
+      drawMgImgs();
+      drawFgImgs();
+   }else
       image(fullImg, 0, 0, 1280, 720);
   }
   
-  void drawThemeImages(){
-    image(skyImg, 0, 0);
-    
+  void drawBgImgs(){
     for(int i = 0; i < bgImgs.size(); i++){
       DisplayImage temp = bgImgs.get(i);
+      if(temp.isFadingOut == true)
+        temp.updateTrans(true);
+      else
+        temp.updateTrans(false);
+      tint(255, 255, 255, temp.trans);
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
     }
-    
+  }
+  
+  void drawMgImgs(){
     for(int i = 0; i < mgImgs.size(); i++){
       DisplayImage temp = mgImgs.get(i);
       temp.updateForParallax();
+      if(temp.isFadingOut == true)
+        temp.updateTrans(true);
+      else
+        temp.updateTrans(false);
+      tint(255, 255, 255, temp.trans);
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
     }
-    
+  }
+  
+  void drawFgImgs(){
     for(int i = 0; i < fgImgs.size(); i++){
       DisplayImage temp = fgImgs.get(i);
       temp.updateForParallax();
+      if(temp.isFadingOut == true)
+        temp.updateTrans(true);
+      else
+        temp.updateTrans(false);
+      tint(255, 255, 255, temp.trans);
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
     }
   }
   
-  void fadeOut(){
-    transOut -= 0.25;
-    tint(255, transOut);
-    image(fullImg, 0, 0, 1280, 720);
+ boolean checkToFadeOutBg(){
+    boolean fadeOut = false;
+    
+    for(int i = 0; i < bgImgs.size(); i++){
+      DisplayImage temp = bgImgs.get(i);
+     if ( (millis() - lastTimeCheck > temp.lifeSpan)) {
+       temp.isFadingOut = true;
+       fadeOut = true;
+       temp.updateTrans(true);
+       //bgTransFadeOut();
+     }
+    }
+   return fadeOut;
+ }
+ 
+ boolean checkToFadeOutMg(){
+   boolean fadeOut = false;
+   for(int i = 0; i < mgImgs.size(); i++){
+      DisplayImage temp = mgImgs.get(i);
+     if ( (millis() - lastTimeCheck > temp.lifeSpan)) {
+       temp.isFadingOut = true;
+       fadeOut = true;
+       temp.updateTrans(true);
+       //mgTransFadeOut();
+     }
+    }
+   return fadeOut;
+ }
+ 
+ boolean checkToFadeOutFg(){
+   boolean fadeOut = false;
+   for(int i = 0; i < fgImgs.size(); i++){
+      DisplayImage temp = fgImgs.get(i);
+     if ( (millis() - lastTimeCheck > temp.lifeSpan)) {
+       temp.isFadingOut = true;
+       fadeOut = true;
+       temp.updateTrans(true);
+       //mgTransFadeOut();
+     }
+    }
+   return fadeOut;
+ }
+  
+  void bgTransFadeIn(){
+    for(int i = 0; i < bgImgs.size(); i++){
+      DisplayImage temp = bgImgs.get(i);
+      temp.isFadingOut = false;
+      temp.updateTrans(false);
+    }    
   }
   
-  void fadeIn(){
-    transIn += 0.25;
-    tint(255, transOut);
-    image(fullImg, 0, 0, 1280, 720);
+  void mgTransFadeIn(){
+    for(int i = 0; i < mgImgs.size(); i++){
+      DisplayImage temp = mgImgs.get(i);
+      temp.isFadingOut = false;
+      temp.updateTrans(false);
+    }
   }
   
- /* void transFullImg(){
-    transparency -= 0.05;
-    tint(255, 255, 255, transparency);
-  }*/
+  void fgTransFadeIn(){
+    for(int i = 0; i < fgImgs.size(); i++){
+      DisplayImage temp = fgImgs.get(i);
+      temp.isFadingOut = false;
+      temp.updateTrans(false);
+    }
+  }
   
+
+
 }
