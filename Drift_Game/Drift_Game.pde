@@ -1,14 +1,24 @@
+
+// Imports
 import gab.opencv.*;
-//import KinectPV2.*;
+import KinectPV2.*;
 import SimpleOpenNI.*;
+import shiffman.box2d.*;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.*;
+import org.jbox2d.dynamics.joints.*;
 
-//KinectPV2 kinect;
-//KinectPV2 kinectBall;
-OpenCV opencvBody;
-OpenCV opencvBalloon;
+// Constructors
+KinectPV2           kinect;
+KinectPV2           kinectBall;
+OpenCV              opencvBody;
+OpenCV              opencvBalloon;
+Box2DProcessing     mBox2D;
+Flock               flock;
 
-Flock flock;
-
+// 
 float polygonFactor = 1;
 
 int threshold = 45;
@@ -36,7 +46,11 @@ PImage skyImg = new PImage();
 
 ArrayList<Theme> themeArray= new ArrayList<Theme>();
 
+ArrayList<string> mString;
+ArrayList<babyBalloon> babyBalloon;
+
 void setup() {
+  // Intialize backgound stuff
   size(1280, 720);
   skyImg = loadImage("City/background/city_bg_sky.png");
   background(skyImg);
@@ -62,30 +76,38 @@ void setup() {
   }
   smooth();
   
- /*   // Kinect related setup
-    opencvBody = new OpenCV(this, 512, 424);
-    kinect = new KinectPV2(this); 
-    
-    // Enable kinect tracking of following
-    kinect.enablePointCloud(true);
-    kinect.enableBodyTrackImg(true);
-    kinect.enableColorImg(true);
-    kinect.enableDepthImg(true);
-    
-    kinect.init(); */
+  mString = new ArrayList<string>();
+  babyBalloon = new ArrayList<babyBalloon>();
+  
+  mBox2D = new Box2DProcessing(this);
+  mBox2D.createWorld();
+  mBox2D.setGravity(0, -20);
+  
+  // Kinect related setup
+  opencvBody = new OpenCV(this, 512, 424);
+  kinect = new KinectPV2(this); 
+  
+  // Enable kinect tracking of following
+  kinect.enablePointCloud(true);
+  kinect.enableBodyTrackImg(true);
+  kinect.enableColorImg(true);
+  kinect.enableDepthImg(true);
+  
+  kinect.init(); 
 }
 
 void draw() {
+  mBox2D.step();
   background(skyImg);
   // KINECT STUFF
-  /*
+  
   noFill();
-  image(kinect.getBodyTrackImage(), 0, 0);
+  /* image(kinect.getBodyTrackImage(), 0, 0);
     //change contour extraction from bodyIndexImg or to PointCloudDepth
   if (contourBodyIndex)
     image(kinect.getBodyTrackImage(), 0, 0);
   else
-    image(kinect.getPointCloudDepthImage(), 0, 0);
+    image(kinect.getPointCloudDepthImage(), 0, 0); */
 
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
@@ -101,7 +123,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours(); */
+  ArrayList<Contour> contours = opencvBody.findContours(); 
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -113,7 +135,41 @@ void draw() {
     Theme temp = themeArray.get(currentTheme);
     temp.drawFullImg();
     
-    //drawContours(contours);
+    if (contours.size() > 0) {
+      for (Contour contour : contours) {
+        
+        contour.setPolygonApproximationFactor(polygonFactor);
+        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
+          stroke(150, 150, 0);
+          //fill(150, 150, 0);
+          beginShape();
+  
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2.5, point.y * 2 );
+          }
+          endShape();
+        }
+        if (contour.numPoints() > 150) {
+          stroke(0, 155, 155);
+          beginShape();
+          //fill(255);
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2.5, point.y * 2 );
+          }
+          endShape();
+          //print(contour.numPoints() + '\n');
+        }
+        
+      }
+    }
+    
+    for(string thisString : mString){
+      thisString.draw();
+    }
+    
+    for(babyBalloon thisCircle : babyBalloon){
+      thisCircle.draw();
+    }
     
     firstRun = false;
     println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
@@ -138,14 +194,14 @@ void draw() {
     }
     
     temp.drawFullImg();
-    /*
+    
     if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
         if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
           stroke(150, 150, 0);
-          fill(150, 150, 0);
+          //fill(150, 150, 0);
           beginShape();
   
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
@@ -156,7 +212,7 @@ void draw() {
         if (contour.numPoints() > 150) {
           stroke(0, 155, 155);
           beginShape();
-          fill(255);
+          //fill(255);
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
             vertex(point.x * 2.5, point.y * 2 );
           }
@@ -166,11 +222,19 @@ void draw() {
         
       }
     }
-    */
+    
+    for(string thisString : mString){
+      thisString.draw();
+    }
+    
+    for(babyBalloon thisCircle : babyBalloon){
+      thisCircle.draw();
+    }
+    
   }
   
-  //kinect.setLowThresholdPC(minD);
-  //kinect.setHighThresholdPC(maxD);
+  kinect.setLowThresholdPC(minD);
+  kinect.setHighThresholdPC(maxD);
   flock.run();
 }
 
@@ -223,7 +287,8 @@ void drawCountours(ArrayList<Contour> contours){
 
 // Add a new boid into the System
 void mousePressed() {
-  flock.addBird(new Bird(new PVector(mouseX,mouseY),random(1.0, 6.0),0.05f));
+  //flock.addBird(new Bird(new PVector(mouseX,mouseY),random(1.0, 6.0),0.05f));
+  mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
 }
 
 // Add a new boid into the System
