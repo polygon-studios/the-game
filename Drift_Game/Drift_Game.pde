@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-import KinectPV2.*;
+//import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,12 +12,12 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-KinectPV2           kinect;
+/*KinectPV2           kinect;
 KinectPV2           kinectBall;
 OpenCV              opencvBody;
-OpenCV              opencvBalloon;
+OpenCV              opencvBalloon;*/
 Box2DProcessing     mBox2D;
-Flock               flock;
+/*Flock               flock;
 
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
@@ -33,11 +33,13 @@ float minD = 0.5f;
 
 
 boolean    contourBodyIndex = false;
-
+*/
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
+int lastBanditTimeCheck = 0;
 int themeChangeTimer = 10000; // in milliseconds
 int cloudTimer = 15000; //in milliseconds
+int banditTimer = 5000;
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
@@ -50,9 +52,11 @@ PImage bgImg;
 PImage fgImg;
 PImage mgImg;
 PImage skyImg = new PImage();
+PImage[] banditFrames = new PImage[7];
 
 ArrayList<Theme> themeArray= new ArrayList<Theme>();
 ArrayList<Cloud> cloudArray= new ArrayList<Cloud>();
+ArrayList<Bandit> banditArray= new ArrayList<Bandit>();
 
 ArrayList<string> mString;
 ArrayList<balloon> balloons;
@@ -62,6 +66,9 @@ void setup() {
   size(1280, 720);
   skyImg = loadImage("City/background/city_bg_sky.png");
   background(skyImg);
+  frameRate(12);
+  
+  loadAnimations();
   
   Theme forest = new Theme("forest.png", skyImg);
   Theme city = new Theme("city.png", skyImg);
@@ -81,7 +88,7 @@ void setup() {
   player = minim.loadFile("Music.mp3", 2048);
   player.loop();
   
-  flock = new Flock();
+ /* flock = new Flock();
   for (int i = 0; i < 3; i++) {
     flock.addBird(new Bird(new PVector(width/2,height/2), random(1.0, 6.0) ,0.03));
   }
@@ -89,13 +96,14 @@ void setup() {
   
   mString = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
-  
+  */
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
   mBox2D.setGravity(0, -40);
+  mBox2D.listenForCollisions(); 
   
   // Kinect related setup
-  opencvBody = new OpenCV(this, 512, 424);
+  /*opencvBody = new OpenCV(this, 512, 424);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -104,7 +112,7 @@ void setup() {
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  kinect.init();
+  //kinect.init();*/
 }
 
 void draw() {
@@ -114,7 +122,7 @@ void draw() {
   
   noFill(); 
   
-
+/*
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -129,7 +137,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours(); 
+  ArrayList<Contour> contours = opencvBody.findContours(); */
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -141,7 +149,7 @@ void draw() {
     Theme temp = themeArray.get(currentTheme);
     temp.drawFullImg();
     
-    if (contours.size() > 0) {
+   /* if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -201,7 +209,7 @@ void draw() {
     for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
-    
+    */
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -226,7 +234,7 @@ void draw() {
     
     temp.drawFullImg();
     
-    if (contours.size() > 0) {
+    /*if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -280,11 +288,11 @@ void draw() {
     
     for(balloon thisCircle : balloons){
       thisCircle.draw();
-    }
+    }*/
     
   }
   
-  kinect.setLowThresholdPC(minD);
+  /*kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
   if (mousePressed) {
@@ -294,24 +302,15 @@ void draw() {
   }
   
   flock.run();
+  */
+  
+  banditGen();
+  cloudGen();
   
   
-  //Cloud generation
-  if ( (millis() - lastCloudTimeCheck > cloudTimer)) {
-    lastCloudTimeCheck = millis();
-    int cloudNum = int(random(4)) + 1;
-    int cloudX = int(random(600));
-    
-    println(cloudX);
-    
-    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(100))));
-  }
-  for(Cloud cloud : cloudArray){
-    cloud.draw();
-  }
   
 }
-
+/*
 // Kinect related
 void keyPressed() {
   //change contour finder from contour body to depth-PC
@@ -366,6 +365,46 @@ void mousePressed() {
 void mouseMoved() {
   flock.addTarget(new PVector(mouseX,mouseY));
 }
+*/
+
+void banditGen(){
+  if ( (millis() - lastBanditTimeCheck > banditTimer)) {
+    lastBanditTimeCheck = millis();
+    
+    int balloonX = int(random(1280));
+    int balloonY = int(random(720));
+    
+    println(balloonX + "   " + balloonY);
+    
+    Arrow arrow = new Arrow(mBox2D,100, 100, balloonX, balloonY);
+    
+    Bandit bandit = new Bandit(arrow, banditFrames, 100, 100 );
+    banditArray.add(bandit);
+  }
+  
+  if(banditArray.size() > 0){
+    for(Bandit bandit : banditArray){
+      bandit.draw();
+    }
+  }
+  
+}
+
+void cloudGen(){
+  //Cloud generation
+  if ( (millis() - lastCloudTimeCheck > cloudTimer)) {
+    lastCloudTimeCheck = millis();
+    int cloudNum = int(random(4)) + 1;
+    int cloudX = int(random(600));
+    
+    println(cloudX);
+    
+    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(100))));
+  }
+  for(Cloud cloud : cloudArray){
+    cloud.draw();
+  }
+}
 
 int calculateThemeCycle(int themeCounter){
   if(themeCounter == 3)
@@ -375,6 +414,12 @@ int calculateThemeCycle(int themeCounter){
    return themeCounter;
 }
 
+void loadAnimations(){
+  for (int i = 0; i < 7; i++) {
+    String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
+    banditFrames[i] = loadImage(imageName);
+  }
+}
 
 /////imagery
 
