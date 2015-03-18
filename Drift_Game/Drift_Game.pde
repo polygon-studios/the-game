@@ -28,11 +28,11 @@ float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 2.5f;
+float maxD = 3.0f;
 float minD = 0.5f;
 
 
-boolean    contourBodyIndex = true;
+boolean    contourBodyIndex = false;
 
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
@@ -145,7 +145,7 @@ void draw() {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
-        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
+        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
           stroke(150, 150, 0);
           //fill(150, 150, 0);
           beginShape();
@@ -175,12 +175,15 @@ void draw() {
           
           fill(0,255,0);
           ellipse(centerX * 2.5, centerY * 2, 8,8);
-          
+          balloons.add(new balloon(new PVector(centerX, centerY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
+          for (balloon s: balloons) {
+           s.attract(mouseX,mouseY);
+          }
         }
-        if (contour.numPoints() > 150) {
+        if (contour.numPoints() > 200) {
           stroke(0, 155, 155);
           beginShape();
-          fill(255);
+          fill(0);
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
             vertex(point.x * 2.5, point.y * 2 );
           }
@@ -227,7 +230,7 @@ void draw() {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
-        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
+        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
           stroke(150, 150, 0);
           //fill(150, 150, 0);
           beginShape();
@@ -257,10 +260,10 @@ void draw() {
           fill(0,255,0);
           ellipse(centerX * 2.5, centerY * 2, 8,8);
         }
-        if (contour.numPoints() > 150) {
+        if (contour.numPoints() > 200) {
           stroke(0, 155, 155);
           beginShape();
-          fill(255);
+          fill(0);
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
             vertex(point.x * 2.5, point.y * 2 );
           }
