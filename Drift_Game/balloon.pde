@@ -20,7 +20,7 @@ class balloon{
     
     mBody = mBox2D.world.createBody(bd);
     if(antiGrav){
-      mBody.setGravityScale(-0.6);
+      mBody.setGravityScale(-0.0);
     }
     
     CircleShape shape = new CircleShape();

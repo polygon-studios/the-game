@@ -9,6 +9,7 @@ import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.*;
 import org.jbox2d.dynamics.joints.*;
+import java.awt.Rectangle;
 
 // Constructors
 KinectPV2           kinect;
@@ -18,12 +19,16 @@ OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
 Flock               flock;
 
-// 
+ArrayList<Rectangle> rectangles;
+ArrayList<Contour> boundingBox;
+Rectangle boundRect;
+
+
 float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 4.0f;
+float maxD = 2.5f;
 float minD = 0.5f;
 
 
@@ -107,13 +112,8 @@ void draw() {
   background(skyImg);
   // KINECT STUFF
   
-  noFill();
-  image(kinect.getBodyTrackImage(), 0, 0);
-    //change contour extraction from bodyIndexImg or to PointCloudDepth
-  if (contourBodyIndex)
-    image(kinect.getBodyTrackImage(), 0, 0);
-  else
-    image(kinect.getPointCloudDepthImage(), 0, 0); 
+  noFill(); 
+  
 
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
@@ -154,11 +154,33 @@ void draw() {
             vertex(point.x * 2.5, point.y * 2 );
           }
           endShape();
+          
+          boundRect = new Rectangle(1280, 720, 0, 0);
+          
+          noFill();
+          stroke(0,0,255);
+          strokeWeight(2);
+          Rectangle rec = contour.getBoundingBox();
+          if(rec.width > boundRect.width && rec.height > boundRect.height){
+             boundRect = rec; 
+          }
+          
+          float centerX;
+          float centerY;
+          
+          centerX = boundRect.x + (boundRect.width/2);
+          centerY = boundRect.y + (boundRect.height/2);
+          
+          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
+          
+          fill(0,255,0);
+          ellipse(centerX * 2.5, centerY * 2, 8,8);
+          
         }
         if (contour.numPoints() > 150) {
           stroke(0, 155, 155);
           beginShape();
-          //fill(255);
+          fill(255);
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
             vertex(point.x * 2.5, point.y * 2 );
           }
@@ -214,11 +236,31 @@ void draw() {
             vertex(point.x * 2.5, point.y * 2 );
           }
           endShape();
+          
+          boundRect = new Rectangle(1280, 720, 0, 0);
+          
+          noFill();
+          stroke(0,0,255);
+          strokeWeight(2);
+          Rectangle rec = contour.getBoundingBox();
+          if(rec.width > boundRect.width && rec.height > boundRect.height){
+             boundRect = rec; 
+          }
+          
+          float centerX;
+          float centerY;
+          
+          centerX = boundRect.x + (boundRect.width/2);
+          centerY = boundRect.y + (boundRect.height/2);
+          
+          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
+          fill(0,255,0);
+          ellipse(centerX * 2.5, centerY * 2, 8,8);
         }
         if (contour.numPoints() > 150) {
           stroke(0, 155, 155);
           beginShape();
-          //fill(255);
+          fill(255);
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
             vertex(point.x * 2.5, point.y * 2 );
           }
@@ -280,37 +322,36 @@ void keyPressed() {
   if( key == 'q'){
      balloons.add(new balloon(new PVector(mouseX, mouseY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
   }
+  if (key == 'a') {
+    threshold+=1;
+  }
+  if (key == 's') {
+    threshold-=1;
+  }
 
+  if (key == '1') {
+    minD += 0.01;
+  }
+
+  if (key == '2') {
+    minD -= 0.01;
+  }
+
+  if (key == '3') {
+    maxD += 0.01;
+  }
+
+  if (key == '4') {
+    maxD -= 0.01;
+  }
+
+  if (key == '5')
+    polygonFactor += 0.1;
+
+  if (key == '6')
+    polygonFactor -= 0.1;
 }
 
-void drawCountours(ArrayList<Contour> contours){
-   if (contours.size() > 0) {
-      for (Contour contour : contours) {
-        
-        contour.setPolygonApproximationFactor(polygonFactor);
-        if (contour.numPoints() < 100 &&  contour.numPoints() > 50) {
-          stroke(150, 150, 0);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2, point.y * 2 );
-          }
-          endShape();
-        }
-        if (contour.numPoints() > 150) {
-          stroke(0, 155, 155);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2, point.y * 2);
-          }
-          endShape();
-          //print(contour.numPoints() + '\n');
-        }
-        
-      }
-    }
-}
 
 // Add a new boid into the System
 void mousePressed() {
