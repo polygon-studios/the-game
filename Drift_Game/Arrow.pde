@@ -104,6 +104,16 @@ class Arrow{
      mBody.setLinearVelocity(new Vec2(xVel,yVel));
    }
    
+   boolean isAlive(){
+     Vec2 pos = mBox2DRef.getBodyPixelCoord( mBody ); 
+     if(trans > 0){
+       if(pos.x < 1500 && pos.x > 0 && pos.y < 850 && pos.y > -150){
+         return true;
+       }
+     }
+     return false;
+   }
+   
    
 }
 

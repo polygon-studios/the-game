@@ -39,7 +39,7 @@ int lastCloudTimeCheck = 0;
 int lastBanditTimeCheck = 0;
 int themeChangeTimer = 10000; // in milliseconds
 int cloudTimer = 15000; //in milliseconds
-int banditTimer = 5000;
+int banditTimer = 15000;
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
@@ -371,14 +371,40 @@ void banditGen(){
   if ( (millis() - lastBanditTimeCheck > banditTimer)) {
     lastBanditTimeCheck = millis();
     
+    int banditX =0;
+    int banditY =0;
+    
+    switch(currentTheme){
+      case 0: 
+        banditX = 125;
+        banditY = 272;
+        break;
+      case 1: //city
+        banditX = 184;
+        banditY = 77;
+        break;
+      case 2: 
+        banditX = 87;
+        banditY = 450;
+        break;
+      case 3: 
+        banditX = 143;
+        banditY = 447;
+        break;
+      default:
+        banditX = 87;
+        banditY = 450;
+        break;
+    }
+    
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
     println(balloonX + "   " + balloonY);
     
-    Arrow arrow = new Arrow(mBox2D,100, 100, balloonX, balloonY);
+    Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
     
-    Bandit bandit = new Bandit(arrow, banditFrames, 100, 100 );
+    Bandit bandit = new Bandit(arrow, banditFrames, banditX, banditY );
     banditArray.add(bandit);
   }
   
@@ -386,6 +412,16 @@ void banditGen(){
     for(Bandit bandit : banditArray){
       bandit.draw();
     }
+    
+    for(int i=0; i < banditArray.size(); i++){
+      Bandit bandit = banditArray.get(i);
+      if( bandit.arrow.isAlive() == false){
+        banditArray.remove(i);
+        break;
+      }
+    }
+    
+    
   }
   
 }
