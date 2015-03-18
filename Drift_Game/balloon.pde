@@ -1,12 +1,14 @@
-class babyBalloon{
+class balloon{
   
   Body mBody;
   float mRadius;
   Box2DProcessing mBox2D;
   
+  color balloonCol = color(255, 255, 255);
+  
   PImage img;
   
-  babyBalloon(PVector startPos, float radius, boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
+  balloon(PVector startPos, float radius, boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
     
    
     mBox2D = box2D;
@@ -41,23 +43,28 @@ class babyBalloon{
   }
   
   void attract(float x,float y) {
-    // From BoxWrap2D example
     Vec2 worldTarget = mBox2D.coordPixelsToWorld(x,y);   
     Vec2 bodyVec = mBody.getWorldCenter();
-    // First find the vector going from this body to the specified point
-    worldTarget.subLocal(bodyVec);
-    // Then, scale the vector to the specified force
-    worldTarget.normalize();
-    worldTarget.mulLocal((float) 30000);
-    // Now apply it to the body's center of mass.
-    mBody.applyForce(worldTarget, bodyVec);
+    //worldTarget.subLocal(bodyVec);
+    //worldTarget.normalize();
+    //worldTarget.mulLocal((float) 40000);
+    mBody.setTransform(worldTarget, 0);
   }
   
+  color getColor()
+  {
+     return balloonCol; 
+  }
+  
+  void setColor( color col ) 
+  {
+    balloonCol = col;
+  }
   void draw(){
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
     
-    //fill(139, 94, 60);
+    fill(balloonCol);
     //noStroke();
     
     pushMatrix();

@@ -47,7 +47,7 @@ PImage skyImg = new PImage();
 ArrayList<Theme> themeArray= new ArrayList<Theme>();
 
 ArrayList<string> mString;
-ArrayList<babyBalloon> babyBalloon;
+ArrayList<balloon> balloons;
 
 void setup() {
   // Intialize backgound stuff
@@ -81,7 +81,7 @@ void setup() {
   smooth();
   
   mString = new ArrayList<string>();
-  babyBalloon = new ArrayList<babyBalloon>();
+  balloons = new ArrayList<balloon>();
   
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
@@ -171,7 +171,7 @@ void draw() {
       thisString.draw();
     }
     
-    for(babyBalloon thisCircle : babyBalloon){
+    for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
     
@@ -231,7 +231,7 @@ void draw() {
       thisString.draw();
     }
     
-    for(babyBalloon thisCircle : babyBalloon){
+    for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
     
@@ -241,7 +241,7 @@ void draw() {
   kinect.setHighThresholdPC(maxD);
   
   if (mousePressed) {
-    for (string s: mString) {
+    for (balloon s: balloons) {
      s.attract(mouseX,mouseY);
     }
   }
@@ -265,7 +265,7 @@ void keyPressed() {
      threshold = 40;
   }
   if( key == 'q'){
-     mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
+     balloons.add(new balloon(new PVector(mouseX, mouseY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
   }
 
 }
