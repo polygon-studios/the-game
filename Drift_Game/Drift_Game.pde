@@ -60,10 +60,14 @@ void setup() {
   Theme farm = new Theme("farm.png", skyImg);
   Theme mountain = new Theme("mountain.png", skyImg);
   
-  updateForest(forest);
-  updateCity(city);
-  updateFarm(farm);
-  updateMountain(mountain);
+  //updateForest(forest);
+  //updateCity(city);
+  //updateFarm(farm);
+  //updateMountain(mountain);
+  themeArray.add(forest);
+  themeArray.add(city);
+  themeArray.add(farm);
+  themeArray.add(mountain);
   
   //getForestImages();
   minim = new Minim(this);
@@ -81,7 +85,7 @@ void setup() {
   
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
-  mBox2D.setGravity(0, -20);
+  mBox2D.setGravity(0, -40);
   
   // Kinect related setup
   opencvBody = new OpenCV(this, 512, 424);
@@ -235,6 +239,13 @@ void draw() {
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
+  
+  if (mousePressed) {
+    for (string s: mString) {
+     s.attract(mouseX,mouseY);
+    }
+  }
+  
   flock.run();
 }
 
@@ -252,6 +263,9 @@ void keyPressed() {
      threshold = 200;
     else
      threshold = 40;
+  }
+  if( key == 'q'){
+     mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
   }
 
 }
@@ -288,7 +302,7 @@ void drawCountours(ArrayList<Contour> contours){
 // Add a new boid into the System
 void mousePressed() {
   //flock.addBird(new Bird(new PVector(mouseX,mouseY),random(1.0, 6.0),0.05f));
-  mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
+
 }
 
 // Add a new boid into the System

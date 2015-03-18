@@ -18,7 +18,7 @@ class babyBalloon{
     
     mBody = mBox2D.world.createBody(bd);
     if(antiGrav){
-      mBody.setGravityScale(-0.3);
+      mBody.setGravityScale(-0.6);
     }
     
     CircleShape shape = new CircleShape();
@@ -38,6 +38,19 @@ class babyBalloon{
     }
 
     mBody.setUserData(this);  
+  }
+  
+  void attract(float x,float y) {
+    // From BoxWrap2D example
+    Vec2 worldTarget = mBox2D.coordPixelsToWorld(x,y);   
+    Vec2 bodyVec = mBody.getWorldCenter();
+    // First find the vector going from this body to the specified point
+    worldTarget.subLocal(bodyVec);
+    // Then, scale the vector to the specified force
+    worldTarget.normalize();
+    worldTarget.mulLocal((float) 1000);
+    // Now apply it to the body's center of mass.
+    mBody.applyForce(worldTarget, bodyVec);
   }
   
   void draw(){
