@@ -30,12 +30,14 @@ float minD = 0.5f;
 boolean    contourBodyIndex = true;
 
 int lastTimeCheck = 0;
+int lastCloudTimeCheck = 0;
 int themeChangeTimer = 10000; // in milliseconds
+int cloudTimer = 15000; //in milliseconds
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
 
-AudioPlayer player;
+AudioPlayer player; 
 Minim minim;//audio context
 boolean firstRun = true;
 
@@ -45,6 +47,7 @@ PImage mgImg;
 PImage skyImg = new PImage();
 
 ArrayList<Theme> themeArray= new ArrayList<Theme>();
+ArrayList<Cloud> cloudArray= new ArrayList<Cloud>();
 
 ArrayList<string> mString;
 ArrayList<balloon> balloons;
@@ -60,16 +63,15 @@ void setup() {
   Theme farm = new Theme("farm.png", skyImg);
   Theme mountain = new Theme("mountain.png", skyImg);
   
-  //updateForest(forest);
-  //updateCity(city);
-  //updateFarm(farm);
-  //updateMountain(mountain);
-  themeArray.add(forest);
-  themeArray.add(city);
-  themeArray.add(farm);
-  themeArray.add(mountain);
+  updateForest(forest);
+  updateCity(city);
+  updateFarm(farm);
+  updateMountain(mountain);
+  //themeArray.add(forest);
+  //themeArray.add(city);
+  //themeArray.add(farm);
+  //themeArray.add(mountain);
   
-  //getForestImages();
   minim = new Minim(this);
   player = minim.loadFile("Music.mp3", 2048);
   player.loop();
@@ -97,7 +99,7 @@ void setup() {
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  kinect.init(); 
+  kinect.init();
 }
 
 void draw() {
@@ -106,12 +108,12 @@ void draw() {
   // KINECT STUFF
   
   noFill();
-  /* image(kinect.getBodyTrackImage(), 0, 0);
+  image(kinect.getBodyTrackImage(), 0, 0);
     //change contour extraction from bodyIndexImg or to PointCloudDepth
   if (contourBodyIndex)
     image(kinect.getBodyTrackImage(), 0, 0);
   else
-    image(kinect.getPointCloudDepthImage(), 0, 0); */
+    image(kinect.getPointCloudDepthImage(), 0, 0); 
 
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
@@ -176,7 +178,7 @@ void draw() {
     }
     
     firstRun = false;
-    println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
+    //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
     Theme temp = themeArray.get(currentTheme);
     
@@ -247,14 +249,25 @@ void draw() {
   }
   
   flock.run();
-}
-
-void getForestImages(){
-  //append(forest.bgImages,loadImage("forest_bg_gate.png") );
+  
+  
+  //Cloud generation
+  if ( (millis() - lastCloudTimeCheck > cloudTimer)) {
+    lastCloudTimeCheck = millis();
+    int cloudNum = int(random(4)) + 1;
+    int cloudX = int(random(600));
+    
+    println(cloudX);
+    
+    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(100))));
+  }
+  for(Cloud cloud : cloudArray){
+    cloud.draw();
+  }
+  
 }
 
 // Kinect related
-
 void keyPressed() {
   //change contour finder from contour body to depth-PC
   if( key == 'b'){
@@ -345,8 +358,8 @@ void updateForest(Theme forest){
 }
 
 void updateCity(Theme city){
-  city.bgImgs.add(new DisplayImage("City/background/city_bg_grass.png", 0, themeChangeTimer - 3000, 0, 327, 1280, 174));//image, parallax, x, y, w, h
-  city.bgImgs.add(new DisplayImage("City/background/city_bg_road.png", 0, themeChangeTimer - 3000, 704, 371, 386, 85));
+  city.bgImgs.add(new DisplayImage("City/background/city_bg_grass.png", 0, themeChangeTimer - 3000, 0, 327, 1280, 394));//image, parallax, x, y, w, h
+  city.bgImgs.add(new DisplayImage("City/background/city_bg_road.png", 0, themeChangeTimer - 3000, 704, 371, 386, 360));
   city.bgImgs.add(new DisplayImage("City/background/city_bg_post.png", 0, themeChangeTimer - 3000, 761, 292, 73, 113));
  
   city.mgImgs.add(new DisplayImage("City/midground/city_mg_ground.png", 0, themeChangeTimer - 2000, 0, 444, 1280, 276));
@@ -376,15 +389,16 @@ void updateFarm(Theme farm){
 }
 
 void updateMountain(Theme mountain){
-  mountain.bgImgs.add(new DisplayImage("Mountain/background/mountain_bg_mountain.png", 0, themeChangeTimer - 3000, 0, 260, 1304, 472));//image, parallax, x, y, w, h
+  mountain.bgImgs.add(new DisplayImage("Mountain/background/mountain_bg_mountain.png", 0, themeChangeTimer - 3000, 0, 255, 1280, 465));//image, parallax, x, y, w, h
  
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_grass_short.png", 0, themeChangeTimer - 2000, 0, 784, 1920, 315));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain.png", 0, themeChangeTimer - 2000, 0, 546, 1920, 540));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", 0, themeChangeTimer - 2000, 880, 270, 420, 640));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 1623, 202, 328, 724));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_grass_short.png", 0, themeChangeTimer - 2000, 0, 522, 1280, 198));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 0, 546, 1920, 540));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", 0, themeChangeTimer - 2000, 999, 175, 281, 430));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 1084, 150, 196, 483));
   
-  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 2, themeChangeTimer - 1000, -100, height-89, 1920, 89));
-  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 0, height-550, 600, 550));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 0, height-90, 1280, 90));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 0, 286, 160, 434));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 935, 7, 345, 710));
   
   themeArray.add(mountain);
 }
