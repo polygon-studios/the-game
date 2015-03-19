@@ -15,6 +15,11 @@ class string{
     mString = new ArrayList<babyBalloon>();
     mBox2D = box2D;
     
+    //BodyDef bd = new BodyDef();
+    //bd.type = 'dynamic';
+    //bd.position = mBox2D.coordPixelsToWorld(startPos.x, startPos.y);
+    //mBody = mBox2D.world.createBody(bd);
+    
     for(int i = 0; i < numSections + 1; i++){
       //balloon startString = null;
       babyBalloon section = null;

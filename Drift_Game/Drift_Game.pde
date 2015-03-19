@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-//import KinectPV2.*;
+import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,12 +12,12 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-/*KinectPV2           kinect;
+KinectPV2           kinect;
 KinectPV2           kinectBall;
 OpenCV              opencvBody;
-OpenCV              opencvBalloon;*/
+OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
-/*Flock               flock;
+Flock               flock;
 
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
@@ -28,18 +28,20 @@ float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 3.0f;
+float maxD = 2.0f;
 float minD = 0.5f;
 
 
 boolean    contourBodyIndex = false;
-*/
+
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
 int lastBanditTimeCheck = 0;
+int lastBirdTimeCheck = 0;
 int themeChangeTimer = 10000; // in milliseconds
 int cloudTimer = 15000; //in milliseconds
 int banditTimer = 15000;
+int birdTimer = 25000;
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
@@ -84,26 +86,23 @@ void setup() {
   //themeArray.add(farm);
   //themeArray.add(mountain);
   
-  minim = new Minim(this);
-  player = minim.loadFile("Music.mp3", 2048);
-  player.loop();
+  //minim = new Minim(this);
+  //player = minim.loadFile("Music.mp3", 2048);
+  //player.loop();
   
- /* flock = new Flock();
-  for (int i = 0; i < 3; i++) {
-    flock.addBird(new Bird(new PVector(width/2,height/2), random(1.0, 6.0) ,0.03));
-  }
+  flock = new Flock();
   smooth();
   
   mString = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
-  */
+  
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
-  mBox2D.setGravity(0, -40);
+  //mBox2D.setGravity(0, -40);
   mBox2D.listenForCollisions(); 
   
   // Kinect related setup
-  /*opencvBody = new OpenCV(this, 512, 424);
+  opencvBody = new OpenCV(this, 512, 424);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -112,7 +111,7 @@ void setup() {
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  //kinect.init();*/
+  kinect.init();
 }
 
 void draw() {
@@ -122,7 +121,7 @@ void draw() {
   
   noFill(); 
   
-/*
+
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -137,7 +136,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours(); */
+  ArrayList<Contour> contours = opencvBody.findContours(); 
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -149,7 +148,7 @@ void draw() {
     Theme temp = themeArray.get(currentTheme);
     temp.drawFullImg();
     
-   /* if (contours.size() > 0) {
+    if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -209,7 +208,7 @@ void draw() {
     for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
-    */
+    
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -234,7 +233,7 @@ void draw() {
     
     temp.drawFullImg();
     
-    /*if (contours.size() > 0) {
+    if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -288,11 +287,11 @@ void draw() {
     
     for(balloon thisCircle : balloons){
       thisCircle.draw();
-    }*/
+    }
     
   }
   
-  /*kinect.setLowThresholdPC(minD);
+  kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
   if (mousePressed) {
@@ -302,15 +301,16 @@ void draw() {
   }
   
   flock.run();
-  */
+  
   
   banditGen();
   cloudGen();
+  birdGen();
   
   
   
 }
-/*
+
 // Kinect related
 void keyPressed() {
   //change contour finder from contour body to depth-PC
@@ -365,7 +365,7 @@ void mousePressed() {
 void mouseMoved() {
   flock.addTarget(new PVector(mouseX,mouseY));
 }
-*/
+
 
 void banditGen(){
   if ( (millis() - lastBanditTimeCheck > banditTimer)) {
@@ -439,6 +439,16 @@ void cloudGen(){
   }
   for(Cloud cloud : cloudArray){
     cloud.draw();
+  }
+}
+
+void birdGen(){
+  //Bird generation
+  if ( (millis() - lastBirdTimeCheck > birdTimer)) {
+    lastBirdTimeCheck = millis();
+    
+    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03));
+  
   }
 }
 
