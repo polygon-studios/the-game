@@ -17,8 +17,8 @@ KinectPV2           kinectBall;
 OpenCV              opencvBody;
 OpenCV              opencvBalloon;*/
 Box2DProcessing     mBox2D;
-/*Flock               flock;
-
+Flock               flock;
+/*
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
 Rectangle boundRect;
@@ -37,9 +37,11 @@ boolean    contourBodyIndex = false;
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
 int lastBanditTimeCheck = 0;
+int lastBirdTimeCheck = 0;
 int themeChangeTimer = 97000; // in milliseconds 97000
 int cloudTimer = 30000; //in milliseconds
 int banditTimer = 15000;
+int birdTimer = 25000;
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
@@ -91,12 +93,10 @@ void setup() {
   player[3] = minim.loadFile("mountainMusic.mp3", 2048);
   player[0].play();
   
- /* flock = new Flock();
-  for (int i = 0; i < 3; i++) {
-    flock.addBird(new Bird(new PVector(width/2,height/2), random(1.0, 6.0) ,0.03));
-  }
-  smooth();
+  flock = new Flock();
   
+  smooth();
+  /*
   mString = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
   */
@@ -318,11 +318,11 @@ void draw() {
     }
   }
   
-  flock.run();
+  
   */
-  
+  flock.run();
   banditGen();
-  
+  birdGen();
   
   
   
@@ -502,6 +502,16 @@ void cloudGen(){
   }
   for(Cloud cloud : cloudArray){
     cloud.draw();
+  }
+}
+
+void birdGen(){
+  //Bird generation
+  if ( (millis() - lastBirdTimeCheck > birdTimer)) {
+    lastBirdTimeCheck = millis();
+    
+    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03));
+  
   }
 }
 
