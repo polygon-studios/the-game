@@ -47,6 +47,8 @@ int nextTheme = 1;
 import ddf.minim.*;
 
 AudioPlayer[] player = new AudioPlayer[4]; 
+AudioPlayer bowPlayer;
+
 Minim minim;//audio context
 boolean firstRun = true;
 
@@ -92,6 +94,8 @@ void setup() {
   player[2] = minim.loadFile("farmMusic.mp3", 2048);
   player[3] = minim.loadFile("mountainMusic.mp3", 2048);
   player[0].play();
+  
+  bowPlayer = minim.loadFile("bow_release.mp3");
   
   flock = new Flock();
   
@@ -415,13 +419,8 @@ void endContact(Contact cp)
         arrow1 = (Arrow)o1;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
       }
-        
-      
     }
   }
-
-
-
 }
 
 void banditGen(){
@@ -438,19 +437,18 @@ void banditGen(){
         banditY = 272;
         break;
       case 1: //city
-        banditX = 184;
-        banditY = 77;
-        break;
-      case 2: 
         int balconyNum = int(random(2));
         if(balconyNum == 1){
-          banditX = 87;
-          banditY = 450;
-        }
-        else{
+          banditX = 184;
+          banditY = 77;
+        }else{
           banditX = 185;
           banditY = 335;
         }
+        break;
+      case 2: 
+        banditX = 87;
+        banditY = 450;
         break;
       case 3: 
         banditX = 143;
@@ -467,7 +465,7 @@ void banditGen(){
     
     Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
     
-    Bandit bandit = new Bandit(arrow, banditFrames, banditX, banditY );
+    Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
     banditArray.add(bandit);
   }
   
@@ -542,7 +540,7 @@ void updateForest(Theme forest){
   
   forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_ground.png", 0, themeChangeTimer - 2000, 25, 0, 514, 1280, 207));
   forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree1.png", -0.3, themeChangeTimer - 2000, 25, 919, 206, 368, 409));
-  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", 0.3, themeChangeTimer - 2000, 25, -38, 83, 514, 529));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", -0.3, themeChangeTimer - 2000, 25, -38, 83, 514, 529));
   
   //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud1.png", 0, 0, 0, 200, 100));
   //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud2.png", 0, 0, 0, 200, 100));

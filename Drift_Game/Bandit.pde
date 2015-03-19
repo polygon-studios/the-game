@@ -2,18 +2,20 @@ class Bandit{
   Arrow arrow;
   int numFrames = 7;
   int currentFrame = 0;
+  AudioPlayer soundEffect;
   PImage[] images = new PImage[numFrames];
   float x;
   float y;
   
   
-  Bandit( Arrow throwArrow, PImage[] animationFrames, float xLoc, float yLoc){
+  Bandit( Arrow throwArrow, PImage[] animationFrames, AudioPlayer bowPlayer, float xLoc, float yLoc){
     x = xLoc;
     y = yLoc;
     
     arrow = throwArrow;
     
     images = animationFrames;
+    soundEffect = bowPlayer;
   }
   
   void draw(){
@@ -30,6 +32,9 @@ class Bandit{
     int offset = 0;
     image(images[(currentFrame+offset) % numFrames], x, y);
     offset+=1;
+    
+    if(currentFrame == 4)
+      soundEffect.play();
   }
   
 }
