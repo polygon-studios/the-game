@@ -4,6 +4,7 @@ class DisplayImage{
   float parallax;
   float trans; //image transparency
   float lifeSpan; //amount of time image appears on screen
+  float transitionSpeed;
   float xOrig = 0;
   float x;
   int y;
@@ -11,7 +12,7 @@ class DisplayImage{
   int h;
   boolean isFadingOut;
   
-  DisplayImage(String imgLocation, float parallaxAmount, float lifespan, int xLoc, int yLoc, int imgWidth, int imgHeight){
+  DisplayImage(String imgLocation, float parallaxAmount, float lifespan, float transSpeed, int xLoc, int yLoc, int imgWidth, int imgHeight){
     image = loadImage(imgLocation);
     parallax = parallaxAmount;
     x = xLoc;
@@ -21,6 +22,7 @@ class DisplayImage{
     trans = 0;
     lifeSpan = lifespan;
     isFadingOut = false;
+    transitionSpeed = transSpeed;
     
     if(parallaxAmount != 0)
       xOrig = xLoc;
@@ -31,11 +33,11 @@ class DisplayImage{
   }
   
   void updateTrans(boolean fadeOut){
- 
+   
     if(fadeOut == true && trans > 0)
-      trans -= lifeSpan/255;
+      trans -= transitionSpeed;
     else if(fadeOut == false && trans < 255)
-      trans += lifeSpan/255;
+      trans += transitionSpeed;
       
    if(trans < 5 && parallax != 0)
         x = xOrig;     

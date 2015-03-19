@@ -12,6 +12,7 @@ class Arrow{
   Vec2 savedPos;
   float step = 0.0f;
   float trans = 1;
+  float angle = 0;
     
   Arrow(Box2DProcessing box2D, float startX, float startY, float endX, float endY){
     mBox2DRef = box2D;
@@ -40,13 +41,14 @@ class Arrow{
     fd.restitution  = -6;//bounciness
 
     mBody.setUserData(this);      //need to set this for collsion listening!!
-
+    mBody.setAngularDamping(3);
     //attach fixture finishing creation of body
     mBody.createFixture( fd );
     //mBody.setGravityScale(1.0, -9.8);
     //mBody.setGravityScale(-0.6);
     setBodyVelocity();
     
+    angle = tan((y2-y1)/(x2-x1));
   }
   
   // This function removes the particle from the box2d world
@@ -69,12 +71,11 @@ class Arrow{
        pushMatrix();
        translate(pos.x,pos.y);
        //rotate(a + sin(2*PI - currentAngle));
-       rotate(a);
+       rotate(angle);
        if(hit == true){
          trans -= 0.04;
          //fill(255, 0, 0, trans*255); // trans *255 because transparency is out of 255
          tint(255, 255, 255, trans*255);   
-         println(trans);
        }else{
          tint(255, 255, 255, 255);   
          //fill(255, 0, 0);
@@ -91,7 +92,7 @@ class Arrow{
    void setBodyVelocity(){
      
      //float time = (x2 - x1)/10; //smaller the denominator, more thime arrow takes
-     float time = 10;
+     float time = 8;
      float xVel = (x2 - x1)/(time);
      float yVel = ((y2-y1) + (0.5 * -40.0 * (int(time/2)^2)))/-time;
      
@@ -99,7 +100,7 @@ class Arrow{
      //int xVel = int((x2 - x1)/10);
      //int yVel = int(((y2-y1) + (0.5 * 1.0 * (16^2)))/-10);
      
-     println("GravityScale : " + mBody.getGravityScale() + " X: " + xVel + " Y: " + yVel);
+     //println("GravityScale : " + mBody.getGravityScale() + " X: " + xVel + " Y: " + yVel);
      
      mBody.setLinearVelocity(new Vec2(xVel,yVel));
    }

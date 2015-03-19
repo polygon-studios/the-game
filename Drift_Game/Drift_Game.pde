@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-import KinectPV2.*;
+//import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,12 +12,12 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-KinectPV2           kinect;
+/*KinectPV2           kinect;
 KinectPV2           kinectBall;
 OpenCV              opencvBody;
-OpenCV              opencvBalloon;
+OpenCV              opencvBalloon;*/
 Box2DProcessing     mBox2D;
-Flock               flock;
+/*Flock               flock;
 
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
@@ -28,25 +28,23 @@ float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 2.0f;
+float maxD = 3.0f;
 float minD = 0.5f;
 
 
 boolean    contourBodyIndex = false;
-
+*/
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
 int lastBanditTimeCheck = 0;
-int lastBirdTimeCheck = 0;
-int themeChangeTimer = 10000; // in milliseconds
-int cloudTimer = 15000; //in milliseconds
+int themeChangeTimer = 97000; // in milliseconds 97000
+int cloudTimer = 30000; //in milliseconds
 int banditTimer = 15000;
-int birdTimer = 25000;
 int currentTheme = 0;
 int nextTheme = 1;
 import ddf.minim.*;
 
-AudioPlayer player; 
+AudioPlayer[] player = new AudioPlayer[4]; 
 Minim minim;//audio context
 boolean firstRun = true;
 
@@ -86,23 +84,29 @@ void setup() {
   //themeArray.add(farm);
   //themeArray.add(mountain);
   
-  //minim = new Minim(this);
-  //player = minim.loadFile("Music.mp3", 2048);
-  //player.loop();
+  minim = new Minim(this);
+  player[0] = minim.loadFile("forestMusic.mp3", 2048);
+  player[1] = minim.loadFile("cityMusic.mp3", 2048);
+  player[2] = minim.loadFile("farmMusic.mp3", 2048);
+  player[3] = minim.loadFile("mountainMusic.mp3", 2048);
+  player[0].play();
   
-  flock = new Flock();
+ /* flock = new Flock();
+  for (int i = 0; i < 3; i++) {
+    flock.addBird(new Bird(new PVector(width/2,height/2), random(1.0, 6.0) ,0.03));
+  }
   smooth();
   
   mString = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
-  
+  */
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
-  //mBox2D.setGravity(0, -40);
+  mBox2D.setGravity(0, -40);
   mBox2D.listenForCollisions(); 
   
   // Kinect related setup
-  opencvBody = new OpenCV(this, 512, 424);
+  /*opencvBody = new OpenCV(this, 512, 424);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -111,7 +115,7 @@ void setup() {
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  kinect.init();
+  //kinect.init();*/
 }
 
 void draw() {
@@ -121,7 +125,7 @@ void draw() {
   
   noFill(); 
   
-
+/*
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -136,7 +140,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours(); 
+  ArrayList<Contour> contours = opencvBody.findContours(); */
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -146,9 +150,19 @@ void draw() {
     }
     
     Theme temp = themeArray.get(currentTheme);
-    temp.drawFullImg();
+    //temp.drawFullImg();
+    temp.drawBgImgs();
+    temp.drawMgImgs();
+    cloudGen();
+    temp.drawFgImgs();
     
-    if (contours.size() > 0) {
+    for(Bandit bandit : banditArray){
+      bandit.arrow.trans = 0;
+    }
+    player[currentTheme].rewind();
+    player[currentTheme].play();
+    
+   /* if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -208,7 +222,7 @@ void draw() {
     for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
-    
+    */
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -231,9 +245,13 @@ void draw() {
       newTemp.drawFgImgs();
     }
     
-    temp.drawFullImg();
+    temp.drawBgImgs();
+    temp.drawMgImgs();
+    cloudGen();
+    temp.drawFgImgs();
+    //temp.drawFullImg();
     
-    if (contours.size() > 0) {
+    /*if (contours.size() > 0) {
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -287,11 +305,11 @@ void draw() {
     
     for(balloon thisCircle : balloons){
       thisCircle.draw();
-    }
+    }*/
     
   }
   
-  kinect.setLowThresholdPC(minD);
+  /*kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
   if (mousePressed) {
@@ -301,16 +319,15 @@ void draw() {
   }
   
   flock.run();
-  
+  */
   
   banditGen();
-  cloudGen();
-  birdGen();
+  
   
   
   
 }
-
+/*
 // Kinect related
 void keyPressed() {
   //change contour finder from contour body to depth-PC
@@ -365,7 +382,47 @@ void mousePressed() {
 void mouseMoved() {
   flock.addTarget(new PVector(mouseX,mouseY));
 }
+*/
 
+//called when Box2D elements have started touching each other
+void beginContact( Contact cp ) 
+{
+}
+
+//called when Box2D elements have stopped touching each other
+void endContact(Contact cp) 
+{
+  // Get both shapes ( A and B )
+  Fixture f1 = cp.getFixtureA();
+  Fixture f2 = cp.getFixtureB();
+  
+  // Get both bodies so we can compare later
+  Body b1 = f1.getBody();
+  Body b2 = f2.getBody();
+
+  // Get our objects that reference these bodies .. Objects are undefined object types ...
+  Object o1 = b1.getUserData();
+  Object o2 = b2.getUserData();
+
+  //check if one of objects is a CircleBody .. if so continue
+  if (o1.getClass() == Arrow.class || o2.getClass() == balloon.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      Arrow arrow1;
+      if (o1.getClass() == Arrow.class) {
+        arrow1 = (Arrow)o1;
+        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+      }else if(o2.getClass() == Arrow.class){
+        arrow1 = (Arrow)o1;
+        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+      }
+        
+      
+    }
+  }
+
+
+
+}
 
 void banditGen(){
   if ( (millis() - lastBanditTimeCheck > banditTimer)) {
@@ -374,6 +431,7 @@ void banditGen(){
     int banditX =0;
     int banditY =0;
     
+    print(currentTheme);
     switch(currentTheme){
       case 0: 
         banditX = 125;
@@ -384,8 +442,15 @@ void banditGen(){
         banditY = 77;
         break;
       case 2: 
-        banditX = 87;
-        banditY = 450;
+        int balconyNum = int(random(2));
+        if(balconyNum == 1){
+          banditX = 87;
+          banditY = 450;
+        }
+        else{
+          banditX = 185;
+          banditY = 335;
+        }
         break;
       case 3: 
         banditX = 143;
@@ -399,8 +464,6 @@ void banditGen(){
     
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
-    
-    println(balloonX + "   " + balloonY);
     
     Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
     
@@ -433,22 +496,12 @@ void cloudGen(){
     int cloudNum = int(random(4)) + 1;
     int cloudX = int(random(600));
     
-    println(cloudX);
+    //println(cloudX);
     
-    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(100))));
+    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(200)-100)));
   }
   for(Cloud cloud : cloudArray){
     cloud.draw();
-  }
-}
-
-void birdGen(){
-  //Bird generation
-  if ( (millis() - lastBirdTimeCheck > birdTimer)) {
-    lastBirdTimeCheck = millis();
-    
-    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03));
-  
   }
 }
 
@@ -471,69 +524,69 @@ void loadAnimations(){
 
 //all skies the same
 void updateForest(Theme forest){
-  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_gate.png", 0, themeChangeTimer - 3000, 188, 474, 608, 126)); //image, parallax, lifespan, x, y, w, h
-  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_grass.png", 0, themeChangeTimer - 3000, 0, 511, 1280, 209));
-  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree1.png", 0, themeChangeTimer - 3000, -47, 309, 223, 248));
-  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree2.png", 0, themeChangeTimer - 3000, 94, 304, 306, 296));
-  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree3.png", 0, themeChangeTimer - 3000, 846, 286, 298,332));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_gate.png", 0, themeChangeTimer - 5000, 15, 188, 474, 608, 126)); //image, parallax, lifespan, x, y, w, h
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_grass.png", 0, themeChangeTimer - 5000, 15, 0, 511, 1280, 209));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree1.png", 0, themeChangeTimer - 5000, 15, -47, 309, 223, 248));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree2.png", 0, themeChangeTimer - 5000, 15, 94, 304, 306, 296));
+  forest.bgImgs.add(new DisplayImage("Forest/background/forest_bg_tree3.png", 0, themeChangeTimer - 5000, 15, 846, 286, 298,332));
   
-  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_ground.png", 0, themeChangeTimer - 2000, 0, 514, 1280, 207));
-  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree1.png", -0.5, themeChangeTimer - 2000, 919, 206, 368, 409));
-  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", 0.5, themeChangeTimer - 2000, -38, 83, 514, 529));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_ground.png", 0, themeChangeTimer - 2000, 25, 0, 514, 1280, 207));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree1.png", -0.3, themeChangeTimer - 2000, 25, 919, 206, 368, 409));
+  forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", 0.3, themeChangeTimer - 2000, 25, -38, 83, 514, 529));
   
   //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud1.png", 0, 0, 0, 200, 100));
   //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud2.png", 0, 0, 0, 200, 100));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_ground_long.png", 1, themeChangeTimer - 1000, -200, 600, 1920, 134));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom1.png", 0, themeChangeTimer - 1000, 65, 486, 216, 185));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom2.png", 0, themeChangeTimer - 1000, 209, 590, 96, 90));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom3.png", 0, themeChangeTimer - 1000, 77, 578, 77, 89));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 693, -58, 822, 736));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, 600, 1920, 134));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom1.png", 0, themeChangeTimer - 1000, 40, 65, 486, 216, 185));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom2.png", 0, themeChangeTimer - 1000, 40, 209, 590, 96, 90));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom3.png", 0, themeChangeTimer - 1000, 40, 77, 578, 77, 89));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 693, -58, 822, 736));
   
   themeArray.add(forest);
 }
 
 void updateCity(Theme city){
-  city.bgImgs.add(new DisplayImage("City/background/city_bg_grass.png", 0, themeChangeTimer - 3000, 0, 327, 1280, 394));//image, parallax, x, y, w, h
-  city.bgImgs.add(new DisplayImage("City/background/city_bg_road.png", 0, themeChangeTimer - 3000, 704, 371, 386, 360));
-  city.bgImgs.add(new DisplayImage("City/background/city_bg_post.png", 0, themeChangeTimer - 3000, 761, 292, 73, 113));
+  city.bgImgs.add(new DisplayImage("City/background/city_bg_grass.png", 0, themeChangeTimer - 5000, 15, 0, 327, 1280, 394));//image, parallax, x, y, w, h
+  city.bgImgs.add(new DisplayImage("City/background/city_bg_road.png", 0, themeChangeTimer - 5000, 15, 704, 371, 386, 360));
+  city.bgImgs.add(new DisplayImage("City/background/city_bg_post.png", 0, themeChangeTimer - 5000, 15, 761, 292, 73, 113));
  
-  city.mgImgs.add(new DisplayImage("City/midground/city_mg_ground.png", 0, themeChangeTimer - 2000, 0, 444, 1280, 276));
-  city.mgImgs.add(new DisplayImage("City/midground/city_mg_road.png", 0, themeChangeTimer - 2000, 115, 444, 979, 277));
-  city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseLeft.png", 0, themeChangeTimer - 2000, 50, 114, 401, 485));
-  city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseRight.png", 0, themeChangeTimer - 2000, 975, 270, 308, 397));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_ground.png", 0, themeChangeTimer - 2000, 25, 0, 444, 1280, 276));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_road.png", 0, themeChangeTimer - 2000, 25, 115, 444, 979, 277));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseLeft.png", 0, themeChangeTimer - 2000, 25, 50, 114, 401, 485));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseRight.png", 0, themeChangeTimer - 2000, 25, 975, 270, 308, 397));
   
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_ground_long.png", 1, themeChangeTimer - 1000, -500, height-60, 1920, 89));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseLeft.png", 0, themeChangeTimer - 1000, 0, 0, 284, 685));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseRight.png", 0, themeChangeTimer - 1000, 1158, 0, 125, 720));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_lamp.png", 0, themeChangeTimer - 1000, 1118, 112, 152, 113));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_wires.png", 0, themeChangeTimer - 1000, 164, 22, 1119, 146));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-60, 1920, 89));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseLeft.png", 0, themeChangeTimer - 1000, 40, 0, 0, 284, 685));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseRight.png", 0, themeChangeTimer - 1000, 40, 1158, 0, 125, 720));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_lamp.png", 0, themeChangeTimer - 1000, 40, 1118, 112, 152, 113));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_wires.png", 0, themeChangeTimer - 1000, 40, 164, 22, 1119, 146));
   
   themeArray.add(city);
 }
 
 void updateFarm(Theme farm){
-  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_grass.png", 0, themeChangeTimer - 3000, 0, 418, 1280, 300));//image, parallax, time, x, y, w, h
-  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_farmHouse.png", 0, themeChangeTimer - 3000, 330, 328, 487, 275));
+  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_grass.png", 0, themeChangeTimer - 5000, 15, 0, 418, 1280, 300));//image, parallax, time, x, y, w, h
+  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_farmHouse.png", 0, themeChangeTimer - 5000, 15, 330, 328, 487, 275));
  
-  farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.5, themeChangeTimer - 2000, 0, 421, 1683, 280));
+  farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.3, themeChangeTimer - 2000, 25, 0, 421, 1683, 280));
   
-  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass.png", 1, themeChangeTimer - 1000, -500, height-91, 1920, 134));
-  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_scareCrow.png", 0, themeChangeTimer - 1000, 900, 325, 369, 403));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-91, 1920, 134));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_scareCrow.png", 0, themeChangeTimer - 1000, 40, 900, 325, 369, 403));
    
   themeArray.add(farm);
 }
 
 void updateMountain(Theme mountain){
-  mountain.bgImgs.add(new DisplayImage("Mountain/background/mountain_bg_mountain.png", 0, themeChangeTimer - 3000, 0, 255, 1280, 465));//image, parallax, x, y, w, h
+  mountain.bgImgs.add(new DisplayImage("Mountain/background/mountain_bg_mountain.png", 0, themeChangeTimer - 3000, 15, 0, 255, 1280, 465));//image, parallax, x, y, w, h
  
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_grass_short.png", 0, themeChangeTimer - 2000, 0, 522, 1280, 198));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 0, 546, 1920, 540));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", 0, themeChangeTimer - 2000, 999, 175, 281, 430));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 1084, 150, 196, 483));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_grass_short.png", 0, themeChangeTimer - 2000, 25, 0, 522, 1280, 198));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 25, 0, 546, 1920, 540));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", -0.25, themeChangeTimer - 2000, 25, 999, 175, 281, 430));
+  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 25, 1084, 150, 196, 483));
   
-  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 0, height-90, 1280, 90));
-  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 0, 286, 160, 434));
-  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 935, 7, 345, 710));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
+  mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 40, 935, 7, 345, 710));
   
   themeArray.add(mountain);
 }

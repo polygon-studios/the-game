@@ -18,6 +18,7 @@ class Bandit{
   
   void draw(){
     arrow.draw();
+    
     if(currentFrame < 6)
       bowCycleDraw();
     else
