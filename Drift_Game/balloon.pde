@@ -66,6 +66,10 @@ class balloon{
     //mBody.applyForce(worldTarget, bodyVec);
   }
   
+  Vec2 getPosition(){
+    return mBox2D.getBodyPixelCoord(mBody);
+  }
+  
   color getColor()
   {
      return balloonCol; 

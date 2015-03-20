@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-import KinectPV2.*;
+//import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,15 +12,15 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-KinectPV2           kinect;
-KinectPV2           kinectBall;
+/*KinectPV2           kinect;
+KinectPV2           kinectBall;*/
 OpenCV              opencvBody;
 OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
 Flock               flock;
 
 ArrayList<Rectangle> rectangles;
-ArrayList<Contour> boundingBox;
+//ArrayList<Contour> boundingBox;
 Rectangle boundRect;
 
 
@@ -114,15 +114,15 @@ void setup() {
   
   // Kinect related setup
   opencvBody = new OpenCV(this, 512, 424);
-  kinect = new KinectPV2(this); 
+  //kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
-  kinect.enablePointCloud(true);
+ /* kinect.enablePointCloud(true);
   kinect.enableBodyTrackImg(true);
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  kinect.init();
+  kinect.init();*/
 }
 
 void draw() {
@@ -132,7 +132,7 @@ void draw() {
   
   noFill(); 
   
-
+/*
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -146,8 +146,8 @@ void draw() {
     PImage dst = opencvBody.getOutput();
   }
 
-    
-  ArrayList<Contour> contours = opencvBody.findContours(); 
+    */
+  //ArrayList<Contour> contours = opencvBody.findContours(); */
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -170,7 +170,7 @@ void draw() {
     player[currentTheme].play();
     
     
-    if (contours.size() > 0) {
+    /*if (contours.size() > 0) {
       currentBalloon = 0;
       for (Contour contour : contours) {
         
@@ -238,7 +238,7 @@ void draw() {
         }
         
       }
-    }
+    }*/
     
     for(string thisString : mString){
       thisString.draw();
@@ -276,7 +276,7 @@ void draw() {
     temp.drawFgImgs();
     //temp.drawFullImg();
     
-    if (contours.size() > 0) {
+    /*if (contours.size() > 0) {
       currentBalloon = 0;
       for (Contour contour : contours) {
         
@@ -342,7 +342,7 @@ void draw() {
         }
         
       }
-    }
+    }*/
     
     for(string thisString : mString){
       thisString.draw();
@@ -354,8 +354,8 @@ void draw() {
     
   }
   
-  kinect.setLowThresholdPC(minD);
-  kinect.setHighThresholdPC(maxD);
+  //kinect.setLowThresholdPC(minD);
+  //kinect.setHighThresholdPC(maxD);
     
   
   flock.run();
@@ -425,7 +425,7 @@ void mouseMoved() {
 //called when Box2D elements have started touching each other
 void beginContact( Contact cp ) 
 {
-   
+ /*  
   // Get both shapes ( A and B )
   Fixture f1 = cp.getFixtureA();
   Fixture f2 = cp.getFixtureB();
@@ -460,7 +460,7 @@ void beginContact( Contact cp )
   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
     //mString.add(new babyBalloon(new PVector(500, 500), 20.0f, false, false, BodyType.DYNAMIC, mBox2D));
     println("COLLIDE");
-  }
+  }*/
 }
 
 //called when Box2D elements have stopped touching each other
@@ -479,22 +479,22 @@ void endContact(Contact cp)
   Object o2 = b2.getUserData();
 
   //check if one of objects is a CircleBody .. if so continue
-  if (o1.getClass() == Arrow.class || o2.getClass() == balloon.class) {
-  
-    
+  if (o1.getClass() == Arrow.class || o2.getClass() == Arrow.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+    print("HERE");
       Arrow arrow1;
       if (o1.getClass() == Arrow.class) {
         arrow1 = (Arrow)o1;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        balloon touchBalloon = (balloon)o2;
-        touchBalloon.killBody();
+        //balloon touchBalloon = (balloon)o2;
+        //touchBalloon.killBody();
       }else if(o2.getClass() == Arrow.class){
-        arrow1 = (Arrow)o1;
+        arrow1 = (Arrow)o2;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        balloon touchBalloon = (balloon)o1;
-        touchBalloon.killBody();
+        //balloon touchBalloon = (balloon)o1;
+        //qtouchBalloon.killBody();
       }
-    
+    }
   }
   
   //check if one of objects is a CircleBody .. if so continue
@@ -541,13 +541,28 @@ void banditGen(){
         break;
     }
     
+    
+    
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
+    
+    if(balloons.size() > 0){
+      
+      int balloonIdx = int(random(balloons.size()));
+    
+    
+    balloon thisBalloon = balloons.get(balloonIdx);
+    Vec2 balloonPos = thisBalloon.getPosition(); 
+    
+    balloonX = int(balloonPos.x);
+    balloonY = int(balloonPos.y);
     
     Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
     
     Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
     banditArray.add(bandit);
+    }
+    
   }
   
   if(banditArray.size() > 0){
