@@ -209,18 +209,21 @@ void draw() {
           
           counter = 0;
           for (balloon s: balloons) {
-            println("Current Balloon: " + currentBalloon + " counter: " + counter);
+            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
             if(counter == currentBalloon){
               s.attract(centerX * 2.5,centerY * 2);
-              println("attract");
+              //println("attract");
+            }
+            if(numBalloons > currentBalloon + 1){
+            // s.attract(1920,1080);
             }
             counter++;
           }
           currentBalloon++;
           
-          if(numBalloons < currentBalloon && numBalloons < 3){
+          if(numBalloons < currentBalloon){
            balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
-           numBalloons++; 
+           numBalloons++;
           }
           
         }
@@ -315,11 +318,14 @@ void draw() {
               s.attract(centerX * 2.5,centerY * 2);
               //println("attract");
             }
+            if(numBalloons > currentBalloon + 1){
+              //s.attract(1920,1080);
+            }
             counter++;
           }
           currentBalloon++;
           
-          if(numBalloons < currentBalloon && numBalloons < 3){
+          if(numBalloons < currentBalloon){
            balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
            numBalloons++;
           }
@@ -350,14 +356,7 @@ void draw() {
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
-  
-  if (mousePressed) {
-    for (balloon s: balloons) {
-     s.attract(mouseX,mouseY);
-    }
-  }
-  
-  
+    
   
   flock.run();
   banditGen();
@@ -413,7 +412,7 @@ void keyPressed() {
 
 // Add a new boid into the System
 void mousePressed() {
-  //flock.addBird(new Bird(new PVector(mouseX,mouseY),random(1.0, 6.0),0.05f));
+  mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
 
 }
 
@@ -426,6 +425,42 @@ void mouseMoved() {
 //called when Box2D elements have started touching each other
 void beginContact( Contact cp ) 
 {
+   
+  // Get both shapes ( A and B )
+  Fixture f1 = cp.getFixtureA();
+  Fixture f2 = cp.getFixtureB();
+  
+  // Get both bodies so we can compare later
+  Body b1 = f1.getBody();
+  Body b2 = f2.getBody();
+
+  // Get our objects that reference these bodies .. Objects are undefined object types ...
+  Object o1 = b1.getUserData();
+  Object o2 = b2.getUserData();
+  
+  //check if one of objects is a CircleBody .. if so continue
+  if (o1.getClass() == Arrow.class || o2.getClass() == balloon.class) {
+    
+      Arrow arrow1;
+      if (o1.getClass() == Arrow.class) {
+        arrow1 = (Arrow)o1;
+        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+        balloon touchBalloon = (balloon)o2;
+        touchBalloon.killBody();
+      }else if(o2.getClass() == Arrow.class){
+        arrow1 = (Arrow)o1;
+        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+        balloon touchBalloon = (balloon)o1;
+        touchBalloon.killBody();
+      }
+    
+  }
+  
+  //check if one of objects is a CircleBody .. if so continue
+  if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+    //mString.add(new babyBalloon(new PVector(500, 500), 20.0f, false, false, BodyType.DYNAMIC, mBox2D));
+    println("COLLIDE");
+  }
 }
 
 //called when Box2D elements have stopped touching each other
@@ -445,16 +480,27 @@ void endContact(Contact cp)
 
   //check if one of objects is a CircleBody .. if so continue
   if (o1.getClass() == Arrow.class || o2.getClass() == balloon.class) {
-    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+  
+    
       Arrow arrow1;
       if (o1.getClass() == Arrow.class) {
         arrow1 = (Arrow)o1;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+        balloon touchBalloon = (balloon)o2;
+        touchBalloon.killBody();
       }else if(o2.getClass() == Arrow.class){
         arrow1 = (Arrow)o1;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
+        balloon touchBalloon = (balloon)o1;
+        touchBalloon.killBody();
       }
-    }
+    
+  }
+  
+  //check if one of objects is a CircleBody .. if so continue
+  if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+    //mString.add(new babyBalloon(new PVector(500, 500), 20.0f, false, false, BodyType.DYNAMIC, box2D));
+    println("COLLIDE");
   }
 }
 

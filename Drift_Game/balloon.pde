@@ -42,6 +42,13 @@ class balloon{
     mBody.setUserData(this);  
   }
   
+   // This function removes the particle from the box2d world
+  void killBody() 
+  {
+    mBox2D.destroyBody( mBody );
+    println("BODY IS KILL");                                                                                
+  }
+  
   void attract(float x,float y) {
     Vec2 worldTarget = mBox2D.coordPixelsToWorld(x,y);   
     Vec2 bodyVec = mBody.getWorldCenter();
@@ -49,6 +56,14 @@ class balloon{
     //worldTarget.normalize();
     //worldTarget.mulLocal((float) 40000);
     mBody.setTransform(worldTarget, 0);
+    
+    // First find the vector going from this body to the specified point
+    //worldTarget.subLocal(bodyVec);
+    // Then, scale the vector to the specified force
+    //worldTarget.normalize();
+    //worldTarget.mulLocal((float) 100000);
+    // Now apply it to the body's center of mass.
+    //mBody.applyForce(worldTarget, bodyVec);
   }
   
   color getColor()
@@ -60,6 +75,7 @@ class balloon{
   {
     balloonCol = col;
   }
+  
   void draw(){
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
