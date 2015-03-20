@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-//import KinectPV2.*;
+import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,15 +12,15 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-/*KinectPV2           kinect;
-KinectPV2           kinectBall;*/
+KinectPV2           kinect;
+KinectPV2           kinectBall;
 OpenCV              opencvBody;
 OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
 Flock               flock;
 
 ArrayList<Rectangle> rectangles;
-//ArrayList<Contour> boundingBox;
+ArrayList<Contour> boundingBox;
 Rectangle boundRect;
 
 
@@ -114,15 +114,15 @@ void setup() {
   
   // Kinect related setup
   opencvBody = new OpenCV(this, 512, 424);
-  //kinect = new KinectPV2(this); 
+  kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
- /* kinect.enablePointCloud(true);
+  kinect.enablePointCloud(true);
   kinect.enableBodyTrackImg(true);
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  kinect.init();*/
+  kinect.init();
 }
 
 void draw() {
@@ -132,7 +132,7 @@ void draw() {
   
   noFill(); 
   
-/*
+
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -146,8 +146,8 @@ void draw() {
     PImage dst = opencvBody.getOutput();
   }
 
-    */
-  //ArrayList<Contour> contours = opencvBody.findContours(); */
+    
+  ArrayList<Contour> contours = opencvBody.findContours(); 
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -170,7 +170,7 @@ void draw() {
     player[currentTheme].play();
     
     
-    /*if (contours.size() > 0) {
+    if (contours.size() > 0) {
       currentBalloon = 0;
       for (Contour contour : contours) {
         
@@ -238,16 +238,9 @@ void draw() {
         }
         
       }
-    }*/
-    
-    for(string thisString : mString){
-      thisString.draw();
     }
-    
-    for(balloon thisCircle : balloons){
-      thisCircle.draw();
-    }
-    
+
+
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -276,7 +269,7 @@ void draw() {
     temp.drawFgImgs();
     //temp.drawFullImg();
     
-    /*if (contours.size() > 0) {
+    if (contours.size() > 0) {
       currentBalloon = 0;
       for (Contour contour : contours) {
         
@@ -342,21 +335,41 @@ void draw() {
         }
         
       }
-    }*/
+    }
     
+    
+       
+  }
+  
+  kinect.setLowThresholdPC(minD);
+  kinect.setHighThresholdPC(maxD);
+  
+  synchronized(this.mString){ //fixes concurrentProblem
     for(string thisString : mString){
       thisString.draw();
     }
-    
-    for(balloon thisCircle : balloons){
-      thisCircle.draw();
-    }
-    
   }
   
-  //kinect.setLowThresholdPC(minD);
-  //kinect.setHighThresholdPC(maxD);
+   /* 
+  for(string thisString : mString){
+      thisString.draw();
+    }*/
+  
+  if(balloons.size() > 0){
+    for(balloon thisBalloon : balloons){
+      thisBalloon.draw();
+    }
     
+    for(int i=0; i < balloons.size(); i++){
+      balloon thisBalloon = balloons.get(i);
+      if( thisBalloon.isAlive() == true){
+        balloons.remove(i);
+        break;
+      }
+    }
+    
+    
+  }
   
   flock.run();
   banditGen();
@@ -413,7 +426,6 @@ void keyPressed() {
 // Add a new boid into the System
 void mousePressed() {
   mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
-
 }
 
 // Add a new boid into the System
@@ -486,24 +498,33 @@ void endContact(Contact cp)
       if (o1.getClass() == Arrow.class) {
         arrow1 = (Arrow)o1;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        //balloon touchBalloon = (balloon)o2;
-        //touchBalloon.killBody();
+        balloon touchBalloon = (balloon)o2;
+        touchBalloon.hit = true;
       }else if(o2.getClass() == Arrow.class){
         arrow1 = (Arrow)o2;
         arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        //balloon touchBalloon = (balloon)o1;
-        //qtouchBalloon.killBody();
+        balloon touchBalloon = (balloon)o1;
+        touchBalloon.hit = true;
       }
     }
   }
   
-  //check if one of objects is a CircleBody .. if so continue
-  if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-    //mString.add(new babyBalloon(new PVector(500, 500), 20.0f, false, false, BodyType.DYNAMIC, box2D));
-    println("COLLIDE");
-  }
+
+   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+   synchronized(mString){
+     mString.add(new string(new PVector (500, 500), new PVector (500, 500 + 15.0), 30, mBox2D));
+     println("COLLIDE");
+     }
+   }
+   /*
+   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+     makeBaby();
+   }*/
 }
 
+void makeBaby(){
+  mString.add(new string(new PVector (1000, 100), new PVector (500, 500 + 15.0), 30, mBox2D));
+}
 void banditGen(){
   if ( (millis() - lastBanditTimeCheck > banditTimer)) {
     lastBanditTimeCheck = millis();

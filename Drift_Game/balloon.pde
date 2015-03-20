@@ -3,6 +3,9 @@ class balloon{
   Body mBody;
   float mRadius;
   Box2DProcessing mBox2D;
+  Boolean hit = false;
+  float xPos;
+  float yPos;
   
   color balloonCol = color(255, 255, 255);
   
@@ -17,6 +20,8 @@ class balloon{
     BodyDef bd = new BodyDef();
     bd.type = type;
     bd.position = mBox2D.coordPixelsToWorld(startPos.x, startPos.y);
+    xPos = startPos.x;
+    yPos = startPos.y;
     
     mBody = mBox2D.world.createBody(bd);
     if(antiGrav){
@@ -57,6 +62,9 @@ class balloon{
     //worldTarget.mulLocal((float) 40000);
     mBody.setTransform(worldTarget, 0);
     
+    xPos = x;
+    yPos = y;
+    
     // First find the vector going from this body to the specified point
     //worldTarget.subLocal(bodyVec);
     // Then, scale the vector to the specified force
@@ -78,6 +86,13 @@ class balloon{
   void setColor( color col ) 
   {
     balloonCol = col;
+  }
+  
+  boolean isAlive(){
+     if(hit){
+        return true;
+     }
+     return false;
   }
   
   void draw(){
