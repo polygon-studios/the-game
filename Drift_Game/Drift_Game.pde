@@ -1,7 +1,7 @@
 
 // Imports
 import gab.opencv.*;
-//import KinectPV2.*;
+import KinectPV2.*;
 import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
@@ -12,13 +12,13 @@ import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
 
 // Constructors
-/*KinectPV2           kinect;
+KinectPV2           kinect;
 KinectPV2           kinectBall;
 OpenCV              opencvBody;
-OpenCV              opencvBalloon;*/
+OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
 Flock               flock;
-/*
+
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
 Rectangle boundRect;
@@ -28,12 +28,15 @@ float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 3.0f;
+float maxD = 1.5f;
 float minD = 0.5f;
 
+int currentBalloon = 0;
+int numBalloons = 0;
+int counter = 0;
 
 boolean    contourBodyIndex = false;
-*/
+
 int lastTimeCheck = 0;
 int lastCloudTimeCheck = 0;
 int lastBanditTimeCheck = 0;
@@ -100,17 +103,17 @@ void setup() {
   flock = new Flock();
   
   smooth();
-  /*
+  
   mString = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
-  */
+  
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
   mBox2D.setGravity(0, -40);
   mBox2D.listenForCollisions(); 
   
   // Kinect related setup
-  /*opencvBody = new OpenCV(this, 512, 424);
+  opencvBody = new OpenCV(this, 512, 424);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -119,7 +122,7 @@ void setup() {
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
   
-  //kinect.init();*/
+  kinect.init();
 }
 
 void draw() {
@@ -129,7 +132,7 @@ void draw() {
   
   noFill(); 
   
-/*
+
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
     opencvBody.gray();
@@ -144,7 +147,7 @@ void draw() {
   }
 
     
-  ArrayList<Contour> contours = opencvBody.findContours(); */
+  ArrayList<Contour> contours = opencvBody.findContours(); 
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -166,10 +169,13 @@ void draw() {
     player[currentTheme].rewind();
     player[currentTheme].play();
     
-   /* if (contours.size() > 0) {
+    
+    if (contours.size() > 0) {
+      currentBalloon = 0;
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
+        
         if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
           stroke(150, 150, 0);
           //fill(150, 150, 0);
@@ -200,10 +206,23 @@ void draw() {
           
           fill(0,255,0);
           ellipse(centerX * 2.5, centerY * 2, 8,8);
-          balloons.add(new balloon(new PVector(centerX, centerY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
+          
+          counter = 0;
           for (balloon s: balloons) {
-           s.attract(mouseX,mouseY);
+            println("Current Balloon: " + currentBalloon + " counter: " + counter);
+            if(counter == currentBalloon){
+              s.attract(centerX * 2.5,centerY * 2);
+              println("attract");
+            }
+            counter++;
           }
+          currentBalloon++;
+          
+          if(numBalloons < currentBalloon && numBalloons < 3){
+           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
+           numBalloons++; 
+          }
+          
         }
         if (contour.numPoints() > 200) {
           stroke(0, 155, 155);
@@ -213,7 +232,6 @@ void draw() {
             vertex(point.x * 2.5, point.y * 2 );
           }
           endShape();
-          //print(contour.numPoints() + '\n');
         }
         
       }
@@ -226,7 +244,7 @@ void draw() {
     for(balloon thisCircle : balloons){
       thisCircle.draw();
     }
-    */
+    
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -255,7 +273,8 @@ void draw() {
     temp.drawFgImgs();
     //temp.drawFullImg();
     
-    /*if (contours.size() > 0) {
+    if (contours.size() > 0) {
+      currentBalloon = 0;
       for (Contour contour : contours) {
         
         contour.setPolygonApproximationFactor(polygonFactor);
@@ -288,6 +307,22 @@ void draw() {
           rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
           fill(0,255,0);
           ellipse(centerX * 2.5, centerY * 2, 8,8);
+          
+          counter = 0;
+          for (balloon s: balloons) {
+            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
+            if(counter == currentBalloon){
+              s.attract(centerX * 2.5,centerY * 2);
+              //println("attract");
+            }
+            counter++;
+          }
+          currentBalloon++;
+          
+          if(numBalloons < currentBalloon && numBalloons < 3){
+           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
+           numBalloons++;
+          }
         }
         if (contour.numPoints() > 200) {
           stroke(0, 155, 155);
@@ -309,11 +344,11 @@ void draw() {
     
     for(balloon thisCircle : balloons){
       thisCircle.draw();
-    }*/
+    }
     
   }
   
-  /*kinect.setLowThresholdPC(minD);
+  kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
   if (mousePressed) {
@@ -323,7 +358,7 @@ void draw() {
   }
   
   
-  */
+  
   flock.run();
   banditGen();
   birdGen();
@@ -331,7 +366,7 @@ void draw() {
   
   
 }
-/*
+
 // Kinect related
 void keyPressed() {
   //change contour finder from contour body to depth-PC
@@ -386,7 +421,7 @@ void mousePressed() {
 void mouseMoved() {
   flock.addTarget(new PVector(mouseX,mouseY));
 }
-*/
+
 
 //called when Box2D elements have started touching each other
 void beginContact( Contact cp ) 
