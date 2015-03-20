@@ -67,6 +67,7 @@ ArrayList<Bandit> banditArray= new ArrayList<Bandit>();
 
 ArrayList<string> mString;
 ArrayList<balloon> balloons;
+int touchyTouchy = 0;
 
 void setup() {
   // Intialize backgound stuff
@@ -221,8 +222,10 @@ void draw() {
           }
           currentBalloon++;
           
+          color passCol = color(153, 0, 0);
+          
           if(numBalloons < currentBalloon){
-           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
+           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
            numBalloons++;
           }
           
@@ -318,8 +321,10 @@ void draw() {
           }
           currentBalloon++;
           
+          color passCol = color(153, 0, 0);
+          
           if(numBalloons < currentBalloon){
-           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, true, true, BodyType.DYNAMIC, mBox2D));
+           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
            numBalloons++;
           }
         }
@@ -367,8 +372,11 @@ void draw() {
         break;
       }
     }
-    
-    
+  }
+  
+  if(touchyTouchy > 0){
+    mString.add(new string(new PVector (500, 500), new PVector (500, 500 + 15.0), 30, mBox2D));
+    touchyTouchy = 0;
   }
   
   flock.run();
@@ -390,7 +398,7 @@ void keyPressed() {
      threshold = 40;
   }
   if( key == 'q'){
-     balloons.add(new balloon(new PVector(mouseX, mouseY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
+     //balloons.add(new balloon(new PVector(mouseX, mouseY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
   }
   if (key == 'a') {
     threshold+=1;
@@ -509,17 +517,17 @@ void endContact(Contact cp)
     }
   }
   
-
+   /*
    if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
    synchronized(mString){
      mString.add(new string(new PVector (500, 500), new PVector (500, 500 + 15.0), 30, mBox2D));
      println("COLLIDE");
      }
-   }
-   /*
-   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-     makeBaby();
    }*/
+   
+   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+     touchyTouchy = 1;
+   }
 }
 
 void makeBaby(){
@@ -625,7 +633,7 @@ void birdGen(){
   if ( (millis() - lastBirdTimeCheck > birdTimer)) {
     lastBirdTimeCheck = millis();
     
-    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03));
+    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D));
   
   }
 }

@@ -1,5 +1,12 @@
 class Bird {
-
+  
+  Body mBody;
+  Box2DProcessing mBox2DRef;
+  FixtureDef fd;
+  
+  float x1;
+  float y1;
+  
   PVector loc;
   PVector vel;
   PVector acc;
@@ -12,7 +19,36 @@ class Bird {
   int currentFrame = 0;
   PImage[] images = new PImage[numFrames];
   
-  Bird(PVector l, float ms, float mf) {
+  Bird(PVector l, float ms, float mf, Box2DProcessing box2D) {
+    mBox2DRef = box2D;
+    
+    x1 = l.x;
+    y1 = l.y;
+    
+    BodyDef bd = new BodyDef();                         //create body def
+    bd.type    = BodyType.DYNAMIC; 
+    
+    bd.position = mBox2DRef.coordPixelsToWorld(x1, y1);      //set position
+    mBody = mBox2DRef.world.createBody(bd);                //define body with bodyDef
+    
+    // Make the body's shape a circle
+    CircleShape cs = new CircleShape();
+    cs.m_radius    = mBox2DRef.scalarPixelsToWorld( 20 );
+    // Define a fixture
+    fd   = new FixtureDef();
+    fd.shape        = cs;
+    fd.density      = 1;
+    fd.friction     = 1;
+    fd.restitution  = -6;//bounciness
+
+    mBody.setUserData(this);      //need to set this for collsion listening!!
+    mBody.setAngularDamping(3);
+    //attach fixture finishing creation of body
+    mBody.createFixture( fd );
+    //mBody.setGravityScale(1.0, -9.8);
+    //mBody.setGravityScale(-0.6);
+    
+    
     acc = new PVector(0,0);
     vel = new PVector(random(-1,1),random(-1,1));
     loc = l.get();

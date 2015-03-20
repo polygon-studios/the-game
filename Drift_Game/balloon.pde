@@ -11,12 +11,13 @@ class balloon{
   
   PImage img;
   
-  balloon(PVector startPos, float radius, boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
+  balloon(PVector startPos, float radius, color startCol,  boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
     
    
     mBox2D = box2D;
     mRadius = radius;
     
+    balloonCol = startCol;
     BodyDef bd = new BodyDef();
     bd.type = type;
     bd.position = mBox2D.coordPixelsToWorld(startPos.x, startPos.y);
