@@ -28,8 +28,9 @@ float polygonFactor = 1;
 
 int threshold = 45;
 
-float maxD = 1.5f;
-float minD = 0.5f;
+float maxD = 3.08f;
+float minD = 1.0f;
+PImage colorImage;
 
 int currentBalloon = 0;
 int numBalloons = 0;
@@ -115,6 +116,7 @@ void setup() {
   
   // Kinect related setup
   opencvBody = new OpenCV(this, 512, 424);
+  opencvBalloon = new OpenCV(this, 1920, 1080);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -146,7 +148,10 @@ void draw() {
     opencvBody.threshold(threshold);
     PImage dst = opencvBody.getOutput();
   }
-
+  
+  opencvBalloon.loadImage(kinect.getColorImage());
+  
+  colorImage = opencvBalloon.getSnapshot();
     
   ArrayList<Contour> contours = opencvBody.findContours(); 
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
@@ -222,7 +227,14 @@ void draw() {
           }
           currentBalloon++;
           
-          color passCol = color(153, 0, 0);
+          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
+          color pointColour = colorImage.pixels[loc];
+          
+          float r1 = red(pointColour);
+          float g1 = green(pointColour);
+          float b1 = blue(pointColour);
+          
+          color passCol = color(r1, g1, b1);
           
           if(numBalloons < currentBalloon){
            balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
@@ -321,7 +333,14 @@ void draw() {
           }
           currentBalloon++;
           
-          color passCol = color(153, 0, 0);
+          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
+          color pointColour = colorImage.pixels[loc];
+          
+          float r1 = red(pointColour);
+          float g1 = green(pointColour);
+          float b1 = blue(pointColour);
+          
+          color passCol = color(r1, g1, b1);
           
           if(numBalloons < currentBalloon){
            balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
@@ -345,6 +364,12 @@ void draw() {
     
        
   }
+  
+  
+  /*if (contourBodyIndex)
+    image(kinect.getBodyTrackImage(), 0, 0);
+  else
+    image(kinect.getPointCloudDepthImage(), 0, 0);*/
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
@@ -375,7 +400,7 @@ void draw() {
   }
   
   if(touchyTouchy > 0){
-    mString.add(new string(new PVector (500, 500), new PVector (500, 500 + 15.0), 30, mBox2D));
+    mString.add(new string(new PVector (500, 250), new PVector (500, 250 + 15.0), 30, mBox2D));
     touchyTouchy = 0;
   }
   
