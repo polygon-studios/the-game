@@ -10,10 +10,10 @@ import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.*;
 import org.jbox2d.dynamics.joints.*;
 import java.awt.Rectangle;
+import ddf.minim.*;
 
 // Constructors
 KinectPV2           kinect;
-KinectPV2           kinectBall;
 OpenCV              opencvBody;
 OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
@@ -22,7 +22,6 @@ Flock               flock;
 ArrayList<Rectangle> rectangles;
 ArrayList<Contour> boundingBox;
 Rectangle boundRect;
-
 
 float polygonFactor = 1;
 
@@ -48,7 +47,7 @@ int banditTimer = 15000;
 int birdTimer = 25000;
 int currentTheme = 0;
 int nextTheme = 1;
-import ddf.minim.*;
+
 
 AudioPlayer[] player = new AudioPlayer[4]; 
 AudioPlayer bowPlayer;
@@ -66,6 +65,7 @@ ArrayList<Theme> themeArray= new ArrayList<Theme>();
 ArrayList<Cloud> cloudArray= new ArrayList<Cloud>();
 ArrayList<Bandit> banditArray= new ArrayList<Bandit>();
 
+ArrayList<Contour> contours;
 ArrayList<string> mString;
 ArrayList<balloon> balloons;
 int touchyTouchy = 0;
@@ -153,7 +153,9 @@ void draw() {
   
   colorImage = opencvBalloon.getSnapshot();
     
-  ArrayList<Contour> contours = opencvBody.findContours(); 
+  contours = opencvBody.findContours(); 
+  
+  
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -175,87 +177,7 @@ void draw() {
     player[currentTheme].rewind();
     player[currentTheme].play();
     
-    
-    if (contours.size() > 0) {
-      currentBalloon = 0;
-      for (Contour contour : contours) {
-        
-        contour.setPolygonApproximationFactor(polygonFactor);
-        
-        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
-          stroke(150, 150, 0);
-          //fill(150, 150, 0);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
-          }
-          endShape();
-          
-          boundRect = new Rectangle(1280, 720, 0, 0);
-          
-          noFill();
-          stroke(0,0,255);
-          strokeWeight(2);
-          Rectangle rec = contour.getBoundingBox();
-          if(rec.width > boundRect.width && rec.height > boundRect.height){
-             boundRect = rec; 
-          }
-          
-          float centerX;
-          float centerY;
-          
-          centerX = boundRect.x + (boundRect.width/2);
-          centerY = boundRect.y + (boundRect.height/2);
-          
-          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
-          
-          fill(0,255,0);
-          ellipse(centerX * 2.5, centerY * 2, 8,8);
-          
-          counter = 0;
-          for (balloon s: balloons) {
-            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
-            if(counter == currentBalloon){
-              s.attract(centerX * 2.5,centerY * 2);
-              //println("attract");
-            }
-            if(numBalloons > currentBalloon + 1){
-            // s.attract(1920,1080);
-            }
-            counter++;
-          }
-          currentBalloon++;
-          
-          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
-          color pointColour = colorImage.pixels[loc];
-          
-          float r1 = red(pointColour);
-          float g1 = green(pointColour);
-          float b1 = blue(pointColour);
-          
-          color passCol = color(r1, g1, b1);
-          
-          if(numBalloons < currentBalloon){
-           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
-           numBalloons++;
-          }
-          
-        }
-        if (contour.numPoints() > 200) {
-          stroke(0, 155, 155);
-          beginShape();
-          fill(0);
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
-          }
-          endShape();
-        }
-        
-      }
-    }
-
-
+    findContours();
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -284,82 +206,7 @@ void draw() {
     temp.drawFgImgs();
     //temp.drawFullImg();
     
-    if (contours.size() > 0) {
-      currentBalloon = 0;
-      for (Contour contour : contours) {
-        
-        contour.setPolygonApproximationFactor(polygonFactor);
-        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
-          stroke(150, 150, 0);
-          //fill(150, 150, 0);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
-          }
-          endShape();
-          
-          boundRect = new Rectangle(1280, 720, 0, 0);
-          
-          noFill();
-          stroke(0,0,255);
-          strokeWeight(2);
-          Rectangle rec = contour.getBoundingBox();
-          if(rec.width > boundRect.width && rec.height > boundRect.height){
-             boundRect = rec; 
-          }
-          
-          float centerX;
-          float centerY;
-          
-          centerX = boundRect.x + (boundRect.width/2);
-          centerY = boundRect.y + (boundRect.height/2);
-          
-          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
-          fill(0,255,0);
-          ellipse(centerX * 2.5, centerY * 2, 8,8);
-          
-          counter = 0;
-          for (balloon s: balloons) {
-            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
-            if(counter == currentBalloon){
-              s.attract(centerX * 2.5,centerY * 2);
-              //println("attract");
-            }
-            if(numBalloons > currentBalloon + 1){
-              //s.attract(1920,1080);
-            }
-            counter++;
-          }
-          currentBalloon++;
-          
-          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
-          color pointColour = colorImage.pixels[loc];
-          
-          float r1 = red(pointColour);
-          float g1 = green(pointColour);
-          float b1 = blue(pointColour);
-          
-          color passCol = color(r1, g1, b1);
-          
-          if(numBalloons < currentBalloon){
-           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
-           numBalloons++;
-          }
-        }
-        if (contour.numPoints() > 200) {
-          stroke(0, 155, 155);
-          beginShape();
-          fill(0);
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
-          }
-          endShape();
-          //print(contour.numPoints() + '\n');
-        }
-        
-      }
-    }
+    findContours();
     
     
        
@@ -467,47 +314,6 @@ void mouseMoved() {
 }
 
 
-//called when Box2D elements have started touching each other
-void beginContact( Contact cp ) 
-{
- /*  
-  // Get both shapes ( A and B )
-  Fixture f1 = cp.getFixtureA();
-  Fixture f2 = cp.getFixtureB();
-  
-  // Get both bodies so we can compare later
-  Body b1 = f1.getBody();
-  Body b2 = f2.getBody();
-
-  // Get our objects that reference these bodies .. Objects are undefined object types ...
-  Object o1 = b1.getUserData();
-  Object o2 = b2.getUserData();
-  
-  //check if one of objects is a CircleBody .. if so continue
-  if (o1.getClass() == Arrow.class || o2.getClass() == balloon.class) {
-    
-      Arrow arrow1;
-      if (o1.getClass() == Arrow.class) {
-        arrow1 = (Arrow)o1;
-        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        balloon touchBalloon = (balloon)o2;
-        touchBalloon.killBody();
-      }else if(o2.getClass() == Arrow.class){
-        arrow1 = (Arrow)o1;
-        arrow1.hit = true; //hit causes the arrow to fade away and to remove the bandit from the scene.
-        balloon touchBalloon = (balloon)o1;
-        touchBalloon.killBody();
-      }
-    
-  }
-  
-  //check if one of objects is a CircleBody .. if so continue
-  if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-    //mString.add(new babyBalloon(new PVector(500, 500), 20.0f, false, false, BodyType.DYNAMIC, mBox2D));
-    println("COLLIDE");
-  }*/
-}
-
 //called when Box2D elements have stopped touching each other
 void endContact(Contact cp) 
 {
@@ -541,23 +347,110 @@ void endContact(Contact cp)
       }
     }
   }
-  
-   /*
-   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-   synchronized(mString){
-     mString.add(new string(new PVector (500, 500), new PVector (500, 500 + 15.0), 30, mBox2D));
-     println("COLLIDE");
-     }
-   }*/
-   
-   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-     touchyTouchy = 1;
-   }
+     
+  if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+    touchyTouchy = 1;
+  }
 }
 
-void makeBaby(){
-  mString.add(new string(new PVector (1000, 100), new PVector (500, 500 + 15.0), 30, mBox2D));
+
+
+
+
+
+void loadAnimations(){
+  for (int i = 0; i < 7; i++) {
+    String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
+    banditFrames[i] = loadImage(imageName);
+  }
 }
+
+void findContours(){
+  if (contours.size() > 0) {
+      currentBalloon = 0;
+      for (Contour contour : contours) {
+        
+        contour.setPolygonApproximationFactor(polygonFactor);
+        
+        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
+          stroke(150, 150, 0);
+          //fill(150, 150, 0);
+          beginShape();
+  
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2.5, point.y * 2 );
+          }
+          endShape();
+          
+          boundRect = new Rectangle(1280, 720, 0, 0);
+          
+          noFill();
+          stroke(0,0,255);
+          strokeWeight(2);
+          Rectangle rec = contour.getBoundingBox();
+          if(rec.width > boundRect.width && rec.height > boundRect.height){
+             boundRect = rec; 
+          }
+          
+          float centerX;
+          float centerY;
+          
+          centerX = boundRect.x + (boundRect.width/2);
+          centerY = boundRect.y + (boundRect.height/2);
+          
+          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
+          
+          fill(0,255,0);
+          ellipse(centerX * 2.5, centerY * 2, 8,8);
+          
+          counter = 0;
+          for (balloon s: balloons) {
+            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
+            if(counter == currentBalloon){
+              s.attract(centerX * 2.5,centerY * 2);
+              //println("attract");
+            }
+            if(numBalloons > currentBalloon + 1){
+            // s.attract(1920,1080);
+            }
+            counter++;
+          }
+          currentBalloon++;
+          
+          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
+          color pointColour = colorImage.pixels[loc];
+          
+          float r1 = red(pointColour);
+          float g1 = green(pointColour);
+          float b1 = blue(pointColour);
+          
+          color passCol = color(r1, g1, b1);
+          
+          if(numBalloons < currentBalloon){
+           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+           numBalloons++;
+          }
+          
+        }
+        if (contour.numPoints() > 200) {
+          stroke(0, 155, 155);
+          beginShape();
+          fill(0);
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2.5, point.y * 2 );
+          }
+          endShape();
+        }
+        
+      }
+    }
+}
+/***********************
+
+OBJECT GENERATION
+
+*************************/
+
 void banditGen(){
   if ( (millis() - lastBanditTimeCheck > banditTimer)) {
     lastBanditTimeCheck = millis();
@@ -663,6 +556,15 @@ void birdGen(){
   }
 }
 
+
+
+
+/***********************
+
+BACKGROUND FUNCTIONS
+
+*************************/
+
 int calculateThemeCycle(int themeCounter){
   if(themeCounter == 3)
       themeCounter = 0;
@@ -670,15 +572,6 @@ int calculateThemeCycle(int themeCounter){
       themeCounter ++;
    return themeCounter;
 }
-
-void loadAnimations(){
-  for (int i = 0; i < 7; i++) {
-    String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
-    banditFrames[i] = loadImage(imageName);
-  }
-}
-
-/////imagery
 
 //all skies the same
 void updateForest(Theme forest){
