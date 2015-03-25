@@ -18,57 +18,64 @@ OpenCV              opencvBody;
 OpenCV              opencvBalloon;
 Box2DProcessing     mBox2D;
 Flock               flock;
+Rectangle           boundRect;
+Skeleton []         skeleton;
 
-ArrayList<Rectangle> rectangles;
-ArrayList<Contour> boundingBox;
-Rectangle boundRect;
+// ArrayLists
+ArrayList<Rectangle>     rectangles;
+ArrayList<Contour>       boundingBox;
 
-float polygonFactor = 1;
+ArrayList<Theme>         themeArray= new ArrayList<Theme>();
+ArrayList<Cloud>         cloudArray= new ArrayList<Cloud>();
+ArrayList<Bandit>        banditArray= new ArrayList<Bandit>();
 
-int threshold = 45;
+ArrayList<Contour>       contours;
+ArrayList<string>        babyBalloon;
+ArrayList<balloon>       balloons;
 
-float maxD = 3.08f;
-float minD = 1.0f;
+// Kinect related variables
+float polygonFactor       = 1;
+float maxD                = 3.08f;
+float minD                = 1.0f;
 PImage colorImage;
 
-int currentBalloon = 0;
-int numBalloons = 0;
-int counter = 0;
-
+int currentBalloon        = 0;
+int numBalloons           = 0;
+int maxBalloons           = 0;
+int counter               = 0;
+int threshold             = 45;
+  
 boolean    contourBodyIndex = false;
 
-int lastTimeCheck = 0;
-int lastCloudTimeCheck = 0;
-int lastBanditTimeCheck = 0;
-int lastBirdTimeCheck = 0;
-int themeChangeTimer = 97000; // in milliseconds 97000
-int cloudTimer = 30000; //in milliseconds
-int banditTimer = 15000;
-int birdTimer = 25000;
-int currentTheme = 0;
-int nextTheme = 1;
+int touchyTouchy = 0;
 
-
-AudioPlayer[] player = new AudioPlayer[4]; 
-AudioPlayer bowPlayer;
-
-Minim minim;//audio context
-boolean firstRun = true;
+// Theme related variables
+int lastTimeCheck           = 0;
+int lastCloudTimeCheck      = 0;
+int lastBanditTimeCheck     = 0;
+int lastBirdTimeCheck       = 0;
+int themeChangeTimer        = 97000; // in milliseconds 97000
+int cloudTimer              = 30000; //in milliseconds
+int banditTimer             = 15000;
+int birdTimer               = 25000;
+int currentTheme            = 0;
+int nextTheme               = 1;
 
 PImage bgImg;
 PImage fgImg;
 PImage mgImg;
 PImage skyImg = new PImage();
+
 PImage[] banditFrames = new PImage[7];
 
-ArrayList<Theme> themeArray= new ArrayList<Theme>();
-ArrayList<Cloud> cloudArray= new ArrayList<Cloud>();
-ArrayList<Bandit> banditArray= new ArrayList<Bandit>();
+boolean firstRun = true;
 
-ArrayList<Contour> contours;
-ArrayList<string> mString;
-ArrayList<balloon> balloons;
-int touchyTouchy = 0;
+// Audio variables
+AudioPlayer[] player = new AudioPlayer[4]; 
+AudioPlayer bowPlayer;
+
+Minim minim;//audio context
+
 
 void setup() {
   // Intialize backgound stuff
@@ -88,10 +95,6 @@ void setup() {
   updateCity(city);
   updateFarm(farm);
   updateMountain(mountain);
-  //themeArray.add(forest);
-  //themeArray.add(city);
-  //themeArray.add(farm);
-  //themeArray.add(mountain);
   
   minim = new Minim(this);
   player[0] = minim.loadFile("forestMusic.mp3", 2048);
@@ -106,7 +109,7 @@ void setup() {
   
   smooth();
   
-  mString = new ArrayList<string>();
+  babyBalloon = new ArrayList<string>();
   balloons = new ArrayList<balloon>();
   
   mBox2D = new Box2DProcessing(this);
@@ -124,6 +127,8 @@ void setup() {
   kinect.enableBodyTrackImg(true);
   kinect.enableColorImg(true);
   kinect.enableDepthImg(true);
+  kinect.enableSkeleton(true );
+  kinect.enableSkeletonDepthMap(true);
   
   kinect.init();
 }
@@ -134,7 +139,6 @@ void draw() {
   // KINECT STUFF
   
   noFill(); 
-  
 
   if (contourBodyIndex) {
     opencvBody.loadImage(kinect.getBodyTrackImage());
@@ -155,6 +159,7 @@ void draw() {
     
   contours = opencvBody.findContours(); 
   
+  skeleton =  kinect.getSkeletonDepthMap();
   
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
@@ -177,7 +182,13 @@ void draw() {
     player[currentTheme].rewind();
     player[currentTheme].play();
     
-    findContours();
+    for (int i = 0; i < skeleton.length; i++) {
+      if (skeleton[i].isTracked()) {
+        findContours();
+        println(skeleton.length);
+      }
+    }
+    
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
@@ -206,7 +217,12 @@ void draw() {
     temp.drawFgImgs();
     //temp.drawFullImg();
     
-    findContours();
+    for (int i = 0; i < skeleton.length; i++) {
+      if (skeleton[i].isTracked()) {
+        findContours();
+        println(skeleton.length);
+      }
+    }
     
     
        
@@ -221,14 +237,14 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  synchronized(this.mString){ //fixes concurrentProblem
-    for(string thisString : mString){
+  synchronized(this.babyBalloon){ //fixes concurrentProblem
+    for(string thisString : babyBalloon){
       thisString.draw();
     }
   }
   
    /* 
-  for(string thisString : mString){
+  for(string thisString : babyBalloon){
       thisString.draw();
     }*/
   
@@ -247,7 +263,7 @@ void draw() {
   }
   
   if(touchyTouchy > 0){
-    mString.add(new string(new PVector (500, 250), new PVector (500, 250 + 15.0), 30, mBox2D));
+    babyBalloon.add(new string(new PVector (500, 250), new PVector (500, 250 + 15.0), 30, mBox2D));
     touchyTouchy = 0;
   }
   
@@ -305,7 +321,7 @@ void keyPressed() {
 
 // Add a new boid into the System
 void mousePressed() {
-  mString.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
+  babyBalloon.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
 }
 
 // Add a new boid into the System
@@ -366,84 +382,88 @@ void loadAnimations(){
 }
 
 void findContours(){
-  if (contours.size() > 0) {
-      currentBalloon = 0;
-      for (Contour contour : contours) {
-        
-        contour.setPolygonApproximationFactor(polygonFactor);
-        
-        if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
-          stroke(150, 150, 0);
-          //fill(150, 150, 0);
-          beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
-          }
-          endShape();
-          
-          boundRect = new Rectangle(1280, 720, 0, 0);
-          
-          noFill();
-          stroke(0,0,255);
-          strokeWeight(2);
-          Rectangle rec = contour.getBoundingBox();
-          if(rec.width > boundRect.width && rec.height > boundRect.height){
-             boundRect = rec; 
-          }
-          
-          float centerX;
-          float centerY;
-          
-          centerX = boundRect.x + (boundRect.width/2);
-          centerY = boundRect.y + (boundRect.height/2);
-          
-          rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
-          
-          fill(0,255,0);
-          ellipse(centerX * 2.5, centerY * 2, 8,8);
-          
-          counter = 0;
-          for (balloon s: balloons) {
-            //println("Current Balloon: " + currentBalloon + " counter: " + counter);
-            if(counter == currentBalloon){
-              s.attract(centerX * 2.5,centerY * 2);
-              //println("attract");
-            }
-            if(numBalloons > currentBalloon + 1){
-            // s.attract(1920,1080);
-            }
-            counter++;
-          }
-          currentBalloon++;
-          
-          int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
-          color pointColour = colorImage.pixels[loc];
-          
-          float r1 = red(pointColour);
-          float g1 = green(pointColour);
-          float b1 = blue(pointColour);
-          
-          color passCol = color(r1, g1, b1);
-          
-          if(numBalloons < currentBalloon){
-           balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
-           numBalloons++;
-          }
-          
+    currentBalloon = 0;
+    
+    // Loop through all the countours
+    for (Contour contour : contours) {
+      
+      contour.setPolygonApproximationFactor(polygonFactor);
+      
+      // Balloon countour handler
+      if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
+        stroke(150, 150, 0);
+        //fill(150, 150, 0);
+        beginShape();
+
+        for (PVector point : contour.getPolygonApproximation().getPoints()) {
+          vertex(point.x * 2.5, point.y * 2 );
         }
-        if (contour.numPoints() > 200) {
-          stroke(0, 155, 155);
-          beginShape();
-          fill(0);
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2.5, point.y * 2 );
+        endShape();
+        
+        boundRect = new Rectangle(1280, 720, 0, 0);
+        
+        noFill();
+        stroke(0,0,255);
+        strokeWeight(2);
+        Rectangle rec = contour.getBoundingBox();
+        if(rec.width > boundRect.width && rec.height > boundRect.height){
+           boundRect = rec; 
+        }
+        
+        float centerX;
+        float centerY;
+        
+        centerX = boundRect.x + (boundRect.width/2);
+        centerY = boundRect.y + (boundRect.height/2);
+        
+        rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
+        
+        fill(0,255,0);
+        ellipse(centerX * 2.5, centerY * 2, 8,8);
+        
+        counter = 0;
+        for (balloon s: balloons) {
+          //println("Current Balloon: " + currentBalloon + " counter: " + counter);
+          if(counter == currentBalloon){
+            s.attract(centerX * 2.5,centerY * 2);
+            //println("attract");
           }
-          endShape();
+          if(numBalloons > currentBalloon + 1){
+          // s.attract(1920,1080);
+          }
+          counter++;
+        }
+        currentBalloon++;
+        
+        int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
+        color pointColour = colorImage.pixels[loc];
+        
+        float r1 = red(pointColour);
+        float g1 = green(pointColour);
+        float b1 = blue(pointColour);
+        
+        color passCol = color(r1, g1, b1);
+        
+        if(numBalloons < maxBalloons){
+         balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+         numBalloons++;
         }
         
       }
+      
+      // Person contour handler
+      if (contour.numPoints() > 750) {
+        stroke(0, 155, 155);
+        beginShape();
+        fill(0);
+        for (PVector point : contour.getPolygonApproximation().getPoints()) {
+          vertex(point.x * 2.5, point.y * 2 );
+        }
+        endShape();
+      }
+      
     }
+    
 }
 /***********************
 
@@ -530,8 +550,9 @@ void banditGen(){
   
 }
 
+
+//Cloud generation
 void cloudGen(){
-  //Cloud generation
   if ( (millis() - lastCloudTimeCheck > cloudTimer)) {
     lastCloudTimeCheck = millis();
     int cloudNum = int(random(4)) + 1;
@@ -546,8 +567,8 @@ void cloudGen(){
   }
 }
 
+//Bird generation
 void birdGen(){
-  //Bird generation
   if ( (millis() - lastBirdTimeCheck > birdTimer)) {
     lastBirdTimeCheck = millis();
     
