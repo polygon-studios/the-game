@@ -35,7 +35,7 @@ ArrayList<balloon>       balloons;
 
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 3.08f;
+float maxD                = 4.0f;
 float minD                = 1.0f;
 PImage colorImage;
 
@@ -47,7 +47,7 @@ int threshold             = 45;
   
 boolean    contourBodyIndex = false;
 
-int touchyTouchy = 0;
+int collision = 0;
 
 // Theme related variables
 int lastTimeCheck           = 0;
@@ -136,8 +136,12 @@ void setup() {
 void draw() {
   mBox2D.step();
   background(skyImg);
-  // KINECT STUFF
   
+  // Resetting variables each time
+  maxBalloons = 0;
+  
+  
+  // KINECT STUFF
   noFill(); 
 
   if (contourBodyIndex) {
@@ -153,14 +157,18 @@ void draw() {
     PImage dst = opencvBody.getOutput();
   }
   
+  // Load our colour image for balloon colours
   opencvBalloon.loadImage(kinect.getColorImage());
-  
   colorImage = opencvBalloon.getSnapshot();
-    
+  
+  // Finding contours  
   contours = opencvBody.findContours(); 
   
+  // Finding skeletons
   skeleton =  kinect.getSkeletonDepthMap();
   
+  
+  // Theme changing
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
@@ -184,8 +192,13 @@ void draw() {
     
     for (int i = 0; i < skeleton.length; i++) {
       if (skeleton[i].isTracked()) {
+        maxBalloons += 1;
+      }
+    }
+    
+    for (int i = 0; i < skeleton.length; i++) {
+      if (skeleton[i].isTracked()) {
         findContours();
-        println(skeleton.length);
       }
     }
     
@@ -216,6 +229,12 @@ void draw() {
     cloudGen();
     temp.drawFgImgs();
     //temp.drawFullImg();
+    
+    for (int i = 0; i < skeleton.length; i++) {
+      if (skeleton[i].isTracked()) {
+        maxBalloons += 1;
+      }
+    }
     
     for (int i = 0; i < skeleton.length; i++) {
       if (skeleton[i].isTracked()) {
@@ -262,9 +281,9 @@ void draw() {
     }
   }
   
-  if(touchyTouchy > 0){
+  if(collision > 0){
     babyBalloon.add(new string(new PVector (500, 250), new PVector (500, 250 + 15.0), 30, mBox2D));
-    touchyTouchy = 0;
+    collision = 0;
   }
   
   flock.run();
@@ -365,7 +384,7 @@ void endContact(Contact cp)
   }
      
   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
-    touchyTouchy = 1;
+    collision = 1;
   }
 }
 
@@ -396,7 +415,7 @@ void findContours(){
         beginShape();
 
         for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2.5, point.y * 2 );
+          vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
         }
         endShape();
         
@@ -416,16 +435,16 @@ void findContours(){
         centerX = boundRect.x + (boundRect.width/2);
         centerY = boundRect.y + (boundRect.height/2);
         
-        rect(boundRect.x * 2.5, boundRect.y * 2, boundRect.width * 2.5, boundRect.height * 2);
+        rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
         
         fill(0,255,0);
-        ellipse(centerX * 2.5, centerY * 2, 8,8);
+        ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
         
         counter = 0;
         for (balloon s: balloons) {
           //println("Current Balloon: " + currentBalloon + " counter: " + counter);
           if(counter == currentBalloon){
-            s.attract(centerX * 2.5,centerY * 2);
+            s.attract(centerX * 2 + 128,centerY * 1.3585 + 72);
             //println("attract");
           }
           if(numBalloons > currentBalloon + 1){
@@ -452,15 +471,17 @@ void findContours(){
       }
       
       // Person contour handler
-      if (contour.numPoints() > 750) {
+      if (contour.numPoints() > 550 && contour.numPoints() < 1000) {
         stroke(0, 155, 155);
         beginShape();
         fill(0);
         for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2.5, point.y * 2 );
+          vertex(point.x * 2 + 128, point.y *  1.3585 + 72 );
         }
         endShape();
       }
+      
+      
       
     }
     
@@ -606,8 +627,6 @@ void updateForest(Theme forest){
   forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree1.png", -0.3, themeChangeTimer - 2000, 25, 919, 206, 368, 409));
   forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", -0.3, themeChangeTimer - 2000, 25, -38, 83, 514, 529));
   
-  //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud1.png", 0, 0, 0, 200, 100));
-  //forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_cloud2.png", 0, 0, 0, 200, 100));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, 600, 1920, 134));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom1.png", 0, themeChangeTimer - 1000, 40, 65, 486, 216, 185));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom2.png", 0, themeChangeTimer - 1000, 40, 209, 590, 96, 90));
