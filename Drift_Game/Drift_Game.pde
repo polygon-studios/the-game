@@ -409,7 +409,7 @@ void findContours(){
       contour.setPolygonApproximationFactor(polygonFactor);
       
       // Balloon countour handler
-      if (contour.numPoints() < 200 &&  contour.numPoints() > 50) {
+      if (contour.numPoints() < 200 &&  contour.numPoints() > 100) {
         stroke(150, 150, 0);
         //fill(150, 150, 0);
         beginShape();
