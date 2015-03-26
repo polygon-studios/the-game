@@ -102,6 +102,11 @@ class Bird {
     loc.add(vel);
     // Reset accelertion to 0 each cycle
     acc.mult(0);
+    Vec2 worldTarget = mBox2D.coordPixelsToWorld(loc.x,loc.y);   
+    //worldTarget.subLocal(bodyVec);
+    //worldTarget.normalize();
+    //worldTarget.mulLocal((float) 40000);
+    mBody.setTransform(worldTarget, 0);
   }
 
   void seek(PVector target) {
@@ -159,10 +164,10 @@ class Bird {
 
   // Wraparound
   void borders() {
-    if (loc.x < -r) loc.x = width+r;
-    if (loc.y < -r) loc.y = height+r;
-    if (loc.x > width+r) loc.x = -r;
-    if (loc.y > height+r) loc.y = -r;
+    //if (loc.x < -r) loc.x = width+r;
+    //if (loc.y < -r) loc.y = height+r;
+    //if (loc.x > width+r) loc.x = -r;
+    //if (loc.y > height+r) loc.y = -r;
   }
 
   // Separation

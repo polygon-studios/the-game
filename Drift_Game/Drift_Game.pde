@@ -28,6 +28,7 @@ ArrayList<Contour>       boundingBox;
 ArrayList<Theme>         themeArray= new ArrayList<Theme>();
 ArrayList<Cloud>         cloudArray= new ArrayList<Cloud>();
 ArrayList<Bandit>        banditArray= new ArrayList<Bandit>();
+ArrayList<Tree>          treeArray= new ArrayList<Tree>();
 
 ArrayList<Contour>       contours;
 ArrayList<string>        babyBalloon;
@@ -246,12 +247,7 @@ void draw() {
     
        
   }
-  
-  
-  /*if (contourBodyIndex)
-    image(kinect.getBodyTrackImage(), 0, 0);
-  else
-    image(kinect.getPointCloudDepthImage(), 0, 0);*/
+
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
@@ -289,6 +285,7 @@ void draw() {
   flock.run();
   banditGen();
   birdGen();
+  treeGen();
   
   
   
@@ -367,7 +364,7 @@ void endContact(Contact cp)
   //check if one of objects is a CircleBody .. if so continue
   if (o1.getClass() == Arrow.class || o2.getClass() == Arrow.class) {
     if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
-    print("HERE");
+    
       Arrow arrow1;
       if (o1.getClass() == Arrow.class) {
         arrow1 = (Arrow)o1;
@@ -598,6 +595,23 @@ void birdGen(){
   }
 }
 
+// Tree collidable generation
+void treeGen(){
+  print(currentTheme);
+  
+  if(treeArray.size() == 0){
+    treeArray.add(new Tree(new PVector(1000, 200), 175.0f, BodyType.DYNAMIC, mBox2D));
+  }
+  
+  if(currentTheme == 0){
+    for (Tree t: treeArray) {
+        t.attract(900,200);
+        t.draw();
+    }
+  }
+  
+  
+}
 
 
 
