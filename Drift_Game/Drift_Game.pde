@@ -383,6 +383,16 @@ void endContact(Contact cp)
   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
     collision = 1;
   }
+  
+  if (o1.getClass() == Tree.class || o2.getClass() == Tree.class) {
+    if (o1.getClass() == Tree.class) {
+        balloon touchBalloon = (balloon)o2;
+        touchBalloon.hit = true;
+      }else if(o2.getClass() == Tree.class){
+        balloon touchBalloon = (balloon)o1;
+        touchBalloon.hit = true;
+      }
+  }
 }
 
 
