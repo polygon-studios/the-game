@@ -236,11 +236,10 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  synchronized(this.babyBalloon){ //fixes concurrentProblem
-    for(string thisString : babyBalloon){
-      thisString.draw();
-    }
+  for(string thisString : babyBalloon){
+    thisString.draw();
   }
+  
   
      
   for (int i = 0; i < skeleton.length; i++) {
@@ -454,16 +453,7 @@ void findContours(){
       contour.setPolygonApproximationFactor(polygonFactor);
       
       // Balloon countour handler
-      if (contour.numPoints() < 200 &&  contour.numPoints() > 100) {
-        stroke(150, 150, 0);
-        //fill(150, 150, 0);
-        beginShape();
-
-        for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
-        }
-        endShape();
-        
+      if (contour.numPoints() < 200 &&  contour.numPoints() > 100) {   
         boundRect = new Rectangle(1280, 720, 0, 0);
         
         noFill();
@@ -505,11 +495,20 @@ void findContours(){
         float r1 = red(pointColour);
         float g1 = green(pointColour);
         float b1 = blue(pointColour);
-        
+        println(r1);
         color passCol = color(r1, g1, b1);
         
+        stroke(150, 150, 0);
+        fill(r1, g1, b1);
+        beginShape();
+
+        for (PVector point : contour.getPolygonApproximation().getPoints()) {
+          vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
+        }
+        endShape();
+        
         if(numBalloons < maxBalloons){
-         balloons.add(new balloon(new PVector(centerX, centerY), 50.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+         balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
          numBalloons++;
         }
         
@@ -645,7 +644,6 @@ void birdGen(){
 
 // Tree collidable generation
 void treeGen(){
-  print(currentTheme);
   
   if(treeArray.size() == 0){
     treeArray.add(new Tree(new PVector(1150, 150), 150.0f, BodyType.STATIC, mBox2D));

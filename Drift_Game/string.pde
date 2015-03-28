@@ -1,12 +1,13 @@
 class string{
   
-  Body mBody;
   Box2DProcessing mBox2D;
   ArrayList<babyBalloon> mString;
+  float balloonRad = 20.0;
   
   string(PVector startPos, PVector endPos, int numSections, Box2DProcessing box2D){
-    
-    PVector stringVec = PVector.sub(endPos, startPos);
+    PVector newStartPos = new PVector(startPos.x, startPos.y + balloonRad*1.5);
+    PVector newEndPos = new PVector(endPos.x, endPos.y + balloonRad*1.5);
+    PVector stringVec = PVector.sub(newEndPos, newStartPos);
     float sectionSpacing = stringVec.mag()/(float)numSections;
     
     stringVec.normalize();
@@ -16,18 +17,16 @@ class string{
     mBox2D = box2D;
     
     for(int i = 0; i < numSections + 1; i++){
-      //balloon startString = null;
       babyBalloon section = null;
       
       if(i == 0){
-        section = new babyBalloon(new PVector(startPos.x, startPos.y), 20.0f, true, true, BodyType.DYNAMIC, mBox2D);
-        //mString.add(startString);
+        section = new babyBalloon(new PVector(startPos.x, startPos.y), balloonRad, true, true, color(255, 255, 0), BodyType.DYNAMIC, mBox2D);
       }
       else{
         PVector sectionPos = new PVector(startPos.x, startPos.y);
         sectionPos.add(PVector.mult(stringVec, (float)i*sectionSpacing));
         
-        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y), sectionRadius, false, false, BodyType.DYNAMIC, box2D);
+        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y + balloonRad*1.5), sectionRadius, false, false, color(0, 0, 0), BodyType.DYNAMIC, box2D);
       }
       
       mString.add(section);
@@ -38,6 +37,11 @@ class string{
         
         djd.bodyA = previous.mBody;
         djd.bodyB = section.mBody;
+        
+        if(i==1){
+          djd.localAnchorA.set(0, -4);
+          djd.localAnchorB.set(0,0);
+        }
         
         djd.length = mBox2D.scalarPixelsToWorld(sectionSpacing);
         
@@ -50,25 +54,10 @@ class string{
     
   }
   
-   void attract(float x,float y) {
-    // From BoxWrap2D example
-    Vec2 worldTarget = mBox2D.coordPixelsToWorld(x,y);   
-    Vec2 bodyVec = mBody.getWorldCenter();
-    // First find the vector going from this body to the specified point
-    worldTarget.subLocal(bodyVec);
-    // Then, scale the vector to the specified force
-    worldTarget.normalize();
-    worldTarget.mulLocal((float) 1000);
-    // Now apply it to the body's center of mass.
-    mBody.applyForce(worldTarget, bodyVec);
-  }
-  
   void draw(){
     fill(255, 0, 0);
-    for(babyBalloon babyBalloon: mString){
-      babyBalloon.draw();
-    }
-    
-  }
-  
+    for(babyBalloon circle: mString){
+      circle.draw();
+    }    
+  }  
 }
