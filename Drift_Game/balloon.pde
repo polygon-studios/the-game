@@ -79,6 +79,14 @@ class balloon{
     return mBox2D.getBodyPixelCoord(mBody);
   }
   
+  float getXPosition(){
+    return xPos;
+  }
+  
+  float getYPosition(){
+    return yPos;
+  }
+  
   color getColor()
   {
      return balloonCol; 

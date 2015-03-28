@@ -36,15 +36,19 @@ ArrayList<balloon>       balloons;
 
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 4.0f;
-float minD                = 1.0f;
+float maxD                = 2.3f;
+float minD                = 1.5f;
 PImage colorImage;
 
 int currentBalloon        = 0;
 int numBalloons           = 0;
 int maxBalloons           = 0;
+int numberOfPeople        = 0;
 int counter               = 0;
 int threshold             = 45;
+
+float newXPos = 0;
+float newYPos = 0;
   
 boolean    contourBodyIndex = false;
 
@@ -130,6 +134,7 @@ void setup() {
   kinect.enableDepthImg(true);
   kinect.enableSkeleton(true );
   kinect.enableSkeletonDepthMap(true);
+  kinect.enableLongExposureInfraredImg(true);
   
   kinect.init();
 }
@@ -140,7 +145,7 @@ void draw() {
   
   // Resetting variables each time
   maxBalloons = 0;
-  
+  numberOfPeople = 0;
   
   // KINECT STUFF
   noFill(); 
@@ -154,6 +159,10 @@ void draw() {
   } else {
     opencvBody.loadImage(kinect.getPointCloudDepthImage());
     opencvBody.gray();
+    opencvBody.dilate();
+    opencvBody.blur(20);
+    opencvBody.erode();
+    
     opencvBody.threshold(threshold);
     PImage dst = opencvBody.getOutput();
   }
@@ -173,6 +182,7 @@ void draw() {
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
+    
     if(firstRun == false){
       currentTheme = calculateThemeCycle(currentTheme);
       nextTheme = calculateThemeCycle(currentTheme);
@@ -190,18 +200,7 @@ void draw() {
     }
     player[currentTheme].rewind();
     player[currentTheme].play();
-    
-    for (int i = 0; i < skeleton.length; i++) {
-      if (skeleton[i].isTracked()) {
-        maxBalloons += 1;
-      }
-    }
-    
-    for (int i = 0; i < skeleton.length; i++) {
-      if (skeleton[i].isTracked()) {
-        findContours();
-      }
-    }
+
     
     firstRun = false;
     //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
@@ -230,22 +229,7 @@ void draw() {
     cloudGen();
     temp.drawFgImgs();
     //temp.drawFullImg();
-    
-    for (int i = 0; i < skeleton.length; i++) {
-      if (skeleton[i].isTracked()) {
-        maxBalloons += 1;
-      }
-    }
-    
-    for (int i = 0; i < skeleton.length; i++) {
-      if (skeleton[i].isTracked()) {
-        findContours();
-        println(skeleton.length);
-      }
-    }
-    
-    
-       
+
   }
 
   
@@ -258,35 +242,63 @@ void draw() {
     }
   }
   
-   /* 
-  for(string thisString : babyBalloon){
-      thisString.draw();
-    }*/
-  
-  if(balloons.size() > 0){
-    for(balloon thisBalloon : balloons){
-      thisBalloon.draw();
+     
+  for (int i = 0; i < skeleton.length; i++) {
+    if (skeleton[i].isTracked()) {
+      maxBalloons = 3;
+      numberOfPeople = 3;
     }
-    
-    for(int i=0; i < balloons.size(); i++){
-      balloon thisBalloon = balloons.get(i);
-      if( thisBalloon.isAlive() == true){
-        balloons.remove(i);
-        break;
+  }
+  
+  for (int i = 0; i < skeleton.length; i++) {
+    if (skeleton[i].isTracked()) {
+      findContours();
+      println(skeleton.length);
+    }
+  }
+  
+//  if(numberOfPeople == 0){
+//    for(balloon thisBalloon : balloons){
+//      thisBalloon.killBody();
+//    }
+//  }
+  
+  PImage dst = opencvBody.getOutput();
+  
+  if (contourBodyIndex)
+     image(kinect.getBodyTrackImage(), 0, 0);
+    else
+     //image(kinect.getPointCloudDepthImage(), 0, 0);
+     //image(dst, 0, 0);
+  
+  //if(numberOfPeople != 0){
+  
+    if(balloons.size() > 0){
+      for(balloon thisBalloon : balloons){
+        thisBalloon.draw();
+      }
+      
+      for(int i=0; i < balloons.size(); i++){
+        balloon thisBalloon = balloons.get(i);
+        if( thisBalloon.isAlive() == true){
+          balloons.remove(i);
+          break;
+        }
       }
     }
-  }
-  
-  if(collision > 0){
-    babyBalloon.add(new string(new PVector (500, 250), new PVector (500, 250 + 15.0), 30, mBox2D));
-    collision = 0;
-  }
+    
+    if(collision > 0){
+      babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
+      collision = 0;
+    }
+    
+   
+  //}
   
   flock.run();
   banditGen();
   birdGen();
   treeGen();
-  
   
   
 }
@@ -381,7 +393,33 @@ void endContact(Contact cp)
   }
      
   if (o1.getClass() == balloon.class && o2.getClass() == balloon.class) {
+    
+    int balloon1xPos = 0;
+    int balloon1yPos = 0;
+    int balloon2xPos = 0;
+    int balloon2yPos = 0;
+    
     collision = 1;
+    balloon Balloon1 = (balloon)o1;
+    balloon Balloon2 = (balloon)o2;
+    
+    Vec2 balloon1Pos = Balloon1.getPosition(); 
+    Vec2 balloon2Pos = Balloon2.getPosition(); 
+    
+    balloon1xPos = int(balloon1Pos.x);
+    balloon1yPos = int(balloon1Pos.y);
+    balloon2xPos = int(balloon2Pos.x);
+    balloon2yPos = int(balloon2Pos.y);
+    
+    if(balloon1xPos > balloon2xPos){
+      newXPos = balloon1xPos - balloon2xPos + balloon2xPos;
+      newYPos = balloon1yPos - 100;
+    }
+    else {
+      newXPos = balloon2xPos - balloon1xPos + balloon1xPos;
+      newYPos = balloon2yPos - 100;
+    }
+    println(newXPos);
   }
   
   if (o1.getClass() == Tree.class || o2.getClass() == Tree.class) {
@@ -478,7 +516,7 @@ void findContours(){
       }
       
       // Person contour handler
-      if (contour.numPoints() > 550 && contour.numPoints() < 1000) {
+      if (contour.numPoints() > 550 && contour.numPoints() < 3000) {
         stroke(0, 155, 155);
         beginShape();
         fill(0);
@@ -610,12 +648,17 @@ void treeGen(){
   print(currentTheme);
   
   if(treeArray.size() == 0){
-    treeArray.add(new Tree(new PVector(1000, 200), 175.0f, BodyType.DYNAMIC, mBox2D));
+    treeArray.add(new Tree(new PVector(1150, 150), 150.0f, BodyType.STATIC, mBox2D));
+    treeArray.add(new Tree(new PVector(1015, 290), 50.0f, BodyType.STATIC, mBox2D));
+    treeArray.add(new Tree(new PVector(925, 340), 40.0f, BodyType.STATIC, mBox2D));
+    treeArray.add(new Tree(new PVector(800, 330), 10.0f, BodyType.STATIC, mBox2D));
+    treeArray.add(new Tree(new PVector(810, 140), 5.0f, BodyType.STATIC, mBox2D));
+    treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
   }
   
   if(currentTheme == 0){
     for (Tree t: treeArray) {
-        t.attract(900,200);
+        //t.attract(900,200);
         t.draw();
     }
   }
@@ -655,7 +698,7 @@ void updateForest(Theme forest){
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom1.png", 0, themeChangeTimer - 1000, 40, 65, 486, 216, 185));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom2.png", 0, themeChangeTimer - 1000, 40, 209, 590, 96, 90));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom3.png", 0, themeChangeTimer - 1000, 40, 77, 578, 77, 89));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 693, -58, 822, 736));
+  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 793, -58, 822, 736));
   
   themeArray.add(forest);
 }
