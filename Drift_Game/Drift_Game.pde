@@ -487,7 +487,7 @@ void findContours(){
         for (balloon s: balloons) {
           //println("Current Balloon: " + currentBalloon + " counter: " + counter);
           if(counter == currentBalloon){
-            s.attract(centerX * 2 + 128,centerY * 1.3585 + 130);
+            s.attract(centerX * 2 + 128,centerY * 1.8 + 130);
             //println("attract");
           }
           if(numBalloons > currentBalloon + 1){
@@ -499,12 +499,6 @@ void findContours(){
         
         int loc = int(centerX*3.75) + int(centerY*2.547) * 1920;
         color pointColour = colorImage.pixels[loc];
-        
-        
-        
-        //int r1 = (pointColour >> 16) & 0xFF; 
-        //int g1 = (pointColour >> 8) & 0xFF;
-        //int b1 = pointColour & 0xFF;
         
         float r1 = red(pointColour);
         float g1 = green(pointColour);
@@ -519,16 +513,20 @@ void findContours(){
           stroke(150, 150, 0);
           fill(r1, g1, b1);
           beginShape();
-  
-          for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2 + 128, point.y * 1.3585 + 130 );
+       
+          ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
+          for (PVector point : points) {
+            curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
           }
+          
+          PVector firstPoint = points.get(1);
+          curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 
           endShape();
           
           // Drawing bounding box and center point
-          //rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
+          //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 72, boundRect.width * 2.5, boundRect.height * 1.8 + 72);
           //fill(0,255,0);
-          //ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
+          //ellipse(centerX * 2 + 128, centerY * 1.8 + 72, 8,8);
         }
         if(numBalloons < maxBalloons){
          balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
@@ -543,7 +541,7 @@ void findContours(){
         beginShape();
         fill(0);
         for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y *  1.3585 + 130 );
+          vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
         }
         endShape();
       }
