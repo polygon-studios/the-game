@@ -30,10 +30,11 @@ ArrayList<Cloud>         cloudArray= new ArrayList<Cloud>();
 ArrayList<Bandit>        banditArray= new ArrayList<Bandit>();
 ArrayList<Tree>          treeArray= new ArrayList<Tree>();
 
-ArrayList<Contour>       contours;
-ArrayList<string>        babyBalloon;
-ArrayList<balloon>       balloons;
+ArrayList<string>        babyBalloon = new ArrayList<string>();
+ArrayList<balloon>       balloons = new ArrayList<balloon>();
+ArrayList<Player>        players = new ArrayList<Player>();
 
+ArrayList<Contour>       contours;
 // Kinect related variables
 float polygonFactor       = 1;
 float maxD                = 2.3f;
@@ -43,7 +44,7 @@ PImage colorImage;
 int currentBalloon        = 0;
 int numBalloons           = 0;
 int maxBalloons           = 0;
-int numberOfPeople        = 0;
+int numberOfPlayers       = 0;
 int counter               = 0;
 int threshold             = 45;
 
@@ -91,9 +92,9 @@ void setup() {
   
   loadAnimations();
   
-  Theme forest = new Theme("forest.png", skyImg);
-  Theme city = new Theme("city.png", skyImg);
-  Theme farm = new Theme("farm.png", skyImg);
+  Theme forest =   new Theme("forest.png", skyImg);
+  Theme city =     new Theme("city.png", skyImg);
+  Theme farm =     new Theme("farm.png", skyImg);
   Theme mountain = new Theme("mountain.png", skyImg);
   
   updateForest(forest);
@@ -113,10 +114,7 @@ void setup() {
   flock = new Flock();
   
   smooth();
-  
-  babyBalloon = new ArrayList<string>();
-  balloons = new ArrayList<balloon>();
-  
+    
   mBox2D = new Box2DProcessing(this);
   mBox2D.createWorld();
   mBox2D.setGravity(0, -40);
@@ -145,7 +143,7 @@ void draw() {
   
   // Resetting variables each time
   maxBalloons = 0;
-  numberOfPeople = 0;
+  numberOfPlayers = 0;
   
   // KINECT STUFF
   noFill(); 
@@ -228,24 +226,20 @@ void draw() {
     temp.drawMgImgs();
     cloudGen();
     temp.drawFgImgs();
-    //temp.drawFullImg();
-
   }
 
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
-  
-  for(string thisString : babyBalloon){
-    thisString.draw();
-  }
-  
-  
-     
+       
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
-      maxBalloons = 3;
-      numberOfPeople = 3;
+      if(players.size() == 0){
+        players.add(new Player(30.0f, 30.0f, i));
+      }
+      maxBalloons += 1;
+      numberOfPlayers += 1;
+      
     }
   }
   
@@ -264,13 +258,8 @@ void draw() {
   
   PImage dst = opencvBody.getOutput();
   
-  if (contourBodyIndex)
-     image(kinect.getBodyTrackImage(), 0, 0);
-    else
-     //image(kinect.getPointCloudDepthImage(), 0, 0);
-     //image(dst, 0, 0);
-  
-  //if(numberOfPeople != 0){
+   
+  if(numberOfPeople != 0){
   
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
@@ -292,13 +281,17 @@ void draw() {
     }
     
    
-  //}
+  }
   
+  
+  // Drawing everything
   flock.run();
   banditGen();
   birdGen();
   treeGen();
-  
+  for(string thisString : babyBalloon){
+    thisString.draw();
+  }
   
 }
 
@@ -454,8 +447,9 @@ void findContours(){
       
       // Balloon countour handler
       if (contour.numPoints() < 200 &&  contour.numPoints() > 100) {   
-        boundRect = new Rectangle(1280, 720, 0, 0);
         
+        // Creating bounding box
+        boundRect = new Rectangle(1280, 720, 0, 0);
         noFill();
         stroke(0,0,255);
         strokeWeight(2);
@@ -469,11 +463,6 @@ void findContours(){
         
         centerX = boundRect.x + (boundRect.width/2);
         centerY = boundRect.y + (boundRect.height/2);
-        
-        rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
-        
-        fill(0,255,0);
-        ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
         
         counter = 0;
         for (balloon s: balloons) {
@@ -498,15 +487,23 @@ void findContours(){
         println(r1);
         color passCol = color(r1, g1, b1);
         
-        stroke(150, 150, 0);
-        fill(r1, g1, b1);
-        beginShape();
-
-        for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
+        // Should NOT draw balloon contours if it is below a certain y value
+        if(centerY < 100){
+          // Drawing the contours
+          stroke(150, 150, 0);
+          fill(r1, g1, b1);
+          beginShape();
+  
+          for (PVector point : contour.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
+          }
+          endShape();
+          
+          // Drawing bounding box and center point
+          rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
+          fill(0,255,0);
+          ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
         }
-        endShape();
-        
         if(numBalloons < maxBalloons){
          balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
          numBalloons++;
