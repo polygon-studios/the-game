@@ -130,6 +130,7 @@ void setup() {
   opencvBody = new OpenCV(this, 512, 424);
   opencvBalloon = new OpenCV(this, 512, 424);
   opencvColour = new OpenCV(this, 1920, 1080);
+  opencvColour.useColor();
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -243,8 +244,8 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  image(kinect.getPointCloudDepthImage(), 0, 0);   
-  
+  image(kinect.getPointCloudDepthImage(), 0, 0); 
+  //image(kinect.getColorImage(), 0, 0);
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
@@ -276,7 +277,7 @@ void draw() {
   
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
-        thisBalloon.draw();
+        //thisBalloon.draw();
       }
       
       for(int i=0; i < balloons.size(); i++){
@@ -496,13 +497,21 @@ void findContours(){
         }
         currentBalloon++;
         
-        int loc = int(centerX*1.5) + int(centerY*1.5) * 1280;
+        int loc = int(centerX*3.75) + int(centerY*2.547) * 1920;
         color pointColour = colorImage.pixels[loc];
+        
+        
+        
+        //int r1 = (pointColour >> 16) & 0xFF; 
+        //int g1 = (pointColour >> 8) & 0xFF;
+        //int b1 = pointColour & 0xFF;
         
         float r1 = red(pointColour);
         float g1 = green(pointColour);
         float b1 = blue(pointColour);
-        //println(r1);
+        println("red: " + r1);
+        println("green: " + g1);
+        println("blue: " + b1);
         color passCol = color(r1, g1, b1);
         // Should NOT draw balloon contours if it is below a certain y value
         if(centerY < 300){
