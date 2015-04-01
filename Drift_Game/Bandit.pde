@@ -1,6 +1,6 @@
 class Bandit{
   Arrow arrow;
-  int numFrames = 7;
+  int numFrames = 13;
   int currentFrame = 0;
   AudioPlayer soundEffect;
   PImage[] images = new PImage[numFrames];
@@ -21,10 +21,10 @@ class Bandit{
   void draw(){
     arrow.draw();
     
-    if(currentFrame < 6)
+    if(currentFrame < 12)
       bowCycleDraw();
     else
-      image(images[6], x, y);
+      image(images[13], x, y);
   }
   
   void bowCycleDraw(){
@@ -33,7 +33,8 @@ class Bandit{
     image(images[(currentFrame+offset) % numFrames], x, y);
     offset+=1;
     
-    if(currentFrame == 4)
+    if(currentFrame == 9)
+      soundEffect.rewind();
       soundEffect.play();
   }
   

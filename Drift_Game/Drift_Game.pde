@@ -65,7 +65,7 @@ int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
 int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
-int banditTimer             = 15000;
+int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
 int currentTheme            = 0;
 int nextTheme               = 1;
@@ -75,7 +75,7 @@ PImage fgImg;
 PImage mgImg;
 PImage skyImg = new PImage();
 
-PImage[] banditFrames = new PImage[7];
+PImage[] banditFrames = new PImage[14];
 
 boolean firstRun = false;
 
@@ -91,7 +91,7 @@ void setup() {
   size(1280, 720);
   skyImg = loadImage("City/background/city_bg_sky.png");
   background(skyImg);
-  frameRate(12);
+  frameRate(24);
   
   loadAnimations();
   
@@ -449,12 +449,6 @@ void endContact(Contact cp)
 }
 
 
-void loadAnimations(){
-  for (int i = 0; i < 7; i++) {
-    String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
-    banditFrames[i] = loadImage(imageName);
-  }
-}
 
 void findContours(){
     currentBalloon = 0;
@@ -503,9 +497,6 @@ void findContours(){
         float r1 = red(pointColour);
         float g1 = green(pointColour);
         float b1 = blue(pointColour);
-        println("red: " + r1);
-        println("green: " + g1);
-        println("blue: " + b1);
         color passCol = color(r1, g1, b1);
         // Should NOT draw balloon contours if it is below a certain y value
         if(centerY < 300){
@@ -564,7 +555,6 @@ void banditGen(){
     int banditX =0;
     int banditY =0;
     
-    print(currentTheme);
     switch(currentTheme){
       case 0: 
         banditX = 125;
@@ -595,7 +585,6 @@ void banditGen(){
     }
     
     
-    
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
@@ -603,21 +592,20 @@ void banditGen(){
       
       int balloonIdx = int(random(balloons.size()));
     
-    
-    balloon thisBalloon = balloons.get(balloonIdx);
-    Vec2 balloonPos = thisBalloon.getPosition(); 
-    
-    balloonX = int(balloonPos.x);
-    balloonY = int(balloonPos.y);
-    
-    Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
-    
-    Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
-    banditArray.add(bandit);
+      balloon thisBalloon = balloons.get(balloonIdx);
+      Vec2 balloonPos = thisBalloon.getPosition(); 
+      
+      balloonX = int(balloonPos.x);
+      balloonY = int(balloonPos.y);
+      
+      Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
+      
+      Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
+      banditArray.add(bandit);
     }
     
   }
-  
+  println("BALLOONS SIZE: " + balloons.size());
   if(banditArray.size() > 0){
     for(Bandit bandit : banditArray){
       bandit.draw();
@@ -692,6 +680,14 @@ void treeGen(){
 BACKGROUND FUNCTIONS
 
 *************************/
+
+
+void loadAnimations(){
+  for (int i = 0; i < 14; i++) {
+    String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
+    banditFrames[i] = loadImage(imageName);
+  }
+}
 
 int calculateThemeCycle(int themeCounter){
   if(themeCounter == 3)
