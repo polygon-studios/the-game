@@ -1,3 +1,5 @@
+//birds, blob, 
+
 
 // Imports
 import gab.opencv.*;
@@ -38,8 +40,8 @@ ArrayList<Contour>       contours;
 ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 2.3f;
-float minD                = 1.5f;
+float maxD                = 3.5f;
+float minD                = 2.5f;
 PImage colorImage;
 
 int currentBalloon        = 0;
@@ -75,7 +77,7 @@ PImage skyImg = new PImage();
 
 PImage[] banditFrames = new PImage[7];
 
-boolean firstRun = true;
+boolean firstRun = false;
 
 // Audio variables
 AudioPlayer[] player = new AudioPlayer[4]; 
@@ -189,7 +191,7 @@ void draw() {
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
     lastTimeCheck = millis();
     
-    
+    println("1: CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
     if(firstRun == false){
       currentTheme = calculateThemeCycle(currentTheme);
       nextTheme = calculateThemeCycle(currentTheme);
@@ -210,7 +212,7 @@ void draw() {
 
     
     firstRun = false;
-    //println("CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
+    println("2: CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
     Theme temp = themeArray.get(currentTheme);
     
@@ -240,7 +242,9 @@ void draw() {
   
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
-       
+  
+  image(kinect.getPointCloudDepthImage(), 0, 0);   
+  
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
@@ -255,7 +259,7 @@ void draw() {
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       findContours();
-      println(skeleton.length);
+      //println(skeleton.length);
     }
   }
   
@@ -332,19 +336,19 @@ void keyPressed() {
   }
 
   if (key == '1') {
-    minD += 0.01;
+    minD += 0.1;
   }
 
   if (key == '2') {
-    minD -= 0.01;
+    minD -= 0.1;
   }
 
   if (key == '3') {
-    maxD += 0.01;
+    maxD += 0.1;
   }
 
   if (key == '4') {
-    maxD -= 0.01;
+    maxD -= 0.1;
   }
 
   if (key == '5')
@@ -431,19 +435,17 @@ void endContact(Contact cp)
   }
   
   if (o1.getClass() == Tree.class || o2.getClass() == Tree.class) {
-    if (o1.getClass() == Tree.class) {
-        balloon touchBalloon = (balloon)o2;
-        touchBalloon.hit = true;
-      }else if(o2.getClass() == Tree.class){
-        balloon touchBalloon = (balloon)o1;
-        touchBalloon.hit = true;
-      }
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      if (o1.getClass() == Tree.class) {
+          balloon touchBalloon = (balloon)o2;
+          touchBalloon.hit = true;
+        }else if(o2.getClass() == Tree.class){
+          balloon touchBalloon = (balloon)o1;
+          touchBalloon.hit = true;
+        }
+    }
   }
 }
-
-
-
-
 
 
 void loadAnimations(){
@@ -484,7 +486,7 @@ void findContours(){
         for (balloon s: balloons) {
           //println("Current Balloon: " + currentBalloon + " counter: " + counter);
           if(counter == currentBalloon){
-            s.attract(centerX * 2 + 128,centerY * 1.3585 + 72);
+            s.attract(centerX * 2 + 128,centerY * 1.3585 + 130);
             //println("attract");
           }
           if(numBalloons > currentBalloon + 1){
@@ -500,25 +502,24 @@ void findContours(){
         float r1 = red(pointColour);
         float g1 = green(pointColour);
         float b1 = blue(pointColour);
-        println(r1);
+        //println(r1);
         color passCol = color(r1, g1, b1);
-        
         // Should NOT draw balloon contours if it is below a certain y value
-        if(centerY < 100){
+        if(centerY < 300){
           // Drawing the contours
           stroke(150, 150, 0);
           fill(r1, g1, b1);
           beginShape();
   
           for (PVector point : contour.getPolygonApproximation().getPoints()) {
-            vertex(point.x * 2 + 128, point.y * 1.3585 + 72 );
+            vertex(point.x * 2 + 128, point.y * 1.3585 + 130 );
           }
           endShape();
           
           // Drawing bounding box and center point
-          rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
-          fill(0,255,0);
-          ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
+          //rect(boundRect.x * 2 + 128, boundRect.y * 1.3585 + 72, boundRect.width * 2.5, boundRect.height * 1.3585 + 72);
+          //fill(0,255,0);
+          //ellipse(centerX * 2 + 128, centerY * 1.3585 + 72, 8,8);
         }
         if(numBalloons < maxBalloons){
          balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
@@ -533,7 +534,7 @@ void findContours(){
         beginShape();
         fill(0);
         for (PVector point : contour.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y *  1.3585 + 72 );
+          vertex(point.x * 2 + 128, point.y *  1.3585 + 130 );
         }
         endShape();
       }
