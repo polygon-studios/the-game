@@ -2,7 +2,6 @@
 // Imports
 import gab.opencv.*;
 import KinectPV2.*;
-import SimpleOpenNI.*;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
@@ -16,6 +15,7 @@ import ddf.minim.*;
 KinectPV2           kinect;
 OpenCV              opencvBody;
 OpenCV              opencvBalloon;
+OpenCV              opencvColour;
 Box2DProcessing     mBox2D;
 Flock               flock;
 Rectangle           boundRect;
@@ -35,6 +35,7 @@ ArrayList<balloon>       balloons = new ArrayList<balloon>();
 ArrayList<Player>        players = new ArrayList<Player>();
 
 ArrayList<Contour>       contours;
+ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
 float maxD                = 2.3f;
@@ -120,9 +121,13 @@ void setup() {
   mBox2D.setGravity(0, -40);
   mBox2D.listenForCollisions(); 
   
-  // Kinect related setup
+  //
+  // KINECT RELATED
+  //
+  
   opencvBody = new OpenCV(this, 512, 424);
-  opencvBalloon = new OpenCV(this, 1920, 1080);
+  opencvBalloon = new OpenCV(this, 512, 424);
+  opencvColour = new OpenCV(this, 1920, 1080);
   kinect = new KinectPV2(this); 
   
   // Enable kinect tracking of following
@@ -145,32 +150,36 @@ void draw() {
   maxBalloons = 0;
   numberOfPlayers = 0;
   
-  // KINECT STUFF
+  //
+  // KINECT RELATED
+  //
+  
   noFill(); 
 
-  if (contourBodyIndex) {
-    opencvBody.loadImage(kinect.getBodyTrackImage());
-    opencvBody.gray();
-    kinect.getBodyTrackImage().loadPixels();
-    opencvBody.threshold(threshold);
-    PImage dst = opencvBody.getOutput();
-  } else {
-    opencvBody.loadImage(kinect.getPointCloudDepthImage());
-    opencvBody.gray();
-    opencvBody.dilate();
-    opencvBody.blur(20);
-    opencvBody.erode();
-    
-    opencvBody.threshold(threshold);
-    PImage dst = opencvBody.getOutput();
-  }
+  // Open CV on bodytrack image
+  opencvBalloon.loadImage(kinect.getBodyTrackImage());
+  opencvBalloon.gray();
+  kinect.getBodyTrackImage().loadPixels();
+  opencvBalloon.threshold(threshold);
+  //PImage dst = opencvBody.getOutput();
+
+  // Open CV on pointcloud depth for ballon
+  opencvBody.loadImage(kinect.getPointCloudDepthImage());
+  opencvBody.gray();
+  opencvBody.dilate();
+  opencvBody.blur(20);
+  opencvBody.erode();
+  opencvBody.threshold(threshold);
+  //PImage dst = opencvBody.getOutput();
+  
   
   // Load our colour image for balloon colours
-  opencvBalloon.loadImage(kinect.getColorImage());
-  colorImage = opencvBalloon.getSnapshot();
+  opencvColour.loadImage(kinect.getColorImage());
+  colorImage = opencvColour.getSnapshot();
   
   // Finding contours  
   contours = opencvBody.findContours(); 
+  playerContours = opencvBalloon.findContours();
   
   // Finding skeletons
   skeleton =  kinect.getSkeletonDepthMap();
@@ -259,7 +268,7 @@ void draw() {
   PImage dst = opencvBody.getOutput();
   
    
-  if(numberOfPeople != 0){
+  if(numberOfPlayers != 0){
   
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
@@ -294,6 +303,13 @@ void draw() {
   }
   
 }
+
+
+/***********************
+
+SECONDARY FUNCTIONS
+
+*************************/
 
 // Kinect related
 void keyPressed() {
