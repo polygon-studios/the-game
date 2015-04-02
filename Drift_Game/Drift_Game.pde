@@ -64,8 +64,8 @@ int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 0;
-int nextTheme               = 1;
+int currentTheme            = 3;
+int nextTheme               = 0;
 
 PImage bgImg;
 PImage fgImg;
@@ -768,7 +768,7 @@ void updateCity(Theme city){
 
 void updateFarm(Theme farm){
   farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_grass.png", 0, themeChangeTimer - 5000, 15, 0, 418, 1280, 300));//image, parallax, time, x, y, w, h
-  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_farmHouse.png", 0, themeChangeTimer - 5000, 15, 330, 328, 487, 275));
+  farm.bgImgs.add(new DisplayImage("Farm/background/farm_bg_barn.png", 0, themeChangeTimer - 5000, 15, 400, 330, 324, 183));
  
   farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.3, themeChangeTimer - 2000, 25, 0, 421, 1683, 280));
   
@@ -794,6 +794,7 @@ void updateMountain(Theme mountain){
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 40, 935, 7, 345, 710));
+  //mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_rock2.png", 0, themeChangeTimer - 1000, 40, 70, 300, 266, 291));
   
   themeArray.add(mountain);
 }
