@@ -64,8 +64,8 @@ int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 3;
-int nextTheme               = 0;
+int currentTheme            = 0;
+int nextTheme               = 1;
 
 PImage bgImg;
 PImage fgImg;
@@ -300,6 +300,17 @@ void draw() {
    
   }
   
+  for(int i=0; i< babyBalloon.size(); i++){
+    string tempString= babyBalloon.get(i);
+    for(int j=0; j< tempString.mString.size(); j++){
+      babyBalloon tempBB = tempString.mString.get(j);
+      if(tempBB.hit == true){
+        babyBalloon.remove(i);
+        break;
+      }
+    }
+    
+  }
   
   // Drawing everything
   flock.run();
@@ -448,9 +459,21 @@ void endContact(Contact cp)
           touchBalloon.hit = true;
         }
     }
+    
+    if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
+      
+        if (o1.getClass() == babyBalloon.class) {
+          println("BB");
+          babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.hit = true;
+        }else if(o2.getClass() == babyBalloon.class){
+          println("BB");
+          babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.hit = true;
+        }
+    }
   }
 }
-
 
 
 void findContours(){

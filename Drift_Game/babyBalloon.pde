@@ -5,8 +5,8 @@ class babyBalloon{
   Box2DProcessing mBox2D;
   boolean mBalloon;
   color mCol;
-  
   PImage img;  
+  boolean hit = false;
   
   babyBalloon(PVector startPos, float radius, boolean initVel, boolean balloon, color col, BodyType type, Box2DProcessing box2D){
     
@@ -14,7 +14,8 @@ class babyBalloon{
     mBox2D = box2D;
     mRadius = radius;
     mCol = col;
-    
+    hit = false;
+        
     if(mCol == color(255, 255, 0)){
       img = loadImage("babyBalloon_y.png");
     }
