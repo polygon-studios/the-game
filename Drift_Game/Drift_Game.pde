@@ -73,6 +73,7 @@ PImage mgImg;
 PImage skyImg = new PImage();
 
 PImage[] banditFrames = new PImage[14];
+PImage[] birdFrames = new PImage[19];
 
 boolean firstRun = false;
 
@@ -585,7 +586,7 @@ void banditGen(){
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
-    if(balloons.size() > 0){
+    /*if(balloons.size() > 0){
       
       int balloonIdx = int(random(balloons.size()));
     
@@ -593,13 +594,15 @@ void banditGen(){
       Vec2 balloonPos = thisBalloon.getPosition(); 
       
       balloonX = int(balloonPos.x);
-      balloonY = int(balloonPos.y);
+      balloonY = int(balloonPos.y);*/
+      balloonX = 1000;
+      balloonY = 400;
       
       Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
       
       Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
       banditArray.add(bandit);
-    }
+    //}
     
   }
   if(banditArray.size() > 0){
@@ -642,7 +645,7 @@ void birdGen(){
   if ( (millis() - lastBirdTimeCheck > birdTimer)) {
     lastBirdTimeCheck = millis();
     
-    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D));
+    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
   
   }
 }
@@ -683,6 +686,11 @@ void loadAnimations(){
     String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
     banditFrames[i] = loadImage(imageName);
   }
+  for (int i = 0; i < 19; i++) {
+    String imageName = "Bird/birdCycle_step" + (i+1) + ".png";
+    birdFrames[i] = loadImage(imageName);
+  }
+  
 }
 
 int calculateThemeCycle(int themeCounter){

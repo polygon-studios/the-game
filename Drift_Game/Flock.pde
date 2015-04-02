@@ -8,9 +8,6 @@ class Flock {
   void run() {
     for (int i = 0; i < birds.size(); i++) {
       Bird b = (Bird) birds.get(i);  
-      if(b.isLoaded() == false){
-        b.loadImages();
-      }
       b.run(birds);  // Passing the entire list of boids to each boid individually
       b.seek(new PVector(mouseX, mouseY));
     }

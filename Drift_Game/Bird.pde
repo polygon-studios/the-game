@@ -15,11 +15,13 @@ class Bird {
   float maxspeed;    // Maximum speed
   boolean loaded = false;
 
-  int numFrames = 10;  // The number of frames in the animation
+  int numFrames = 19;  // The number of frames in the animation
   int currentFrame = 0;
-  PImage[] images = new PImage[numFrames];
+  //PImage[] images = new PImage[numFrames];
+  PImage[] images;
   
-  Bird(PVector l, float ms, float mf, Box2DProcessing box2D) {
+  Bird(PVector l, float ms, float mf, Box2DProcessing box2D, PImage[] birdFrames) {
+    images = birdFrames;
     mBox2DRef = box2D;
     
     x1 = l.x;
@@ -55,19 +57,6 @@ class Bird {
     r = 2.0;
     maxspeed = ms;
     maxforce = mf;
-  }
-  
-  boolean isLoaded(){
-    return loaded;
-  }
-  
-  void loadImages() {
-    frameRate(12);
-    for (int i = 0; i < numFrames; i++) {
-      String imageName = "Bird/birdCycle_step" + (i+1) + ".png";
-      images[i] = loadImage(imageName);
-    }
-    loaded  = true;
   }
   
   void run(ArrayList Birds) {
