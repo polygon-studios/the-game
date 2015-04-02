@@ -252,7 +252,7 @@ void draw() {
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
-        players.add(new Player(30.0f, 30.0f, i));
+        players.add(new Player(30.0f, 30.0f, i, playerContours));
       }
       maxBalloons += 1;
       numberOfPlayers += 1;
@@ -311,6 +311,11 @@ void draw() {
       }
     }
     
+  }
+  
+  for(Player thisPlayer : players){
+     thisPlayer.updateContour(playerContours);    
+     thisPlayer.draw();
   }
   
   // Drawing everything
@@ -553,21 +558,7 @@ void findContours(){
         
       }    
     }
-    for (Contour person : playerContours) {
-      
-      person.setPolygonApproximationFactor(polygonFactor);
-      
-      // Person contour handler
-      if (person.numPoints() > 550 && person.numPoints() < 3000) {
-        stroke(0, 155, 155);
-        beginShape();
-        fill(0);
-        for (PVector point : person.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
-        }
-        endShape();
-      }
-    }
+    
     
     
 }
