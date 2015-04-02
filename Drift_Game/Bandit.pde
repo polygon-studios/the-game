@@ -33,9 +33,10 @@ class Bandit{
     image(images[(currentFrame+offset) % numFrames], x, y);
     offset+=1;
     
-    if(currentFrame == 9)
+    if(currentFrame == 2 && !soundEffect.isPlaying()){
       soundEffect.rewind();
       soundEffect.play();
+    }
   }
   
 }

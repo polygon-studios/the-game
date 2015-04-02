@@ -1,6 +1,3 @@
-//birds, blob, 
-
-
 // Imports
 import gab.opencv.*;
 import KinectPV2.*;
@@ -605,7 +602,6 @@ void banditGen(){
     }
     
   }
-  println("BALLOONS SIZE: " + balloons.size());
   if(banditArray.size() > 0){
     for(Bandit bandit : banditArray){
       bandit.draw();
