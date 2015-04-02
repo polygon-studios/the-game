@@ -586,7 +586,7 @@ void banditGen(){
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
-    /*if(balloons.size() > 0){
+    if(balloons.size() > 0){
       
       int balloonIdx = int(random(balloons.size()));
     
@@ -594,7 +594,7 @@ void banditGen(){
       Vec2 balloonPos = thisBalloon.getPosition(); 
       
       balloonX = int(balloonPos.x);
-      balloonY = int(balloonPos.y);*/
+      balloonY = int(balloonPos.y);
       balloonX = 1000;
       balloonY = 400;
       
@@ -602,7 +602,7 @@ void banditGen(){
       
       Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
       banditArray.add(bandit);
-    //}
+    }
     
   }
   if(banditArray.size() > 0){
