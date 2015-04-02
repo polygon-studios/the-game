@@ -74,6 +74,11 @@ PImage skyImg = new PImage();
 
 PImage[] banditFrames = new PImage[14];
 PImage[] birdFrames = new PImage[19];
+PImage[] wireFrames = new PImage[95];
+PImage[] lampFrames = new PImage[95];
+PImage[] mushroom1Frames = new PImage[95];
+PImage[] mushroom2Frames = new PImage[95];
+PImage[] mushroom3Frames = new PImage[95];
 
 boolean firstRun = false;
 
@@ -690,7 +695,26 @@ void loadAnimations(){
     String imageName = "Bird/birdCycle_step" + (i+1) + ".png";
     birdFrames[i] = loadImage(imageName);
   }
-  
+  for (int i = 0; i < 95; i++) {
+    String imageName = "City/foreground/wire/wireCycle_" + (i+1) + ".png";
+    wireFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < lampFrames.length; i++) {
+    String imageName = "City/foreground/lamp/lampCycle_" + (i+1) + ".png";
+    lampFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < mushroom1Frames.length; i++) {
+    String imageName = "Forest/foreground/mushroom1/mushroom1_Cycle00" + (i+1) + ".png";
+    mushroom1Frames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < mushroom2Frames.length; i++) {
+    String imageName = "Forest/foreground/mushroom2/mushroom2_Cycle" + (i+1) + ".png";
+    mushroom2Frames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < mushroom3Frames.length; i++) {
+    String imageName = "Forest/foreground/mushroom3/mushroom3_Cycle" + (i+1) + ".png";
+    mushroom3Frames[i] = loadImage(imageName);
+  }
 }
 
 int calculateThemeCycle(int themeCounter){
@@ -714,9 +738,10 @@ void updateForest(Theme forest){
   forest.mgImgs.add(new DisplayImage("Forest/midground/forest_mg_tree2.png", -0.3, themeChangeTimer - 2000, 25, -38, 83, 514, 529));
   
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, 600, 1920, 134));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom1.png", 0, themeChangeTimer - 1000, 40, 65, 486, 216, 185));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom2.png", 0, themeChangeTimer - 1000, 40, 209, 590, 96, 90));
-  forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_mushroom3.png", 0, themeChangeTimer - 1000, 40, 77, 578, 77, 89));
+  forest.fgImgs.add(new DisplayImage(mushroom1Frames, 0, themeChangeTimer - 1000, 40, 0, 0, 1280, 720));
+  //forest.fgImgs.add(new DisplayImage(mushroom1Frames, 0, themeChangeTimer - 1000, 40, 65, 486, 222, 190));
+  forest.fgImgs.add(new DisplayImage(mushroom2Frames, 0, themeChangeTimer - 1000, 40, 209, 590, 101, 93));
+  forest.fgImgs.add(new DisplayImage(mushroom3Frames, 0, themeChangeTimer - 1000, 40, 65, 578, 96, 100));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 793, -58, 822, 736));
   
   themeArray.add(forest);
@@ -735,8 +760,8 @@ void updateCity(Theme city){
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-60, 1920, 89));
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseLeft.png", 0, themeChangeTimer - 1000, 40, 0, 0, 284, 685));
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseRight.png", 0, themeChangeTimer - 1000, 40, 1158, 0, 125, 720));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_lamp.png", 0, themeChangeTimer - 1000, 40, 1118, 112, 152, 113));
-  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_wires.png", 0, themeChangeTimer - 1000, 40, 164, 22, 1119, 146));
+  city.fgImgs.add(new DisplayImage(lampFrames, 0, themeChangeTimer - 1000, 40, 1118, 112, 152, 113));
+  city.fgImgs.add(new DisplayImage(wireFrames, 0, themeChangeTimer - 1000, 40, 164, 22, 1120, 156));
   
   themeArray.add(city);
 }
@@ -748,8 +773,13 @@ void updateFarm(Theme farm){
   farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.3, themeChangeTimer - 2000, 25, 0, 421, 1683, 280));
   
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-91, 1920, 134));
-  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_scareCrow.png", 0, themeChangeTimer - 1000, 40, 900, 325, 369, 403));
-   
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_scareCrow.png", 0, themeChangeTimer - 1000, 40, 870, 325, 369, 403));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_pitchfork.png", 0, themeChangeTimer - 1000, 40, 890, 270, 80, 438));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_tree.png", 0, themeChangeTimer - 1000, 40, 0, 100, 420, 622));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayBale.png", 0, themeChangeTimer - 1000, 40, 1180, 600, 211, 111));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayBale.png", 0, themeChangeTimer - 1000, 40, 1180, 520, 211, 111));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayPile.png", 0, themeChangeTimer - 1000, 40, 110, 600, 243, 125));
+  
   themeArray.add(farm);
 }
 
