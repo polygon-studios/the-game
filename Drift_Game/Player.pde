@@ -1,9 +1,11 @@
 class Player{
   
-  Boolean alive;
+  Boolean alive = true;
   int skeletonID;
   Vec2 lastPos;
   float polygonFactor= 1;
+  color fillColour = color(0,0,0);
+  int playerCount;
   
   ArrayList<Contour>       playerContours;
 
@@ -23,6 +25,12 @@ class Player{
   }
   
   void draw(){
+    playerCount = 0;
+    if(!alive){
+      fillColour = color(255,105,180);
+    }
+      
+     
     for (Contour person : playerContours) {
       
       person.setPolygonApproximationFactor(polygonFactor);
@@ -37,7 +45,11 @@ class Player{
         }
         endShape();
       }
+      
+      playerCount++;
     }
+    
+    println("PLAYA contours.. yeee " + playerCount);
    
     
   }

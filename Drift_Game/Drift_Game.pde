@@ -143,7 +143,6 @@ void setup() {
   kinect.enableDepthImg(true);
   kinect.enableSkeleton(true );
   kinect.enableSkeletonDepthMap(true);
-  kinect.enableLongExposureInfraredImg(true);
   
   kinect.init();
 }
@@ -175,7 +174,7 @@ void draw() {
   opencvBalloon.blur(20);
   opencvBalloon.erode();
   opencvBalloon.threshold(threshold);
-  //PImage dst = opencvBody.getOutput();
+  PImage dst = opencvBalloon.getOutput();
   
   
   // Load our colour image for balloon colours
@@ -248,7 +247,7 @@ void draw() {
   
   //image(kinect.getPointCloudDepthImage(), 0, 0); 
   //image(kinect.getColorImage(), 0, 0);
-  image(kinect.getBodyTrackImage(), 0, 0); 
+  image(dst, 0, 0); 
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
@@ -274,7 +273,7 @@ void draw() {
 //    }
 //  }
   
-  PImage dst = opencvBody.getOutput();
+  //PImage dst = opencvBody.getOutput();
   
    
   if(numberOfPlayers != 0){
@@ -298,6 +297,10 @@ void draw() {
       collision = 0;
     }
     
+    for(Player thisPlayer : players){
+       thisPlayer.updateContour(playerContours);    
+       thisPlayer.draw();
+    }
    
   }
   
@@ -313,10 +316,7 @@ void draw() {
     
   }
   
-  for(Player thisPlayer : players){
-     thisPlayer.updateContour(playerContours);    
-     thisPlayer.draw();
-  }
+  
   
   // Drawing everything
   flock.run();
@@ -491,8 +491,8 @@ void findContours(){
       contour.setPolygonApproximationFactor(polygonFactor);
       
       // Balloon countour handler
-      if (contour.numPoints() < 200 &&  contour.numPoints() > 100) {   
-        
+      if (contour.numPoints() < 300 &&  contour.numPoints() > 50) {   
+        println("Is dis being called?");
         // Creating bounding box
         boundRect = new Rectangle(1280, 720, 0, 0);
         noFill();
@@ -558,7 +558,7 @@ void findContours(){
         
       }    
     }
-    
+    println("# of balloon contours.. yeee" + contours.size());
     
     
 }
