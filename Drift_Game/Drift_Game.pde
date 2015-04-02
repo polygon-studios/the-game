@@ -163,19 +163,18 @@ void draw() {
   noFill(); 
 
   // Open CV on bodytrack image
-  opencvBalloon.loadImage(kinect.getBodyTrackImage());
-  opencvBalloon.gray();
-  kinect.getBodyTrackImage().loadPixels();
-  opencvBalloon.threshold(threshold);
+  opencvBody.loadImage(kinect.getPointCloudDepthImage());
+  opencvBody.gray();
+  opencvBody.threshold(threshold);
   //PImage dst = opencvBody.getOutput();
 
   // Open CV on pointcloud depth for ballon
-  opencvBody.loadImage(kinect.getPointCloudDepthImage());
-  opencvBody.gray();
-  opencvBody.dilate();
-  opencvBody.blur(20);
-  opencvBody.erode();
-  opencvBody.threshold(threshold);
+  opencvBalloon.loadImage(kinect.getPointCloudDepthImage());
+  opencvBalloon.gray();
+  opencvBalloon.dilate();
+  opencvBalloon.blur(20);
+  opencvBalloon.erode();
+  opencvBalloon.threshold(threshold);
   //PImage dst = opencvBody.getOutput();
   
   
@@ -184,8 +183,8 @@ void draw() {
   colorImage = opencvColour.getSnapshot();
   
   // Finding contours  
-  contours = opencvBody.findContours(); 
-  playerContours = opencvBalloon.findContours();
+  contours = opencvBalloon.findContours(); 
+  playerContours = opencvBody.findContours(false, false);
   
   // Finding skeletons
   skeleton =  kinect.getSkeletonDepthMap();
@@ -247,8 +246,9 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  image(kinect.getPointCloudDepthImage(), 0, 0); 
+  //image(kinect.getPointCloudDepthImage(), 0, 0); 
   //image(kinect.getColorImage(), 0, 0);
+  image(kinect.getBodyTrackImage(), 0, 0); 
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
@@ -264,6 +264,7 @@ void draw() {
     if (skeleton[i].isTracked()) {
       findContours();
       //println(skeleton.length);
+      println("Skeleton #:" + i);   
     }
   }
   
@@ -525,7 +526,7 @@ void findContours(){
         float b1 = blue(pointColour);
         color passCol = color(r1, g1, b1);
         // Should NOT draw balloon contours if it is below a certain y value
-        if(centerY < 300){
+        if(centerY < 250){
           // Drawing the contours
           stroke(150, 150, 0);
           fill(r1, g1, b1);
@@ -550,22 +551,24 @@ void findContours(){
          numBalloons++;
         }
         
-      }
+      }    
+    }
+    for (Contour person : playerContours) {
+      
+      person.setPolygonApproximationFactor(polygonFactor);
       
       // Person contour handler
-      if (contour.numPoints() > 550 && contour.numPoints() < 3000) {
+      if (person.numPoints() > 550 && person.numPoints() < 3000) {
         stroke(0, 155, 155);
         beginShape();
         fill(0);
-        for (PVector point : contour.getPolygonApproximation().getPoints()) {
+        for (PVector point : person.getPolygonApproximation().getPoints()) {
           vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
         }
         endShape();
       }
-      
-      
-      
     }
+    
     
 }
 /***********************
@@ -681,19 +684,28 @@ void birdGen(){
 // Tree collidable generation
 void treeGen(){
   
-  if(treeArray.size() == 0){
-    treeArray.add(new Tree(new PVector(1150, 150), 150.0f, BodyType.STATIC, mBox2D));
-    treeArray.add(new Tree(new PVector(1015, 290), 50.0f, BodyType.STATIC, mBox2D));
-    treeArray.add(new Tree(new PVector(925, 340), 40.0f, BodyType.STATIC, mBox2D));
-    treeArray.add(new Tree(new PVector(800, 330), 10.0f, BodyType.STATIC, mBox2D));
-    treeArray.add(new Tree(new PVector(810, 140), 5.0f, BodyType.STATIC, mBox2D));
-    treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
-  }
+  
   
   if(currentTheme == 0){
     for (Tree t: treeArray) {
         //t.attract(900,200);
         t.draw();
+    }
+    if(treeArray.size() == 0){
+      treeArray.add(new Tree(new PVector(1150, 150), 150.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(1015, 290), 50.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(925, 340), 40.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(800, 330), 10.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(810, 140), 5.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
+    }
+  }
+  
+  if(currentTheme == 1){
+    if(treeArray.size() != 0){
+      for (Tree t: treeArray) {
+        t.killBody();
+      }
     }
   }
   
