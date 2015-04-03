@@ -47,6 +47,8 @@ int maxBalloons           = 0;
 int numberOfPlayers       = 0;
 int counter               = 0;
 int threshold             = 45;
+int maxBirds              = 1;
+int currentBirds          = 0;
 
 float newXPos = 0;
 float newYPos = 0;
@@ -665,9 +667,12 @@ void cloudGen(){
 //Bird generation
 void birdGen(){
   if ( (millis() - lastBirdTimeCheck > birdTimer)) {
-    lastBirdTimeCheck = millis();
-    
-    flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
+    if(currentBirds < maxBirds){
+      lastBirdTimeCheck = millis();
+      
+      flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
+      currentBirds++;
+    }
   
   }
 }
