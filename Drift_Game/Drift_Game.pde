@@ -269,6 +269,11 @@ void draw() {
     }
   }
   
+  if(players.length > numberOfPlayers){
+     int position = players.length;
+     players.remove(position); 
+  }
+  
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       findContours();
