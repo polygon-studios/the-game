@@ -5,15 +5,16 @@ class Theme{
   PImage skyImg;
   boolean fadeOutBg = false;
   boolean incomingScene = true;
+  boolean hasFireflies = false;
   
   ArrayList<DisplayImage> bgImgs; //background
   ArrayList<DisplayImage> mgImgs; //midground
   ArrayList<DisplayImage> fgImgs; //foreground
   
   
-  Theme(String imgLoc, PImage skyBg){
+  Theme(String imgLoc, PImage skyBg, boolean fireflies){
     fullImg = loadImage(imgLoc);
-    
+    hasFireflies = fireflies;
     skyImg = skyBg;
     
     bgImgs = new ArrayList<DisplayImage>();
@@ -138,6 +139,12 @@ class Theme{
     }
   }
   
-
+  //fireFlies
+  void drawFireflies(){
+    if(hasFireflies == true){
+      ps.addParticle();
+      ps.run();
+    }
+  }
 
 }

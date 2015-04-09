@@ -19,6 +19,7 @@ Box2DProcessing     mBox2D;
 Flock               flock;
 Rectangle           boundRect;
 Skeleton []         skeleton;
+ParticleSystem      ps;
 
 // ArrayLists
 ArrayList<Rectangle>     rectangles;
@@ -107,10 +108,10 @@ void setup() {
   
   loadAnimations();
   
-  Theme forest =   new Theme("forest.png", skyImg);
-  Theme city =     new Theme("city.png", skyImg);
-  Theme farm =     new Theme("farm.png", skyImg);
-  Theme mountain = new Theme("mountain.png", skyImg);
+  Theme forest =   new Theme("forest.png", skyImg, true);
+  Theme city =     new Theme("city.png", skyImg, false);
+  Theme farm =     new Theme("farm.png", skyImg, true);
+  Theme mountain = new Theme("mountain.png", skyImg, false);
   
   updateForest(forest);
   updateCity(city);
@@ -127,6 +128,7 @@ void setup() {
   bowPlayer = minim.loadFile("bow_release.mp3");
   
   flock = new Flock();
+  ps = new ParticleSystem();
   
   smooth();
     
@@ -212,6 +214,7 @@ void draw() {
     //temp.drawFullImg();
     temp.drawBgImgs();
     temp.drawMgImgs();
+    temp.drawFireflies();
     cloudGen();
     darkCloudGen();
     temp.drawFgImgs();
@@ -247,6 +250,7 @@ void draw() {
     
     temp.drawBgImgs();
     temp.drawMgImgs();
+    temp.drawFireflies();
     cloudGen();
     darkCloudGen();
     temp.drawFgImgs();
@@ -278,10 +282,10 @@ void draw() {
     }
   }
   
-  if(players.length > numberOfPlayers){
+  /*if(players.length > numberOfPlayers){
      int position = players.length;
      players.remove(position); 
-  }
+  }*/
   
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
