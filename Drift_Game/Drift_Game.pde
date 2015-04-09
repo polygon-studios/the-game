@@ -261,13 +261,26 @@ void draw() {
   //image(dst, 0, 0); 
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
+      numberOfPlayers += 1;
       if(players.size() == 0){
         players.add(new Player(30.0f, 30.0f, i, playerContours));
       }
+      for(Player thisPlayer : players){
+        int id = thisPlayer.getSkeletonID();
+        if( i == id){
+          
+        }
+      }
+      
       maxBalloons += 1;
       numberOfPlayers += 1;
       
     }
+  }
+  
+  if(players.length > numberOfPlayers){
+     int position = players.length;
+     players.remove(position); 
   }
   
   for (int i = 0; i < skeleton.length; i++) {
