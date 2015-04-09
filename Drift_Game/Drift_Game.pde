@@ -26,6 +26,8 @@ ArrayList<Contour>       boundingBox;
 
 ArrayList<Theme>         themeArray= new ArrayList<Theme>();
 ArrayList<Cloud>         cloudArray= new ArrayList<Cloud>();
+ArrayList<Cloud>         darkCloudArray = new ArrayList<Cloud>();
+ArrayList<Lightning>     lightningArray = new ArrayList<Lightning>();
 ArrayList<Bandit>        banditArray= new ArrayList<Bandit>();
 ArrayList<Tree>          treeArray= new ArrayList<Tree>();
 
@@ -60,10 +62,12 @@ int collision = 0;
 // Theme related variables
 int lastTimeCheck           = 0;
 int lastCloudTimeCheck      = 0;
+int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
 int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
+int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
 int currentTheme            = 0;
@@ -74,6 +78,9 @@ PImage fgImg;
 PImage mgImg;
 PImage skyImg = new PImage();
 
+PImage[] cloudImages = new PImage[4]; //cloud type options
+PImage[] darkCloudImages = new PImage[4]; //cloud type options
+PImage[] lightningImages = new PImage[24];
 PImage[] banditFrames = new PImage[14];
 PImage[] birdFrames = new PImage[19];
 PImage[] wireFrames = new PImage[95];
@@ -115,7 +122,7 @@ void setup() {
   player[1] = minim.loadFile("cityMusic.mp3", 2048);
   player[2] = minim.loadFile("farmMusic.mp3", 2048);
   player[3] = minim.loadFile("mountainMusic.mp3", 2048);
-  player[0].play();
+  //player[0].play();
   
   bowPlayer = minim.loadFile("bow_release.mp3");
   
@@ -206,6 +213,7 @@ void draw() {
     temp.drawBgImgs();
     temp.drawMgImgs();
     cloudGen();
+    darkCloudGen();
     temp.drawFgImgs();
     
     for(Bandit bandit : banditArray){
@@ -240,6 +248,7 @@ void draw() {
     temp.drawBgImgs();
     temp.drawMgImgs();
     cloudGen();
+    darkCloudGen();
     temp.drawFgImgs();
   }
 
@@ -249,7 +258,7 @@ void draw() {
   
   //image(kinect.getPointCloudDepthImage(), 0, 0); 
   //image(kinect.getColorImage(), 0, 0);
-  image(dst, 0, 0); 
+  //image(dst, 0, 0); 
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       if(players.size() == 0){
@@ -641,8 +650,6 @@ void banditGen(){
         break;
       }
     }
-    
-    
   }
   
 }
@@ -652,17 +659,87 @@ void banditGen(){
 void cloudGen(){
   if ( (millis() - lastCloudTimeCheck > cloudTimer)) {
     lastCloudTimeCheck = millis();
-    int cloudNum = int(random(4)) + 1;
+    int cloudNum = int(random(4));
     int cloudX = int(random(600));
     
     //println(cloudX);
     
-    cloudArray.add(new Cloud("lightClouds/cloud" + str(cloudNum) + "_light.png", 2000, (random(5)-2.5), cloudX, int(random(200)-100)));
+    cloudArray.add(new Cloud(cloudImages[cloudNum], int(random(20000, 60000)), (random(5)-2.5), cloudX, int(random(200)-100)));
   }
   for(Cloud cloud : cloudArray){
     cloud.draw();
   }
+  
+  for(int i=0; i < cloudArray.size(); i++){
+    Cloud cloud = cloudArray.get(i);
+    if( cloud.isAlive() == false){
+      cloudArray.remove(i);
+      break;
+    }
+  }
+  
 }
+
+//dark cloud generation
+void darkCloudGen(){
+  if ( (millis() - lastDarkCloudTimeCheck > darkCloudTimer)) {
+    lastDarkCloudTimeCheck = millis();
+    int cloudNum = int(random(4));
+    int cloudX = int(random(600));
+    if(darkCloudArray.size() < 2)//remove line
+      darkCloudArray.add(new Cloud(darkCloudImages[cloudNum], int(random(20000, 60000)), (random(5)-2.5), cloudX, int(random(200)-100)));
+  }
+  for(Cloud darkCloud : darkCloudArray){
+    darkCloud.draw();
+    
+    for(Cloud darkCloud2 : darkCloudArray){
+      if(darkCloud.centreX != darkCloud2.centreX){
+        fill(255, 0, 0);
+        rect(darkCloud.centreX - 75, darkCloud.centreY - 75, 150, 150);
+        rect(darkCloud2.centreX - 75, darkCloud2.centreY - 75, 150, 150);
+        if(darkCloud.hasBolted == false && darkCloud2.hasBolted == false){
+          
+          if(((darkCloud2.centreX - 75  < darkCloud.centreX + 75) && 
+            (darkCloud2.centreX + 75 > darkCloud.centreX - 75))){
+              
+            darkCloud.lifeSpan = 0;
+            darkCloud2.lifeSpan = 0;
+            darkCloud.hasBolted = true;
+            darkCloud2.hasBolted = true;
+            
+            //create Lightning at the centre of two clouds
+            int centreX = int((darkCloud.centreX + darkCloud2.centreX)/2);
+            int centreY = int((darkCloud.centreY + darkCloud2.centreY)/2);
+            lightningArray.add(new Lightning(centreX, centreY, lightningImages));
+            
+            
+            println("INTERSECTION");
+            //cause lightning
+            //fade away dark clouds
+          }
+        }
+        
+          
+      }
+     // if(darkCloud2.centreX - 150 < darkCloud.centreX +150 && darkCloud2.centreX + 150 
+    }
+    
+  }
+  
+  for(Lightning lightning : lightningArray){
+    lightning.draw();
+  }
+  for(int i=0; i < lightningArray.size(); i++){
+    Lightning lightning = lightningArray.get(i);
+    if( lightning.isAlive == false){
+      lightningArray.remove(i);
+      break;
+    }
+  }
+  
+  
+}
+
 
 //Bird generation
 void birdGen(){
@@ -697,13 +774,13 @@ void treeGen(){
     }
   }
   
-  if(currentTheme == 1){
+  /*if(currentTheme == 1){
     if(treeArray.size() != 0){
       for (Tree t: treeArray) {
         t.killBody();
       }
     }
-  }
+  }*/
   
   
 }
@@ -718,6 +795,18 @@ BACKGROUND FUNCTIONS
 
 
 void loadAnimations(){
+  for(int i = 0; i < cloudImages.length; i++){
+    String imageName = "lightClouds/cloud" + str(i + 1) + "_light.png";
+    cloudImages[i] = loadImage(imageName);
+  }
+  for(int i = 0; i < cloudImages.length; i++){
+    String imageName = "darkClouds/cloud" + str(i + 1) + "_dark.png";
+    darkCloudImages[i] = loadImage(imageName);
+  }
+  for(int i = 0; i < lightningImages.length; i++){
+    String imageName = "lightning/lightningCycle_" + str(i + 1) + ".png";
+    lightningImages[i] = loadImage(imageName);
+  }
   for (int i = 0; i < 14; i++) {
     String imageName = "Bandit/banditCycle_" + (i+1) + ".png";
     banditFrames[i] = loadImage(imageName);
@@ -746,6 +835,7 @@ void loadAnimations(){
     String imageName = "Forest/foreground/mushroom3/mushroom3_Cycle" + (i+1) + ".png";
     mushroom3Frames[i] = loadImage(imageName);
   }
+  
 }
 
 int calculateThemeCycle(int themeCounter){

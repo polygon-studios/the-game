@@ -15,6 +15,39 @@ class babyBalloon{
     mRadius = radius;
     mCol = col;
     hit = false;
+    
+    /*float yThreshMaxR = 255;
+    float yThreshMaxG = 255;
+    float yThreshMaxB = 220;
+    
+    float yThreshMinR = 150;
+    float yThreshMinG = 200;
+    float yThreshMinB = 0;
+    
+    float bThreshMaxR = 220;
+    float bThreshMaxG = 255;
+    float bThreshMaxB = 255;
+    
+    float bThreshMinR = 0;
+    float bThreshMinG = 0;
+    float bThreshMinB = 100;
+    
+    float r = red(mCol);
+    float g = green(mCol);
+    float b = blue(mCol);
+    
+    if(r < yThreshMaxR && g < yThreshMaxG && b < yThreshMaxB && r > yThreshMinR && g > yThreshMinG && b > yThreshMinB){
+      print("yellow\n");
+      img = loadImage("babyBalloon_y.png");
+    }
+    else if(r < bThreshMaxR && g < bThreshMaxG && b < bThreshMaxB && r > bThreshMinR && g > bThreshMinG && b > bThreshMinB){
+      print("blue\n");
+      img = loadImage("babyBalloon_g.png");
+    }
+    else{
+      print("unknown\n");
+      img = loadImage("babyBalloon_w.png");
+    }*/
         
     if(mCol == color(255, 255, 0)){
       img = loadImage("babyBalloon_y.png");
