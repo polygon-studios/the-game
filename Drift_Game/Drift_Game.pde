@@ -41,7 +41,7 @@ ArrayList<Contour>       balloonContours;
 ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 2.0f;
+float maxD                = 2.5f;
 float minD                = 1.5f;
 PImage colorImage;
 
@@ -274,7 +274,7 @@ void draw() {
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       boolean alreadyCreated = false;
-           
+      println("Skeleton at: " + i + " is tracked");     
       // If there are no players
       if(players.size() == 0){
         // Determine position of head of skeleton
@@ -292,13 +292,14 @@ void draw() {
         int id = thisPlayer.getSkeletonID();
         if( i == id){
           alreadyCreated = true;
-          println("It was already created");
+          
         }
       }
       
       // Create a skeleton if that ID hasn't been tracked already
-      if(!alreadyCreated)
+      if(alreadyCreated == false)
       {
+        println("Blehhhh????");
         // Determine position of head of skeleton
         KJoint[] joints = skeleton[i].getJoints();
         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
@@ -524,11 +525,9 @@ void endContact(Contact cp)
     if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
       
         if (o1.getClass() == babyBalloon.class) {
-          println("BB");
           babyBalloon tempBaby = (babyBalloon)o1;
           tempBaby.hit = true;
         }else if(o2.getClass() == babyBalloon.class){
-          println("BB");
           babyBalloon tempBaby = (babyBalloon)o2;
           tempBaby.hit = true;
         }
@@ -824,6 +823,7 @@ void treeGen(){
         Tree thisTree = treeArray.get(i);
         
         treeArray.remove(i);
+        println("Should have removed tree");
            
       }
     }
