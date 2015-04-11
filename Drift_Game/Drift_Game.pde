@@ -368,8 +368,13 @@ void draw() {
     }
     
     for(Player thisPlayer : players){
-       thisPlayer.updateContour(playerContours);    
-       thisPlayer.updateBalloonContour(balloonContours);
+       thisPlayer.updateContour(playerContours); 
+       int i = thisPlayer.getSkeletonID();
+       KJoint[] joints = skeleton[i].getJoints();   
+       Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
+       float headXPos = headPos.x;
+       float headYPos = headPos.y;
+       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos);
        thisPlayer.draw();
        //println("drawin");
     }

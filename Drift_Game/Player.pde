@@ -30,7 +30,7 @@ class Player{
      
     startPos = new Vec2(headPosX, headPosY);
     balloonsList = new ArrayList();
-    makeBalloon();
+    makeBalloon(balloonContour);
   }
   
   // This function removes the particle from the box2d world
@@ -83,6 +83,8 @@ class Player{
   }
   
   void makeBalloon(ArrayList<Contour> balloon){
+    
+    
     for (Contour balloons : balloon) {
       balloons.setPolygonApproximationFactor(polygonFactor);
       
@@ -130,13 +132,17 @@ class Player{
     }
   }
   
-  void updateBalloonContour(ArrayList<Contour> newContour){
+  void updateBalloonContour(ArrayList<Contour> newContour, float headPosX, float headPosY){
+    
+    headPositionX = headPosX;
+    headPositionY = headPosY;
+    
     if(balloonsList.size() != 0){
        balloon b = (balloon) balloonsList.get(0);  
        b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
     }
     else{
-      makeBalloon(newCountour);
+      makeBalloon(newContour);
     }
     
   }
