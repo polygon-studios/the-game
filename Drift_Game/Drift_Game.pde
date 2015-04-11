@@ -1,6 +1,7 @@
 // Imports
 import gab.opencv.*;
 import KinectPV2.*;
+import KinectPV2.KJoint;
 import shiffman.box2d.*;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
@@ -36,12 +37,12 @@ ArrayList<string>        babyBalloon = new ArrayList<string>();
 ArrayList<balloon>       balloons = new ArrayList<balloon>();
 ArrayList<Player>        players = new ArrayList<Player>();
 
-ArrayList<Contour>       contours;
+ArrayList<Contour>       balloonContours;
 ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 3.5f;
-float minD                = 2.5f;
+float maxD                = 2.0f;
+float minD                = 1.5f;
 PImage colorImage;
 
 int currentBalloon        = 0;
@@ -167,7 +168,7 @@ void draw() {
   numberOfPlayers = 0;
   
   //
-  // KINECT RELATED
+  // KINECT RELATED - GETTING VARIOUS IMAGES ETC
   //
   
   noFill(); 
@@ -193,12 +194,17 @@ void draw() {
   colorImage = opencvColour.getSnapshot();
   
   // Finding contours  
-  contours = opencvBalloon.findContours(); 
+  balloonContours = opencvBalloon.findContours(); 
   playerContours = opencvBody.findContours(false, false);
   
   // Finding skeletons
   skeleton =  kinect.getSkeletonDepthMap();
   
+  
+  
+  //
+  // CHANGING THE THEME STUFF
+  //
   
   // Theme changing
   if ( (millis() - lastTimeCheck > themeChangeTimer)) {
@@ -260,55 +266,65 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  //image(kinect.getPointCloudDepthImage(), 0, 0); 
+  image(kinect.getPointCloudDepthImage(), 0, 0); 
   //image(kinect.getColorImage(), 0, 0);
   //image(dst, 0, 0); 
+  
+  
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
-      numberOfPlayers += 1;
+      boolean alreadyCreated = false;
+           
+      // If there are no players
       if(players.size() == 0){
-        players.add(new Player(30.0f, 30.0f, i, playerContours));
+        // Determine position of head of skeleton
+        KJoint[] joints = skeleton[i].getJoints();
+        Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
+        float headXPos = headPos.x;
+        float headYPos = headPos.y;
+        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
+        numberOfPlayers += 1;
       }
+      // Check to see if there is already a skeleton with that skeletonID
       for(Player thisPlayer : players){
         int id = thisPlayer.getSkeletonID();
         if( i == id){
-          
+          alreadyCreated = true;
         }
       }
       
-      maxBalloons += 1;
-      numberOfPlayers += 1;
+      // Create a skeleton if that ID hasn't been tracked already
+      if(!alreadyCreated)
+      {
+        // Determine position of head of skeleton
+        KJoint[] joints = skeleton[i].getJoints();
+        Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
+        float headXPos = headPos.x;
+        float headYPos = headPos.y;
+        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
+      }
       
+      maxBalloons += 1;
     }
   }
-  
-  /*if(players.length > numberOfPlayers){
-     int position = players.length;
-     players.remove(position); 
-  }*/
-  
+
+  /*
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       findContours();
       //println(skeleton.length);
-      println("Skeleton #:" + i);   
+      //println("Skeleton #:" + i);   
     }
   }
-  
-//  if(numberOfPeople == 0){
-//    for(balloon thisBalloon : balloons){
-//      thisBalloon.killBody();
-//    }
-//  }
-  
-  //PImage dst = opencvBody.getOutput();
-  
+  */
    
-  if(numberOfPlayers != 0){
+  if(players.size() != 0){
   
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
-        //thisBalloon.draw();
+        thisBalloon.draw();
       }
       
       for(int i=0; i < balloons.size(); i++){
@@ -327,7 +343,9 @@ void draw() {
     
     for(Player thisPlayer : players){
        thisPlayer.updateContour(playerContours);    
+       thisPlayer.updateBalloonContour(balloonContours);
        thisPlayer.draw();
+       println("drawin");
     }
    
   }
@@ -405,6 +423,13 @@ void keyPressed() {
 
   if (key == '6')
     polygonFactor -= 0.1;
+}
+
+Vec2 getHeadPos(KJoint[] joints, int jointType) {
+  float xPos = joints[jointType].getX();
+  float yPos = joints[jointType].getY();
+  Vec2 position = new Vec2(xPos, yPos);
+  return position;
 }
 
 
@@ -514,13 +539,13 @@ void findContours(){
     currentBalloon = 0;
     
     // Loop through all the countours
-    for (Contour contour : contours) {
+    for (Contour contour : balloonContours) {
       
       contour.setPolygonApproximationFactor(polygonFactor);
       
       // Balloon countour handler
       if (contour.numPoints() < 300 &&  contour.numPoints() > 50) {   
-        println("Is dis being called?");
+        
         // Creating bounding box
         boundRect = new Rectangle(1280, 720, 0, 0);
         noFill();
@@ -580,13 +605,13 @@ void findContours(){
           //ellipse(centerX * 2 + 128, centerY * 1.8 + 72, 8,8);
         }
         if(numBalloons < maxBalloons){
-         balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+         //balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
          numBalloons++;
         }
         
       }    
     }
-    println("# of balloon contours.. yeee" + contours.size());
+    //println("# of balloon contours.. yeee" + contours.size());
     
     
 }
@@ -636,12 +661,12 @@ void banditGen(){
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
-    if(balloons.size() > 0){
+    if(players.size() > 0){
       
       int balloonIdx = int(random(balloons.size()));
     
-      balloon thisBalloon = balloons.get(balloonIdx);
-      Vec2 balloonPos = thisBalloon.getPosition(); 
+      Player thisPlayer = players.get(balloonIdx);
+      Vec2 balloonPos = thisPlayer.getBalloonPos(); 
       
       balloonX = int(balloonPos.x);
       balloonY = int(balloonPos.y);
@@ -791,13 +816,16 @@ void treeGen(){
     }
   }
   
-  /*if(currentTheme == 1){
+  if(currentTheme == 1){
     if(treeArray.size() != 0){
-      for (Tree t: treeArray) {
-        t.killBody();
+      for(int i=0; i < treeArray.size(); i++){
+        Tree thisTree = treeArray.get(i);
+        
+        treeArray.remove(i);
+           
       }
     }
-  }*/
+  }
   
   
 }
