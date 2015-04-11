@@ -282,15 +282,17 @@ void draw() {
         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
         float headXPos = headPos.x;
         float headYPos = headPos.y;
-        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        //println("Headposition: " + headXPos + "x " + headYPos + "y");
         players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
         numberOfPlayers += 1;
+        alreadyCreated = true;
       }
       // Check to see if there is already a skeleton with that skeletonID
       for(Player thisPlayer : players){
         int id = thisPlayer.getSkeletonID();
         if( i == id){
           alreadyCreated = true;
+          println("It was already created");
         }
       }
       
@@ -302,7 +304,7 @@ void draw() {
         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
         float headXPos = headPos.x;
         float headYPos = headPos.y;
-        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        //println("Headposition: " + headXPos + "x " + headYPos + "y");
         players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
       }
       
@@ -345,7 +347,7 @@ void draw() {
        thisPlayer.updateContour(playerContours);    
        thisPlayer.updateBalloonContour(balloonContours);
        thisPlayer.draw();
-       println("drawin");
+       //println("drawin");
     }
    
   }
