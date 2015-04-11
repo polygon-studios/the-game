@@ -31,25 +31,6 @@ Tree(PVector startPos, float radius, BodyType type, Box2DProcessing box2D){
     
     mBody.createFixture(fd);
     
-    // Specific branch colliders
-    
-//    BodyDef branch = new BodyDef();
-//    branch.type = type;
-//    branch.position = mBox2D.coordPixelsToWorld(1000, 300);
-//    
-//    mBody = mBox2D.world.createBody(branch);
-//    
-//    CircleShape branchShape = new CircleShape();
-//    shape.m_radius = mBox2D.scalarPixelsToWorld(50.0f);
-//    
-//    FixtureDef branchFD = new FixtureDef();
-//    branchFD.shape = shape;    
-//    branchFD.density     = 1.0f;
-//    branchFD.friction    = 0.2f;
-//    branchFD.restitution = 0.1f;
-//    
-//    mBody.createFixture(branchFD);
-
     mBody.setUserData(this);  
   }
   

@@ -173,7 +173,7 @@ class balloon{
     balloonContours = newContour;
   }
   
-  boolean isAlive(){
+  boolean isDead(){
      if(hit){
         return true;
      }
