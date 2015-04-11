@@ -754,7 +754,7 @@ void darkCloudGen(){
             //create Lightning at the centre of two clouds
             int centreX = int((darkCloud.centreX + darkCloud2.centreX)/2);
             int centreY = int((darkCloud.centreY + darkCloud2.centreY)/2);
-            lightningArray.add(new Lightning(centreX, centreY, lightningImages));
+            lightningArray.add(new Lightning(centreX, centreY, lightningImages, mBox2D,BodyType.STATIC));
             
             
             println("INTERSECTION");
@@ -762,8 +762,6 @@ void darkCloudGen(){
             //fade away dark clouds
           }
         }
-        
-          
       }
      // if(darkCloud2.centreX - 150 < darkCloud.centreX +150 && darkCloud2.centreX + 150 
     }
@@ -780,8 +778,6 @@ void darkCloudGen(){
       break;
     }
   }
-  
-  
 }
 
 
@@ -800,9 +796,6 @@ void birdGen(){
 
 // Tree collidable generation
 void treeGen(){
-  
-  
-  
   if(currentTheme == 0){
     for (Tree t: treeArray) {
         //t.attract(900,200);
@@ -831,8 +824,6 @@ void treeGen(){
       }
     }
   }
-  
-  
 }
 
 
@@ -964,6 +955,7 @@ void updateMountain(Theme mountain){
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 25, 0, 546, 1920, 540));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", -0.25, themeChangeTimer - 2000, 25, 999, 175, 281, 430));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 25, 1084, 150, 196, 483));
+  /// add rockAnimation to this
   
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
