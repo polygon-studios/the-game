@@ -10,10 +10,11 @@ class Player{
   ArrayList<balloon>       balloonsList;
 
     
-  Player(float headPosX, float headPosY, int skeletonID, ArrayList<Contour> contour, ArrayList<Contour> balloonContour, PImage colourImage){
+  Player(float headPosX, float headPosY, int ID, ArrayList<Contour> contour, ArrayList<Contour> balloonContour, PImage colourImage){
     
     playerContours = contour;
     alive = true;
+    skeletonID = ID;
      
     startPos = new Vec2(headPosX, headPosY);
     balloonsList = new ArrayList();
@@ -54,7 +55,7 @@ class Player{
             println("Sorta within");  
             if(balloonsList.size() < 1){
               balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
-              println("Deep within");  
+              println("Balloon Created");  
           }
         }
         }

@@ -85,9 +85,9 @@ class balloon{
         centerY = boundRect.y + (boundRect.height/2);
         
         
-        if(centerX < boundingBoxMax.x && centerX > boundingBoxMin.x && centerY < boundingBoxMax.y && centerY > boundingBoxMin.y) {
+        if(centerX < (boundingBoxMax.x + 100) && centerX > (boundingBoxMin.x - 100) && centerY < (boundingBoxMax.y + 100) && centerY > (boundingBoxMin.y - 100)) {
           attract(centerX * 2 + 128,centerY * 1.8 + 130);
-          println("Is dis being called?");
+          //println("Is dis being called?");
           
           // Should NOT draw balloon contours if it is below a certain y value
           if(centerY < 250){

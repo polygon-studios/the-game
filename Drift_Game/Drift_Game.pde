@@ -41,7 +41,7 @@ ArrayList<Contour>       balloonContours;
 ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 2.0f;
+float maxD                = 2.5f;
 float minD                = 1.5f;
 PImage colorImage;
 
@@ -275,7 +275,7 @@ void draw() {
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       boolean alreadyCreated = false;
-           
+      println("Skeleton at: " + i + " is tracked");     
       // If there are no players
       if(players.size() == 0){
         // Determine position of head of skeleton
@@ -283,27 +283,30 @@ void draw() {
         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
         float headXPos = headPos.x;
         float headYPos = headPos.y;
-        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        //println("Headposition: " + headXPos + "x " + headYPos + "y");
         players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
         numberOfPlayers += 1;
+        alreadyCreated = true;
       }
       // Check to see if there is already a skeleton with that skeletonID
       for(Player thisPlayer : players){
         int id = thisPlayer.getSkeletonID();
         if( i == id){
           alreadyCreated = true;
+          
         }
       }
       
       // Create a skeleton if that ID hasn't been tracked already
-      if(!alreadyCreated)
+      if(alreadyCreated == false)
       {
+        println("Blehhhh????");
         // Determine position of head of skeleton
         KJoint[] joints = skeleton[i].getJoints();
         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
         float headXPos = headPos.x;
         float headYPos = headPos.y;
-        println("Headposition: " + headXPos + "x " + headYPos + "y");
+        //println("Headposition: " + headXPos + "x " + headYPos + "y");
         players.add(new Player(headXPos, headYPos, i, playerContours, balloonContours, colorImage));
       }
       
@@ -346,7 +349,7 @@ void draw() {
        thisPlayer.updateContour(playerContours);    
        thisPlayer.updateBalloonContour(balloonContours);
        thisPlayer.draw();
-       println("drawin");
+       //println("drawin");
     }
    
   }
@@ -823,6 +826,7 @@ void treeGen(){
         Tree thisTree = treeArray.get(i);
         
         treeArray.remove(i);
+        println("Should have removed tree");
            
       }
     }
