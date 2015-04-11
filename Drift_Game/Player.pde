@@ -115,8 +115,8 @@ class Player{
   }
   
   void updateBalloonContour(ArrayList<Contour> newContour){
-    //balloon b = (balloon) balloonsList.get(0);  
-    //b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
+    balloon b = (balloon) balloonsList.get(0);  
+    b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
   }
   
   Vec2 getBalloonPos(){

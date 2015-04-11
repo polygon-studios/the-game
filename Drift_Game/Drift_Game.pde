@@ -355,7 +355,7 @@ void draw() {
       
       for(int i=0; i < balloons.size(); i++){
         balloon thisBalloon = balloons.get(i);
-        if( thisBalloon.isAlive() == true){
+        if( thisBalloon.isDead() == true){
           balloons.remove(i);
           break;
         }
@@ -845,13 +845,10 @@ void treeGen(){
            
       }
     }
-<<<<<<< HEAD
-  }
-=======
   }*/
   
   
->>>>>>> fc9559aec798456bb8d89d22e000bddec2cba097
+
 }
 
 
