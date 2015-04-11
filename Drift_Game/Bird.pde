@@ -3,6 +3,7 @@ class Bird {
   Body mBody;
   Box2DProcessing mBox2DRef;
   FixtureDef fd;
+  float mRadius;
   
   float x1;
   float y1;
@@ -36,6 +37,7 @@ class Bird {
     // Make the body's shape a circle
     CircleShape cs = new CircleShape();
     cs.m_radius    = mBox2DRef.scalarPixelsToWorld( 20 );
+    mRadius = 20.0f;
     // Define a fixture
     fd   = new FixtureDef();
     fd.shape        = cs;
@@ -91,7 +93,7 @@ class Bird {
     loc.add(vel);
     // Reset accelertion to 0 each cycle
     acc.mult(0);
-    Vec2 worldTarget = mBox2D.coordPixelsToWorld(loc.x,loc.y);   
+    Vec2 worldTarget = mBox2D.coordPixelsToWorld(loc.x + 50,loc.y + 50);   
     //worldTarget.subLocal(bodyVec);
     //worldTarget.normalize();
     //worldTarget.mulLocal((float) 40000);
@@ -132,18 +134,15 @@ class Bird {
 
   void render() {
     // Draw a triangle rotated in the direction of velocity
-    float theta = vel.heading2D() + radians(90);
-    /*fill(175);
-    stroke(0);
+    Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
+    float angle = mBody.getAngle();
+    fill(0);
+    
     pushMatrix();
-    translate(loc.x,loc.y);
-    rotate(theta);
-    beginShape(TRIANGLES);
-    vertex(0, -r*2);
-    vertex(-r, r*2);
-    vertex(r, r*2);
-    endShape();
-    popMatrix();*/
+    translate(pos.x,pos.y);
+    rotate(-angle);
+    ellipse(0,0,mRadius*2,mRadius*2);
+    popMatrix();  
     currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
     int offset = 0;
     //rotate(theta);

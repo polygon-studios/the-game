@@ -73,14 +73,21 @@ class Player{
   
   void draw(){
     
+    //println("PLAYA contours.. yeee " + playerCount);
+    for(balloon thisBalloon : balloonsList){
+      if(thisBalloon.isDead() == true){
+         alive = false;
+         println("It's dead now");
+      }
+      else{  
+        thisBalloon.draw();
+        println("Its drawn still");
+      }
+    }  
+    
     if(!alive){
       fillColour = color(255,105,180);
     }
-    
-    //println("PLAYA contours.. yeee " + playerCount);
-    for(balloon thisBalloon : balloonsList){
-       thisBalloon.draw();
-    }  
      
     for (Contour person : playerContours) {
       
@@ -90,7 +97,7 @@ class Player{
       if (person.numPoints() > 550 && person.numPoints() < 3000) {
         stroke(0, 155, 155);
         beginShape();
-        fill(0);
+        fill(fillColour);
         for (PVector point : person.getPolygonApproximation().getPoints()) {
           vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
         }

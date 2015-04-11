@@ -160,6 +160,28 @@ void setup() {
 }
 
 void draw() {
+  if(currentTheme == 1){
+    if(treeArray.size() != 0){
+      int currentPart = 0;
+      for (Tree t: treeArray) {
+        if(currentPart < 2){
+          //t.attract(900,200);
+          t.killBody();
+          currentPart++;
+        }  
+      }
+      /*
+      for(int i = treeArray.size() - 1; i >= 0; i--){
+        Tree thisTree = treeArray.get(i);
+        
+        treeArray.remove(i);
+        println("Should have removed tree");
+           
+      }
+      println("Tree array length is:" + treeArray.size());*/
+    }
+  }
+  
   mBox2D.step();
   background(skyImg);
   
@@ -324,7 +346,7 @@ void draw() {
   */
    
   if(players.size() != 0){
-  
+    /*  
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
         thisBalloon.draw();
@@ -332,12 +354,13 @@ void draw() {
       
       for(int i=0; i < balloons.size(); i++){
         balloon thisBalloon = balloons.get(i);
-        if( thisBalloon.isAlive() == true){
+        if( thisBalloon.isDead() == true){
           balloons.remove(i);
           break;
         }
       }
     }
+    */
     
     if(collision > 0){
       babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
@@ -819,13 +842,17 @@ void treeGen(){
   
   if(currentTheme == 1){
     if(treeArray.size() != 0){
-      for(int i=0; i < treeArray.size(); i++){
+      
+
+      /*
+      for(int i = treeArray.size() - 1; i >= 0; i--){
         Tree thisTree = treeArray.get(i);
         
         treeArray.remove(i);
         println("Should have removed tree");
            
       }
+      println("Tree array length is:" + treeArray.size());*/
     }
   }
   
