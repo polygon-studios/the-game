@@ -51,7 +51,7 @@ class Player{
         if(centerY < 250){
           // Only say its a balloon if within threshold of person
           if( centerY < (headPosY + 75) && centerY > (headPosY - 50) && centerX < (headPosX + 150) && centerX > (headPosX - 150) ){
-           
+            println("Sorta within");  
             if(balloonsList.size() < 1){
               balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
               println("Deep within");  
@@ -107,8 +107,8 @@ class Player{
   }
   
   void updateBalloonContour(ArrayList<Contour> newContour){
-    balloon b = (balloon) balloonsList.get(0);  
-    b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
+    //balloon b = (balloon) balloonsList.get(0);  
+    //b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
   }
   
   Vec2 getBalloonPos(){

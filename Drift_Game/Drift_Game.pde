@@ -90,6 +90,7 @@ PImage[] lampFrames = new PImage[95];
 PImage[] mushroom1Frames = new PImage[95];
 PImage[] mushroom2Frames = new PImage[95];
 PImage[] mushroom3Frames = new PImage[95];
+PImage[] rockFrames = new PImage[95];
 
 boolean firstRun = false;
 
@@ -522,11 +523,9 @@ void endContact(Contact cp)
     if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
       
         if (o1.getClass() == babyBalloon.class) {
-          println("BB");
           babyBalloon tempBaby = (babyBalloon)o1;
           tempBaby.hit = true;
         }else if(o2.getClass() == babyBalloon.class){
-          println("BB");
           babyBalloon tempBaby = (babyBalloon)o2;
           tempBaby.hit = true;
         }
@@ -817,7 +816,9 @@ void treeGen(){
   }
   
   if(currentTheme == 1){
+    println("CurrentTheme is 1");
     if(treeArray.size() != 0){
+      println(treeArray.size());
       for(int i=0; i < treeArray.size(); i++){
         Tree thisTree = treeArray.get(i);
         
@@ -880,7 +881,10 @@ void loadAnimations(){
     String imageName = "Forest/foreground/mushroom3/mushroom3_Cycle" + (i+1) + ".png";
     mushroom3Frames[i] = loadImage(imageName);
   }
-  
+  for (int i = 0; i < rockFrames.length; i++){
+    String imageName = "Mountain/midground/rockAnimation/rollingRock_" + (i+1) + ".png";
+    rockFrames[i] = loadImage(imageName);
+  }
 }
 
 int calculateThemeCycle(int themeCounter){
