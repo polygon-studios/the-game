@@ -161,6 +161,28 @@ void setup() {
 }
 
 void draw() {
+  if(currentTheme == 1){
+    if(treeArray.size() != 0){
+      int currentPart = 0;
+      for (Tree t: treeArray) {
+        if(currentPart < 2){
+          //t.attract(900,200);
+          t.killBody();
+          currentPart++;
+        }  
+      }
+      /*
+      for(int i = treeArray.size() - 1; i >= 0; i--){
+        Tree thisTree = treeArray.get(i);
+        
+        treeArray.remove(i);
+        println("Should have removed tree");
+           
+      }
+      println("Tree array length is:" + treeArray.size());*/
+    }
+  }
+  
   mBox2D.step();
   background(skyImg);
   
@@ -325,7 +347,7 @@ void draw() {
   */
    
   if(players.size() != 0){
-  
+    /*  
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
         thisBalloon.draw();
@@ -338,7 +360,7 @@ void draw() {
           break;
         }
       }
-    }
+    }*/
     
     if(collision > 0){
       babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
@@ -817,7 +839,7 @@ void treeGen(){
       treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
     }
   }
-  
+  /*
   if(currentTheme == 1){
     println("CurrentTheme is 1");
     if(treeArray.size() != 0){
@@ -830,7 +852,7 @@ void treeGen(){
            
       }
     }
-  }
+  }*/
   
   
 }
