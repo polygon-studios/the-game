@@ -27,11 +27,6 @@ class Lightning{
     int offset = 0;
     image(frames[(currentFrame+offset) % numFrames], x, y);
     offset+=1;
-    /*
-    if(currentFrame == 2 && !soundEffect.isPlaying()){
-      soundEffect.rewind();
-      soundEffect.play();
-    }*/
   }
   
 }
