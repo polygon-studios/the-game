@@ -161,28 +161,6 @@ void setup() {
 }
 
 void draw() {
-  if(currentTheme == 1){
-    if(treeArray.size() != 0){
-      int currentPart = 0;
-      for (Tree t: treeArray) {
-        if(currentPart < 2){
-          //t.attract(900,200);
-          t.killBody();
-          currentPart++;
-        }  
-      }
-      /*
-      for(int i = treeArray.size() - 1; i >= 0; i--){
-        Tree thisTree = treeArray.get(i);
-        
-        treeArray.remove(i);
-        println("Should have removed tree");
-           
-      }
-      println("Tree array length is:" + treeArray.size());*/
-    }
-  }
-  
   mBox2D.step();
   background(skyImg);
   
@@ -347,7 +325,7 @@ void draw() {
   */
    
   if(players.size() != 0){
-    /*  
+  
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
         thisBalloon.draw();
@@ -355,12 +333,12 @@ void draw() {
       
       for(int i=0; i < balloons.size(); i++){
         balloon thisBalloon = balloons.get(i);
-        if( thisBalloon.isAlive() == true){
+        if( thisBalloon.isDead() == true){
           balloons.remove(i);
           break;
         }
       }
-    }*/
+    }
     
     if(collision > 0){
       babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
@@ -534,12 +512,37 @@ void endContact(Contact cp)
     println(newXPos);
   }
   
+  ////tree collision
   if (o1.getClass() == Tree.class || o2.getClass() == Tree.class) {
     if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
       if (o1.getClass() == Tree.class) {
           balloon touchBalloon = (balloon)o2;
           touchBalloon.hit = true;
         }else if(o2.getClass() == Tree.class){
+          balloon touchBalloon = (balloon)o1;
+          touchBalloon.hit = true;
+        }
+    }
+    
+    if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
+      
+        if (o1.getClass() == babyBalloon.class) {
+          babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.hit = true;
+        }else if(o2.getClass() == babyBalloon.class){
+          babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.hit = true;
+        }
+    }
+  }
+  
+  ////lightning collision
+  if (o1.getClass() == Lightning.class || o2.getClass() == Lightning.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      if (o1.getClass() == Lightning.class) {
+          balloon touchBalloon = (balloon)o2;
+          touchBalloon.hit = true;
+        }else if(o2.getClass() == Lightning.class){
           balloon touchBalloon = (balloon)o1;
           touchBalloon.hit = true;
         }
@@ -832,7 +835,7 @@ void treeGen(){
       treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
     }
   }
-  /*
+  
   if(currentTheme == 1){
     println("CurrentTheme is 1");
     if(treeArray.size() != 0){
@@ -845,13 +848,7 @@ void treeGen(){
            
       }
     }
-<<<<<<< HEAD
   }
-=======
-  }*/
-  
-  
->>>>>>> fc9559aec798456bb8d89d22e000bddec2cba097
 }
 
 

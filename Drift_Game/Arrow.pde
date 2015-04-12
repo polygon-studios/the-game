@@ -44,6 +44,8 @@ class Arrow{
     mBody.setAngularDamping(3);
     //attach fixture finishing creation of body
     mBody.createFixture( fd );
+    //mBody.setGravityScale(1.0, -9.8);
+    //mBody.setGravityScale(-0.6);
     setBodyVelocity();
     
     angle = tan((y2-y1)/(x2-x1));
