@@ -93,6 +93,9 @@ class balloon{
         
         if(centerX < (boundingBoxMax.x + 100) && centerX > (boundingBoxMin.x - 100) && centerY < (boundingBoxMax.y + 100) && centerY > (boundingBoxMin.y - 100)) {
           attract(centerX * 2 + 128,centerY * 1.8 + 130);
+          
+          boundingBoxMin = new PVector(boundRect.x, boundRect.y);
+          boundingBoxMax = new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height));
           //println("Is dis being called?");
           
           // Should NOT draw balloon contours if it is below a certain y value
