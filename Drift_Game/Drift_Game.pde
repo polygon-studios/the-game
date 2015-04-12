@@ -365,7 +365,7 @@ void draw() {
        Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
        float headXPos = headPos.x;
        float headYPos = headPos.y;
-       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos);
+       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
        
        thisPlayer.draw();
        //println("drawin");
