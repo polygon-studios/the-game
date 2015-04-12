@@ -72,8 +72,8 @@ int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 0;
-int nextTheme               = 1;
+int currentTheme            = 3;
+int nextTheme               = 0;
 
 PImage bgImg;
 PImage fgImg;
@@ -314,6 +314,16 @@ void draw() {
     }
   }
 
+  /*
+  for (int i = 0; i < skeleton.length; i++) {
+    if (skeleton[i].isTracked()) {
+      findContours();
+      //println(skeleton.length);
+      //println("Skeleton #:" + i);   
+    }
+  }
+  */
+   
   if(players.size() != 0){
   
     if(balloons.size() > 0){
@@ -336,15 +346,8 @@ void draw() {
     }
     
     for(Player thisPlayer : players){
-       thisPlayer.updateContour(playerContours);
-       
-       int i = thisPlayer.getSkeletonID();
-       KJoint[] joints = skeleton[i].getJoints();   
-       Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
-       float headXPos = headPos.x;
-       float headYPos = headPos.y;
-       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
-       
+       thisPlayer.updateContour(playerContours);    
+       thisPlayer.updateBalloonContour(balloonContours);
        thisPlayer.draw();
        //println("drawin");
     }
@@ -559,6 +562,86 @@ void endContact(Contact cp)
 }
 
 
+void findContours(){
+    currentBalloon = 0;
+    
+    // Loop through all the countours
+    for (Contour contour : balloonContours) {
+      
+      contour.setPolygonApproximationFactor(polygonFactor);
+      
+      // Balloon countour handler
+      if (contour.numPoints() < 300 &&  contour.numPoints() > 50) {   
+        
+        // Creating bounding box
+        boundRect = new Rectangle(1280, 720, 0, 0);
+        noFill();
+        stroke(0,0,255);
+        strokeWeight(2);
+        Rectangle rec = contour.getBoundingBox();
+        if(rec.width > boundRect.width && rec.height > boundRect.height){
+           boundRect = rec; 
+        }
+        
+        float centerX;
+        float centerY;
+        
+        centerX = boundRect.x + (boundRect.width/2);
+        centerY = boundRect.y + (boundRect.height/2);
+        
+        counter = 0;
+        for (balloon s: balloons) {
+          //println("Current Balloon: " + currentBalloon + " counter: " + counter);
+          if(counter == currentBalloon){
+            s.attract(centerX * 2 + 128,centerY * 1.8 + 130);
+            //println("attract");
+          }
+          if(numBalloons > currentBalloon + 1){
+          // s.attract(1920,1080);
+          }
+          counter++;
+        }
+        currentBalloon++;
+        
+        int loc = int(centerX*3.75) + int(centerY*2.547) * 1920;
+        color pointColour = colorImage.pixels[loc];
+        
+        float r1 = red(pointColour);
+        float g1 = green(pointColour);
+        float b1 = blue(pointColour);
+        color passCol = color(r1, g1, b1);
+        // Should NOT draw balloon contours if it is below a certain y value
+        if(centerY < 250){
+          // Drawing the contours
+          stroke(150, 150, 0);
+          fill(r1, g1, b1);
+          beginShape();
+       
+          ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
+          for (PVector point : points) {
+            curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
+          }
+          
+          PVector firstPoint = points.get(1);
+          curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 
+          endShape();
+          
+          // Drawing bounding box and center point
+          //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 72, boundRect.width * 2.5, boundRect.height * 1.8 + 72);
+          //fill(0,255,0);
+          //ellipse(centerX * 2 + 128, centerY * 1.8 + 72, 8,8);
+        }
+        if(numBalloons < maxBalloons){
+         //balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+         numBalloons++;
+        }
+        
+      }    
+    }
+    //println("# of balloon contours.. yeee" + contours.size());
+    
+    
+}
 /***********************
 
 OBJECT GENERATION
@@ -680,9 +763,6 @@ void darkCloudGen(){
     
     for(Cloud darkCloud2 : darkCloudArray){
       if(darkCloud.centreX != darkCloud2.centreX){
-        fill(255, 0, 0);
-        rect(darkCloud.centreX - 75, darkCloud.centreY - 75, 150, 150);
-        rect(darkCloud2.centreX - 75, darkCloud2.centreY - 75, 150, 150);
         if(darkCloud.hasBolted == false && darkCloud2.hasBolted == false){
           
           if(((darkCloud2.centreX - 75  < darkCloud.centreX + 75) && 
@@ -765,7 +845,7 @@ void treeGen(){
            
       }
     }
-  }*/
+  }
   
 }
 
@@ -898,7 +978,7 @@ void updateMountain(Theme mountain){
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 25, 0, 546, 1920, 540));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", -0.25, themeChangeTimer - 2000, 25, 999, 175, 281, 430));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 25, 1084, 150, 196, 483));
-  /// add rockAnimation to this
+  mountain.mgImgs.add(new DisplayImage(rockFrames, 0, themeChangeTimer-2000, 25, 0, 176, 544, 297));
   
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
