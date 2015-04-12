@@ -314,16 +314,6 @@ void draw() {
     }
   }
 
-  /*
-  for (int i = 0; i < skeleton.length; i++) {
-    if (skeleton[i].isTracked()) {
-      findContours();
-      //println(skeleton.length);
-      //println("Skeleton #:" + i);   
-    }
-  }
-  */
-   
   if(players.size() != 0){
   
     if(balloons.size() > 0){
@@ -346,8 +336,15 @@ void draw() {
     }
     
     for(Player thisPlayer : players){
-       thisPlayer.updateContour(playerContours);    
-       thisPlayer.updateBalloonContour(balloonContours);
+       thisPlayer.updateContour(playerContours);
+       
+       int i = thisPlayer.getSkeletonID();
+       KJoint[] joints = skeleton[i].getJoints();   
+       Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
+       float headXPos = headPos.x;
+       float headYPos = headPos.y;
+       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
+       
        thisPlayer.draw();
        //println("drawin");
     }
@@ -562,86 +559,6 @@ void endContact(Contact cp)
 }
 
 
-void findContours(){
-    currentBalloon = 0;
-    
-    // Loop through all the countours
-    for (Contour contour : balloonContours) {
-      
-      contour.setPolygonApproximationFactor(polygonFactor);
-      
-      // Balloon countour handler
-      if (contour.numPoints() < 300 &&  contour.numPoints() > 50) {   
-        
-        // Creating bounding box
-        boundRect = new Rectangle(1280, 720, 0, 0);
-        noFill();
-        stroke(0,0,255);
-        strokeWeight(2);
-        Rectangle rec = contour.getBoundingBox();
-        if(rec.width > boundRect.width && rec.height > boundRect.height){
-           boundRect = rec; 
-        }
-        
-        float centerX;
-        float centerY;
-        
-        centerX = boundRect.x + (boundRect.width/2);
-        centerY = boundRect.y + (boundRect.height/2);
-        
-        counter = 0;
-        for (balloon s: balloons) {
-          //println("Current Balloon: " + currentBalloon + " counter: " + counter);
-          if(counter == currentBalloon){
-            s.attract(centerX * 2 + 128,centerY * 1.8 + 130);
-            //println("attract");
-          }
-          if(numBalloons > currentBalloon + 1){
-          // s.attract(1920,1080);
-          }
-          counter++;
-        }
-        currentBalloon++;
-        
-        int loc = int(centerX*3.75) + int(centerY*2.547) * 1920;
-        color pointColour = colorImage.pixels[loc];
-        
-        float r1 = red(pointColour);
-        float g1 = green(pointColour);
-        float b1 = blue(pointColour);
-        color passCol = color(r1, g1, b1);
-        // Should NOT draw balloon contours if it is below a certain y value
-        if(centerY < 250){
-          // Drawing the contours
-          stroke(150, 150, 0);
-          fill(r1, g1, b1);
-          beginShape();
-       
-          ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
-          for (PVector point : points) {
-            curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
-          }
-          
-          PVector firstPoint = points.get(1);
-          curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 
-          endShape();
-          
-          // Drawing bounding box and center point
-          //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 72, boundRect.width * 2.5, boundRect.height * 1.8 + 72);
-          //fill(0,255,0);
-          //ellipse(centerX * 2 + 128, centerY * 1.8 + 72, 8,8);
-        }
-        if(numBalloons < maxBalloons){
-         //balloons.add(new balloon(new PVector(centerX, centerY), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
-         numBalloons++;
-        }
-        
-      }    
-    }
-    //println("# of balloon contours.. yeee" + contours.size());
-    
-    
-}
 /***********************
 
 OBJECT GENERATION
