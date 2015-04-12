@@ -528,7 +528,12 @@ void beginContact(Contact cp)
     balloon Balloon2 = (balloon)o2;
     
     Vec2 balloon1Pos = Balloon1.getPosition(); 
-    Vec2 balloon2Pos = Balloon2.getPosition(); 
+    Vec2 balloon2Pos = Balloon2.getPosition();
+   
+   
+    int balloon1Red = Balloon1.getRColor();
+    int balloon1Green = Balloon1.getGColor();
+    int balloon1Blue = Balloon1.getBColor(); 
     
     balloon1xPos = int(balloon1Pos.x);
     balloon1yPos = int(balloon1Pos.y);

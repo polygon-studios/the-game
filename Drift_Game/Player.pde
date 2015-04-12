@@ -55,17 +55,19 @@ class Player{
     for(balloon thisBalloon : balloonsList){
       if(thisBalloon.isDead() == true){
          alive = false;
-         println("Balloon array size:" + balloonsList.size());
+         println("Balloon array size: " + balloonsList.size() + "on skeleton ID:" + skeletonID);
       }
       else{  
         thisBalloon.draw();
-        println("Balloon array size:" + balloonsList.size());
+        println("Balloon array size: " + balloonsList.size() + "on skeleton ID:" + skeletonID);
       }
     }  
     
     if(!alive){
       fillColour = color(255,105,180);
     }
+    
+    rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
      
     for (Contour person : playerContours) {
       
@@ -119,8 +121,6 @@ class Player{
         
         int loc = int(centerX*3.75) + int(centerY*2.547) * 1920;
         color pointColour = colorImage.pixels[loc];
-        
-        //color passCol = color(r1, g1, b1);
         
         float yThreshMaxR = 255;
         float yThreshMaxG = 255;

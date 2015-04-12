@@ -13,6 +13,9 @@ class balloon{
   PVector boundingBoxMax;
   
   color balloonCol = color(255, 255, 255);
+  int redVal;
+  int greenVal;
+  int blueVal;
   
   ArrayList<Contour>       balloonContours;
   
@@ -20,6 +23,9 @@ class balloon{
   
   balloon(PVector startPos, PVector boundingMin, PVector boundingMax, float radius, int rVal,  int gVal,  int bVal,  boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
     
+    redVal = rVal;
+    greenVal = gVal;
+    blueVal = bVal;
    
     mBox2D = box2D;
     mRadius = radius;
@@ -91,8 +97,10 @@ class balloon{
         centerY = boundRect.y + (boundRect.height/2);
         
         
-        if(centerX < (boundingBoxMax.x + 100) && centerX > (boundingBoxMin.x - 100) && centerY < (boundingBoxMax.y + 100) && centerY > (boundingBoxMin.y - 100)) {
+        if(centerX < (boundingBoxMax.x + 50) && centerX > (boundingBoxMin.x - 50) && centerY < (boundingBoxMax.y + 50) && centerY > (boundingBoxMin.y - 50)) {
           attract(centerX * 2 + 128,centerY * 1.8 + 130);
+          
+          rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
           
           boundingBoxMin = new PVector(boundRect.x, boundRect.y);
           boundingBoxMax = new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height));
@@ -168,9 +176,19 @@ class balloon{
     return yPos;
   }
   
-  color getColor()
+  int getRColor()
   {
-     return balloonCol; 
+     return redVal; 
+  }
+  
+  int getGColor()
+  {
+     return greenVal; 
+  }
+  
+  int getBColor()
+  {
+     return blueVal; 
   }
   
   void setColor( color col ) 
