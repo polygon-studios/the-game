@@ -6,7 +6,7 @@ class Player{
   int skeletonID;
   Vec2 startPos;
   float polygonFactor= 1;
-  color fillColour = color(0,0,0);
+  color fillColour = color(random(0, 255),random(0, 255),0);
   
   int rVal = 0;
   int gVal = 0;
@@ -66,6 +66,9 @@ class Player{
     if(!alive){
       fillColour = color(255,105,180);
     }
+    else{
+      //fillColour = color(0,0,0);
+    }
     
     //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
      
@@ -75,13 +78,36 @@ class Player{
       
       // Person contour handler
       if (person.numPoints() > 550 && person.numPoints() < 3000) {
-        stroke(0, 155, 155);
-        beginShape();
-        fill(fillColour);
-        for (PVector point : person.getPolygonApproximation().getPoints()) {
-          vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
+        
+        // Creating bounding box
+        boundRect = new Rectangle(1280, 720, 0, 0);
+        //noFill();
+        //stroke(0,0,255);
+        //strokeWeight(2);
+        Rectangle rec = person.getBoundingBox();
+        if(rec.width > boundRect.width && rec.height > boundRect.height){
+           boundRect = rec; 
         }
-        endShape();
+        
+        float centerX;
+        float centerY;
+        
+        centerX = boundRect.x + (boundRect.width/2);
+        centerY = boundRect.y + (boundRect.height/2);
+        
+        
+        if(centerX < (headPositionX + 75) && centerX > (headPositionX - 75)) {
+          stroke(0, 155, 155);
+          beginShape();
+          fill(fillColour);
+          for (PVector point : person.getPolygonApproximation().getPoints()) {
+            vertex(point.x * 2 + 128, point.y *  1.8 + 130 );
+          }
+          endShape();
+          noFill();
+        }
+        
+        
       }
       
     }
@@ -168,7 +194,7 @@ class Player{
         // Should NOT draw balloon contours if it is below a certain y value
         if(centerY < 250){
           // Only say its a balloon if within threshold of person
-          if( centerY < (headPositionY + 75) && centerY > (headPositionY - 50) && centerX < (headPositionX + 150) && centerX > (headPositionX - 150) ){
+          if( centerY < (headPositionY + 100) && centerY > (headPositionY - 100) && centerX < (headPositionX + 150) && centerX > (headPositionX - 150) ){
             println("Sorta within");  
             if(balloonsList.size() < 1){
               balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, rVal, gVal, bVal, true, true, BodyType.DYNAMIC, mBox2D));
