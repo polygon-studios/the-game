@@ -67,7 +67,7 @@ class Player{
       fillColour = color(255,105,180);
     }
     
-    rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
+    //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
      
     for (Contour person : playerContours) {
       
