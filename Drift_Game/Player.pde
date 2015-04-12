@@ -1,6 +1,7 @@
 class Player{
   
   Boolean alive = true;
+  Boolean toDelete = false;
   int skeletonID;
   Vec2 startPos;
   float polygonFactor= 1;
@@ -200,10 +201,16 @@ class Player{
   boolean isAlive(){
     return alive;
   }
+  
+  boolean isMarkedForDeletion(){
+    return toDelete; 
+  }
  
   int getSkeletonID(){
     return skeletonID;
   }
+  
+
    
    
 }

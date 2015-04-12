@@ -161,6 +161,15 @@ void setup() {
 }
 
 void draw() {
+  for(int i=0; i< players.size(); i++){
+    Player tempPlayer= players.get(i);
+      if(tempPlayer.toDelete == true){
+        players.remove(i);
+        println("REMOVED ZE PLAYAAAA!");
+        break;
+      } 
+  }
+  
   mBox2D.step();
   background(skyImg);
   
@@ -338,16 +347,32 @@ void draw() {
     }
     
     for(Player thisPlayer : players){
-       thisPlayer.updateContour(playerContours);
+       // We want to delete the player if they are no longer trackeds
+       boolean isTracked = false;
+       int id = thisPlayer.getSkeletonID();
        
-       int i = thisPlayer.getSkeletonID();
-       KJoint[] joints = skeleton[i].getJoints();   
-       Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
-       float headXPos = headPos.x;
-       float headYPos = headPos.y;
-       thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
-       thisPlayer.draw();
-       //println("drawin");
+       for (int i = 0; i < skeleton.length; i++) {
+          if (skeleton[i].isTracked()) {
+            if(id == i){
+              isTracked = true;
+            }
+          }
+       }
+       if(isTracked){
+         thisPlayer.updateContour(playerContours);
+         
+         int i = thisPlayer.getSkeletonID();
+         KJoint[] joints = skeleton[i].getJoints();   
+         Vec2 headPos = getHeadPos(joints, KinectPV2.JointType_Head);
+         float headXPos = headPos.x;
+         float headYPos = headPos.y;
+         thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
+         thisPlayer.draw();
+         //println("drawin");
+      }
+      else{
+        thisPlayer.toDelete = true; 
+      }
     }
    
   }
