@@ -96,10 +96,14 @@ class balloon{
             fill(balloonCol);
             beginShape();
          
+            //println("NEW CURVE VERTEX");
             ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
             for (PVector point : points) {
               curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
+              //println(" X : " + (point.x * 2 + 128) + " Y : " + ( point.y * 1.8 + 130) );
             }
+            
+            
             
             PVector firstPoint = points.get(1);
             curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 

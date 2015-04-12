@@ -58,7 +58,6 @@ class Lightning{
        fill(0, 255, 0);
        popMatrix();
       rect(pos.x, pos.y, 30, 400);
-      
     }
     
     if(currentFrame < 23)

@@ -72,8 +72,8 @@ int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 0;
-int nextTheme               = 1;
+int currentTheme            = 3;
+int nextTheme               = 0;
 
 PImage bgImg;
 PImage fgImg;
@@ -161,28 +161,6 @@ void setup() {
 }
 
 void draw() {
-  if(currentTheme == 1){
-    if(treeArray.size() != 0){
-      int currentPart = 0;
-      for (Tree t: treeArray) {
-        if(currentPart < 2){
-          //t.attract(900,200);
-          t.killBody();
-          currentPart++;
-        }  
-      }
-      /*
-      for(int i = treeArray.size() - 1; i >= 0; i--){
-        Tree thisTree = treeArray.get(i);
-        
-        treeArray.remove(i);
-        println("Should have removed tree");
-           
-      }
-      println("Tree array length is:" + treeArray.size());*/
-    }
-  }
-  
   mBox2D.step();
   background(skyImg);
   
@@ -336,8 +314,10 @@ void draw() {
     }
   }
 
+
+   
   if(players.size() != 0){
-    /*  
+  
     if(balloons.size() > 0){
       for(balloon thisBalloon : balloons){
         thisBalloon.draw();
@@ -350,7 +330,7 @@ void draw() {
           break;
         }
       }
-    }*/
+    }
     
     if(collision > 0){
       babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
@@ -366,7 +346,6 @@ void draw() {
        float headXPos = headPos.x;
        float headYPos = headPos.y;
        thisPlayer.updateBalloonContour(balloonContours, headXPos, headYPos, colorImage);
-       
        thisPlayer.draw();
        //println("drawin");
     }
@@ -531,6 +510,7 @@ void endContact(Contact cp)
     println(newXPos);
   }
   
+  ////tree collision
   if (o1.getClass() == Tree.class || o2.getClass() == Tree.class) {
     if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
       if (o1.getClass() == Tree.class) {
@@ -553,7 +533,32 @@ void endContact(Contact cp)
         }
     }
   }
+  
+  ////lightning collision
+  if (o1.getClass() == Lightning.class || o2.getClass() == Lightning.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      if (o1.getClass() == Lightning.class) {
+          balloon touchBalloon = (balloon)o2;
+          touchBalloon.hit = true;
+        }else if(o2.getClass() == Lightning.class){
+          balloon touchBalloon = (balloon)o1;
+          touchBalloon.hit = true;
+        }
+    }
+    
+    if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
+      
+        if (o1.getClass() == babyBalloon.class) {
+          babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.hit = true;
+        }else if(o2.getClass() == babyBalloon.class){
+          babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.hit = true;
+        }
+    }
+  }
 }
+
 
 
 /***********************
@@ -677,9 +682,6 @@ void darkCloudGen(){
     
     for(Cloud darkCloud2 : darkCloudArray){
       if(darkCloud.centreX != darkCloud2.centreX){
-        fill(255, 0, 0);
-        rect(darkCloud.centreX - 75, darkCloud.centreY - 75, 150, 150);
-        rect(darkCloud2.centreX - 75, darkCloud2.centreY - 75, 150, 150);
         if(darkCloud.hasBolted == false && darkCloud2.hasBolted == false){
           
           if(((darkCloud2.centreX - 75  < darkCloud.centreX + 75) && 
@@ -749,7 +751,7 @@ void treeGen(){
       treeArray.add(new Tree(new PVector(955, 200), 40.0f, BodyType.STATIC, mBox2D));
     }
   }
-  /*
+  
   if(currentTheme == 1){
     println("CurrentTheme is 1");
     if(treeArray.size() != 0){
@@ -762,10 +764,8 @@ void treeGen(){
            
       }
     }
-  }*/
+  }
   
-  
-
 }
 
 
@@ -897,7 +897,7 @@ void updateMountain(Theme mountain){
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain_long.png", -0.5, themeChangeTimer - 2000, 25, 0, 546, 1920, 540));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", -0.25, themeChangeTimer - 2000, 25, 999, 175, 281, 430));
   mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 25, 1084, 150, 196, 483));
-  /// add rockAnimation to this
+  mountain.mgImgs.add(new DisplayImage(rockFrames, 0, themeChangeTimer-2000, 25, 0, 176, 544, 297));
   
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
