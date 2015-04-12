@@ -297,7 +297,7 @@ void draw() {
   for (int i = 0; i < skeleton.length; i++) {
     if (skeleton[i].isTracked()) {
       boolean alreadyCreated = false;
-      println("Skeleton at: " + i + " is tracked");     
+      //println("Skeleton at: " + i + " is tracked");     
       // If there are no players
       if(players.size() == 0){
         // Determine position of head of skeleton

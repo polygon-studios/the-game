@@ -18,13 +18,13 @@ class balloon{
   
   PImage img;
   
-  balloon(PVector startPos, PVector boundingMin, PVector boundingMax, float radius, color startCol,  boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
+  balloon(PVector startPos, PVector boundingMin, PVector boundingMax, float radius, int rVal,  int gVal,  int bVal,  boolean initVel, boolean antiGrav, BodyType type, Box2DProcessing box2D){
     
    
     mBox2D = box2D;
     mRadius = radius;
     
-    balloonCol = startCol;
+    balloonCol = color(rVal, gVal, bVal);
     BodyDef bd = new BodyDef();
     bd.type = type;
     bd.position = mBox2D.coordPixelsToWorld(startPos.x, startPos.y);
@@ -93,7 +93,7 @@ class balloon{
           if(centerY < 250){
             // Drawing the contours
             stroke(150, 150, 0);
-            fill(0);
+            fill(balloonCol);
             beginShape();
          
             ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
@@ -108,15 +108,15 @@ class balloon{
         }
       }    
     }
-    
-    fill(0);
+    /*
+    fill(balloonCol);
     
     pushMatrix();
     translate(pos.x,pos.y);
     rotate(-angle);
     ellipse(0,0,mRadius*2,mRadius*2);
     popMatrix();   
-    
+    */
     
   }  
   

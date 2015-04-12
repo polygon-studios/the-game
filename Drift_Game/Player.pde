@@ -5,7 +5,10 @@ class Player{
   Vec2 startPos;
   float polygonFactor= 1;
   color fillColour = color(0,0,0);
-  color passCol;
+  
+  int rVal = 0;
+  int gVal = 0;
+  int bVal = 0;
   
   ArrayList<Contour>       playerContours;
   ArrayList<Contour>       baloonContours;
@@ -50,7 +53,6 @@ class Player{
       }
       else{  
         thisBalloon.draw();
-        println("Its drawn still");
       }
     }  
     
@@ -133,17 +135,27 @@ class Player{
         float g = green(pointColour);
         float b = blue(pointColour);
         
+        
+        
         if(r < yThreshMaxR && g < yThreshMaxG && b < yThreshMaxB && r > yThreshMinR && g > yThreshMinG && b > yThreshMinB){
           print("yellow\n");
-          color passCol = color(255,255,0);
+          rVal = 255;
+          gVal = 255;
+          bVal = 0;
         }
         else if(r < bThreshMaxR && g < bThreshMaxG && b < bThreshMaxB && r > bThreshMinR && g > bThreshMinG && b > bThreshMinB){
           print("blue\n");
-          color passCol = color(0,0,255);
+          rVal = 0;
+          gVal = 0;
+          bVal = 255;
         }
         else{
           print("unknown\n");
-          color passCol = color(255,0,0);
+          //color passCol = color(255,0,0);
+          rVal = 255;
+          gVal = 0;
+          bVal = 0;
+          println("Passing colour: R:" + rVal + " G:" + gVal + " B:" + bVal);
         }
         
         // Should NOT draw balloon contours if it is below a certain y value
@@ -152,7 +164,7 @@ class Player{
           if( centerY < (headPositionY + 75) && centerY > (headPositionY - 50) && centerX < (headPositionX + 150) && centerX > (headPositionX - 150) ){
             println("Sorta within");  
             if(balloonsList.size() < 1){
-              balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, passCol, true, true, BodyType.DYNAMIC, mBox2D));
+              balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, rVal, gVal, bVal, true, true, BodyType.DYNAMIC, mBox2D));
               println("Balloon Created");  
           }
         }
