@@ -21,6 +21,7 @@ Flock               flock;
 Rectangle           boundRect;
 Skeleton []         skeleton;
 ParticleSystem      ps;
+Goat                goat;
 
 // ArrayLists
 ArrayList<Rectangle>     rectangles;
@@ -91,6 +92,7 @@ PImage[] mushroom1Frames = new PImage[95];
 PImage[] mushroom2Frames = new PImage[95];
 PImage[] mushroom3Frames = new PImage[95];
 PImage[] rockFrames = new PImage[96];
+PImage[] goatFrames = new PImage[192];
 
 boolean firstRun = false;
 
@@ -404,6 +406,7 @@ void draw() {
   banditGen();
   birdGen();
   treeGen();
+  goatGen();
   for(string thisString : babyBalloon){
     thisString.draw();
   }
@@ -816,6 +819,17 @@ void treeGen(){
   
 }
 
+//Goat for mountain
+void goatGen(){
+  if(currentTheme == 3){
+    if(goat == null){
+      goat = new Goat(600, 300, goatFrames,mBox2D, BodyType.STATIC);
+      println("empty goat");
+    }else{
+      goat.draw();
+    }
+  }
+}
 
 
 /***********************
@@ -826,10 +840,7 @@ BACKGROUND FUNCTIONS
 
 
 void loadAnimations(){
-  for (int i = 0; i < 96; i++){
-    String imageName = "Mountain/midground/rockAni/rollingRock_" + (i+1) + ".png";
-    rockFrames[i] = loadImage(imageName);
-  }
+  
   for(int i = 0; i < cloudImages.length; i++){
     String imageName = "lightClouds/cloud" + str(i + 1) + "_light.png";
     cloudImages[i] = loadImage(imageName);
@@ -869,6 +880,14 @@ void loadAnimations(){
   for (int i = 0; i < mushroom3Frames.length; i++) {
     String imageName = "Forest/foreground/mushroom3/mushroom3_Cycle" + (i+1) + ".png";
     mushroom3Frames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < 96; i++){
+    String imageName = "Mountain/midground/rockAni/rollingRock_" + (i+1) + ".png";
+    rockFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < goatFrames.length; i++){
+    String imageName = "Mountain/foreground/goat/mountainGoat_" + (i+1) + ".png";
+    goatFrames[i] = loadImage(imageName);
   }
   
 }
@@ -951,6 +970,7 @@ void updateMountain(Theme mountain){
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 40, 935, 7, 345, 710));
+  //mountain.fgImgs.add(new DisplayImage(goatFrames, 0 , themeChangeTimer - 2000, 40, 245, 230, 270, 385, 0));
   
   themeArray.add(mountain);
 }

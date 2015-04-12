@@ -145,8 +145,9 @@ class Theme{
   void drawFireflies(){
     if(hasFireflies == true){
       ps.addParticle();
-      ps.run();
+      
     }
+    ps.run();
   }
 
 }
