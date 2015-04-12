@@ -48,11 +48,7 @@ class balloon{
     fd.restitution = 0.1f;
     
     mBody.createFixture(fd);
-    
-    if(initVel == true){
-      //mBody.setLinearVelocity(new Vec2(random(0.0f, 2.0), random(0.0f, 2.0)));
-      mBody.setAngularVelocity(random(1.0, 2.0));
-    }
+
 
     mBody.setUserData(this);  
   }
@@ -60,6 +56,16 @@ class balloon{
   void draw(){
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
+    
+    
+    fill(0);
+    
+    pushMatrix();
+    translate(pos.x,pos.y);
+    rotate(-angle);
+    ellipse(0,0,mRadius*2,mRadius*2);
+    popMatrix();   
+    
     
     for (Contour contour : balloonContours) {
       
@@ -112,22 +118,18 @@ class balloon{
         }
       }    
     }
-    /*
-    fill(balloonCol);
     
-    pushMatrix();
-    translate(pos.x,pos.y);
-    rotate(-angle);
-    ellipse(0,0,mRadius*2,mRadius*2);
-    popMatrix();   
-    */
     
   }  
+  
+  void removeBody(){
+   killBody(); 
+  }
   
    // This function removes the particle from the box2d world
   void killBody() 
   {
-    mBox2D.destroyBody( mBody );
+    mBox2D.destroyBody(mBody);
     println("BODY IS KILL");                                                                                
   }
   

@@ -170,6 +170,14 @@ void draw() {
       } 
   }
   
+  for(Player thisPlayer : players){
+    if(thisPlayer.alive == false){
+       if(thisPlayer.balloonDeleted == false){
+         thisPlayer.removeBalloon();
+       }
+    }
+  }
+  
   mBox2D.step();
   background(skyImg);
   
@@ -472,7 +480,7 @@ void mouseMoved() {
 
 
 //called when Box2D elements have stopped touching each other
-void endContact(Contact cp) 
+void beginContact(Contact cp) 
 {
   // Get both shapes ( A and B )
   Fixture f1 = cp.getFixtureA();
@@ -659,6 +667,7 @@ void banditGen(){
     for(int i=0; i < banditArray.size(); i++){
       Bandit bandit = banditArray.get(i);
       if( bandit.arrow.isAlive() == false){
+        bandit.removeArrow();
         banditArray.remove(i);
         break;
       }
@@ -740,6 +749,7 @@ void darkCloudGen(){
   for(int i=0; i < lightningArray.size(); i++){
     Lightning lightning = lightningArray.get(i);
     if( lightning.isAlive == false){
+      lightning.killBody();
       lightningArray.remove(i);
       break;
     }
@@ -777,16 +787,29 @@ void treeGen(){
     }
   }
   
-  if(currentTheme == 1){
-    println("CurrentTheme is 1");
+  if(currentTheme == 3){
+    for (Tree t: treeArray) {
+        //t.attract(900,200);
+        t.draw();
+    }
+    if(treeArray.size() == 0){
+      treeArray.add(new Tree(new PVector(1150, 500), 150.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(1100, 315), 50.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(985, 550), 40.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(1115, 220), 40.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(1125, 170), 40.0f, BodyType.STATIC, mBox2D));
+    }
+  }
+  
+  if(currentTheme != 0 && currentTheme != 3){
+    
     if(treeArray.size() != 0){
       println(treeArray.size());
-      for(int i=0; i < treeArray.size(); i++){
+      for(int i = treeArray.size() - 1; i >= 0; i--){
         Tree thisTree = treeArray.get(i);
-        
+        thisTree.killBody();
         treeArray.remove(i);
         println("Should have removed tree");
-           
       }
     }
   }

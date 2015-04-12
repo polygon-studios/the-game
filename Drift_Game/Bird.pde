@@ -93,7 +93,7 @@ class Bird {
     loc.add(vel);
     // Reset accelertion to 0 each cycle
     acc.mult(0);
-    Vec2 worldTarget = mBox2D.coordPixelsToWorld(loc.x + 50,loc.y + 50);   
+    Vec2 worldTarget = mBox2D.coordPixelsToWorld(loc.x + 60,loc.y + 55);   
     //worldTarget.subLocal(bodyVec);
     //worldTarget.normalize();
     //worldTarget.mulLocal((float) 40000);

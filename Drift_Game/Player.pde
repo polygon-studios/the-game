@@ -2,6 +2,7 @@ class Player{
   
   Boolean alive = true;
   Boolean toDelete = false;
+  Boolean balloonDeleted = false;
   int skeletonID;
   Vec2 startPos;
   float polygonFactor= 1;
@@ -38,10 +39,14 @@ class Player{
     makeBalloon(balloonContour);
   }
   
-  // This function removes the particle from the box2d world
-  void popBalloon() 
-  {
-    alive = false;
+
+  
+  void removeBalloon(){
+    balloon b = (balloon) balloonsList.get(0);  
+    b.removeBody();
+    balloonDeleted = true;
+    balloonsList.remove(0);
+    println("Balloon array size:" + balloonsList.size());
   }
   
   void draw(){
@@ -50,10 +55,11 @@ class Player{
     for(balloon thisBalloon : balloonsList){
       if(thisBalloon.isDead() == true){
          alive = false;
-         println("It's dead now");
+         println("Balloon array size:" + balloonsList.size());
       }
       else{  
         thisBalloon.draw();
+        println("Balloon array size:" + balloonsList.size());
       }
     }  
     
@@ -188,14 +194,20 @@ class Player{
        b.updateContour(newContour);  // Passing the entire list of boids to each boid individually
     }
     else{
-      makeBalloon(newContour);
+      if(alive){
+        makeBalloon(newContour);
+      }
     }
     
   }
   
   Vec2 getBalloonPos(){
-    balloon b = (balloon) balloonsList.get(0);  
-    return b.getPosition();
+    if(balloonsList.size() != 0){
+      balloon b = (balloon) balloonsList.get(0);  
+      return b.getPosition();
+    }
+    Vec2 blank = new Vec2(500, 500);
+    return blank;
   }
    
   boolean isAlive(){

@@ -45,6 +45,11 @@ class Lightning{
     mBody.setUserData(this);  
   }
   
+  void killBody() 
+  {
+    mBox2D.destroyBody( mBody );
+  }
+  
   void draw(){
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();

@@ -27,6 +27,10 @@ class Bandit{
       image(images[13], x, y);
   }
   
+  void removeArrow(){
+    arrow.killBody();
+  }
+  
   void bowCycleDraw(){
     currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
     int offset = 0;
