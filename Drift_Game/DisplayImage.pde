@@ -13,6 +13,8 @@ class DisplayImage{
   int h;
   int currentFrame = 0;
   int numFrames;
+  int delayTimer;
+  int lastTimeCheck;
   boolean isFadingOut;
   boolean isAnimation;
   
@@ -33,7 +35,7 @@ class DisplayImage{
       xOrig = xLoc;
   }
   
-  DisplayImage(PImage[] animationFrames, float parallaxAmount, float lifespan, float transSpeed, int xLoc, int yLoc, int imgWidth, int imgHeight){
+  DisplayImage(PImage[] animationFrames, float parallaxAmount, float lifespan, float transSpeed, int xLoc, int yLoc, int imgWidth, int imgHeight, int delay){
     aniFrames = animationFrames;
     image = aniFrames[0];
     parallax = parallaxAmount;
@@ -41,12 +43,14 @@ class DisplayImage{
     y = yLoc;
     w = imgWidth;
     h = imgHeight;
-    trans = 1;
+    trans = 0;
     lifeSpan = lifespan;
     isFadingOut = false;
     transitionSpeed = transSpeed;
     isAnimation = true;
     numFrames = aniFrames.length;
+    delayTimer = delay;
+    lastTimeCheck = 0;
     
     if(parallaxAmount != 0)
       xOrig = xLoc;
@@ -68,9 +72,24 @@ class DisplayImage{
   }
   
   void stepAni(){
-    currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
-    int offset = 0;
-    image = aniFrames[(currentFrame+offset) %numFrames];
-    offset+=1;
+    if(delayTimer == 0){
+       currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
+      int offset = 0;
+      image = aniFrames[(currentFrame+offset) %numFrames];
+      offset+=1;
+    }else{
+      
+      if(currentFrame < numFrames-1 || (millis() - lastTimeCheck > delayTimer)){
+        //trans = 255;
+        lastTimeCheck = millis();
+        currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
+        int offset = 0;
+        image = aniFrames[(currentFrame+offset) %numFrames];
+        offset+=1;
+      }else{
+        trans = 0;
+      }
+      
+    }
   }
 }

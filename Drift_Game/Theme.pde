@@ -52,6 +52,8 @@ class Theme{
         temp.updateTrans(true);
       else
         temp.updateTrans(false);
+      if(temp.isAnimation == true)
+        temp.stepAni();
       tint(255, 255, 255, temp.trans);
       image(temp.image, temp.x, temp.y, temp.w, temp.h);
     }

@@ -53,11 +53,8 @@ class Lightning{
     if(currentFrame < 15){
       pushMatrix();
        translate(pos.x,pos.y);
-       //rotate(a + sin(2*PI - currentAngle));
        rotate(angle);
-       fill(0, 255, 0);
        popMatrix();
-      rect(pos.x, pos.y, 30, 400);
     }
     
     if(currentFrame < 23)
