@@ -41,7 +41,7 @@ class DisplayImage{
     y = yLoc;
     w = imgWidth;
     h = imgHeight;
-    trans = 0;
+    trans = 1;
     lifeSpan = lifespan;
     isFadingOut = false;
     transitionSpeed = transSpeed;
