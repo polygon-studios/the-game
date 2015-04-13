@@ -7,6 +7,8 @@ class balloon{
   float xPos;
   float yPos;
   
+  float rando = random(0, 5);
+  
   float polygonFactor= 1;
   
   PVector boundingBoxMin;
@@ -99,6 +101,7 @@ class balloon{
           
           if(centerX < (boundingBoxMax.x + 50) && centerX > (boundingBoxMin.x - 50) && centerY < (boundingBoxMax.y + 50) && centerY > (boundingBoxMin.y - 50)) {
             attract(centerX * 2 + 128,centerY * 1.8 + 130);
+            println(rando);
             
             //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
             
