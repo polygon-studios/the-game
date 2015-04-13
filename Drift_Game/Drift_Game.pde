@@ -74,8 +74,8 @@ int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 3;
-int nextTheme               = 0;
+int currentTheme            = 1;
+int nextTheme               = 2;
 
 PImage bgImg;
 PImage fgImg;
@@ -101,7 +101,6 @@ PImage[] blueBBPopFrames = new PImage[7];
 PImage[] whiteBBPopFrames = new PImage[7];
 PImage[] yellowBBPopFrames = new PImage[7];
 
-boolean firstRun = false;
 
 // Audio variables
 AudioPlayer[] player = new AudioPlayer[4]; 
@@ -135,7 +134,7 @@ void setup() {
   player[1] = minim.loadFile("cityMusic.mp3", 2048);
   player[2] = minim.loadFile("farmMusic.mp3", 2048);
   player[3] = minim.loadFile("mountainMusic.mp3", 2048);
-  //player[0].play();
+  player[currentTheme].play();
   
   bowPlayer = minim.loadFile("bow_release.mp3");
   
@@ -240,11 +239,12 @@ void draw() {
     lastTimeCheck = millis();
     
     println("1: CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
-    if(firstRun == false){
-      currentTheme = calculateThemeCycle(currentTheme);
-      nextTheme = calculateThemeCycle(currentTheme);
-    }
     
+    player[currentTheme].close();
+    
+    currentTheme = calculateThemeCycle(currentTheme);
+    nextTheme = calculateThemeCycle(currentTheme);
+      
     Theme temp = themeArray.get(currentTheme);
     temp.drawBgImgs();
     temp.drawMgImgs();
@@ -261,7 +261,6 @@ void draw() {
     player[currentTheme].play();
 
     
-    firstRun = false;
     println("2: CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
     Theme temp = themeArray.get(currentTheme);
