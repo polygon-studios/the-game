@@ -232,7 +232,7 @@ class Player{
       balloon b = (balloon) balloonsList.get(0);  
       return b.getPosition();
     }
-    Vec2 blank = new Vec2(500, 500);
+    Vec2 blank = new Vec2(500, 300);
     return blank;
   }
    
