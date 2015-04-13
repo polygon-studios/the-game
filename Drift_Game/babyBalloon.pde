@@ -3,6 +3,7 @@ class babyBalloon{
   Body mBody;
   float mRadius;
   Box2DProcessing mBox2D;
+  AudioPlayer soundEffect;
   boolean mBalloon;
   color mCol;
   PImage img;  
@@ -13,13 +14,14 @@ class babyBalloon{
   
   PImage[] poppingFrames;
   
-  babyBalloon(PVector startPos, float radius, boolean initVel, boolean balloon, color col, BodyType type, Box2DProcessing box2D){
+  babyBalloon(PVector startPos, float radius, boolean initVel, boolean balloon, color col, BodyType type, Box2DProcessing box2D, AudioPlayer poppnigPlayer){
     
     mBalloon = balloon;
     mBox2D = box2D;
     mRadius = radius;
     mCol = col;
     hit = false;
+    soundEffect = poppingPlayer;
     
     /*float yThreshMaxR = 255;
     float yThreshMaxG = 255;
@@ -139,10 +141,17 @@ class babyBalloon{
       tint(255);
       
       if(hit == true && currentFrame < 7){
+        
+        if(currentFrame == 1 && !soundEffect.isPlaying()){
+          soundEffect.rewind();
+          soundEffect.play();
+        }
+        
         currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
         int offset = 0;
         image(poppingFrames[(currentFrame+offset) % numFrames], 0, mRadius/2, mRadius*2, mRadius*3);
         offset+=1;
+        
       }
       else
         image(img, 0, mRadius/2, mRadius*2, mRadius*3);

@@ -105,6 +105,8 @@ PImage[] yellowBBPopFrames = new PImage[7];
 // Audio variables
 AudioPlayer[] player = new AudioPlayer[4]; 
 AudioPlayer bowPlayer;
+AudioPlayer thunderPlayer;
+AudioPlayer poppingPlayer;
 
 Minim minim;//audio context
 
@@ -137,6 +139,8 @@ void setup() {
   player[currentTheme].play();
   
   bowPlayer = minim.loadFile("bow_release.mp3");
+  thunderPlayer = minim.loadFile("thunder.mp3");
+  poppingPlayer = minim.loadFile("pop2.mp3");
   
   flock = new Flock();
   ps = new ParticleSystem();
@@ -796,7 +800,7 @@ void darkCloudGen(){
             //create Lightning at the centre of two clouds
             int centreX = int((darkCloud.centreX + darkCloud2.centreX)/2);
             int centreY = int((darkCloud.centreY + darkCloud2.centreY)/2);
-            lightningArray.add(new Lightning(centreX, centreY, lightningImages, mBox2D,BodyType.STATIC));
+            lightningArray.add(new Lightning(centreX, centreY, lightningImages, mBox2D,BodyType.STATIC, thunderPlayer));
             
           }
         }

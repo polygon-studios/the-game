@@ -7,18 +7,25 @@ class Lightning{
   int currentFrame;
   int numFrames;
   boolean isAlive = true;
+  AudioPlayer soundEffect;
   
   Body mBody;
   float mWidth = 30;
   float mHeight = 400;
   Box2DProcessing mBox2D;
   
-  Lightning(int xLoc, int yLoc, PImage[] aniFrames, Box2DProcessing box2D, BodyType type){
+  Lightning(int xLoc, int yLoc, PImage[] aniFrames, Box2DProcessing box2D, BodyType type, AudioPlayer thunderPlayer){
     x = xLoc;
     y = yLoc;
     startY = yLoc - 350;
     frames = aniFrames;
     numFrames = aniFrames.length;
+    soundEffect = thunderPlayer;
+    
+    if(!soundEffect.isPlaying()){
+      soundEffect.rewind();
+      soundEffect.play();
+    }
     
     mBox2D = box2D;
     BodyDef bd = new BodyDef();
@@ -54,6 +61,7 @@ class Lightning{
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
     attract();
+    
     
     if(currentFrame < 15){
       pushMatrix();

@@ -20,13 +20,13 @@ class string{
       babyBalloon section = null;
       
       if(i == 0){
-        section = new babyBalloon(new PVector(startPos.x, startPos.y), balloonRad, true, true, color(255, 255, 0), BodyType.DYNAMIC, mBox2D);
+        section = new babyBalloon(new PVector(startPos.x, startPos.y), balloonRad, true, true, color(255, 255, 0), BodyType.DYNAMIC, mBox2D, poppingPlayer);
       }
       else{
         PVector sectionPos = new PVector(startPos.x, startPos.y);
         sectionPos.add(PVector.mult(stringVec, (float)i*sectionSpacing));
         
-        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y + balloonRad*1.5), sectionRadius, false, false, color(0, 0, 0), BodyType.DYNAMIC, box2D);
+        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y + balloonRad*1.5), sectionRadius, false, false, color(0, 0, 0), BodyType.DYNAMIC, box2D, poppingPlayer);
       }
       
       mString.add(section);
