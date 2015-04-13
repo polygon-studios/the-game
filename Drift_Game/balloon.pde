@@ -7,7 +7,7 @@ class balloon{
   float xPos;
   float yPos;
   
-  int rando = random(0, 5);
+  float rando = random(0, 5);
   
   float polygonFactor= 1;
   
