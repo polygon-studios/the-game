@@ -69,13 +69,13 @@ int lastCloudTimeCheck      = 0;
 int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
-int themeChangeTimer        = 10000; // in milliseconds 97000
+int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 0;
-int nextTheme               = 1;
+int currentTheme            = 3;
+int nextTheme               = 0;
 
 PImage bgImg;
 PImage fgImg;
@@ -1002,11 +1002,8 @@ void updateFarm(Theme farm){
 void updateMountain(Theme mountain){
   mountain.bgImgs.add(new DisplayImage("Mountain/background/mountain_bg_mountain.png", 0, themeChangeTimer - 3000, 15, 0, 255, 1280, 465));//image, parallax, x, y, w, h
  
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_grass_short.png", 0, themeChangeTimer - 2000, 25, 0, 522, 1280, 198)); //y was 522
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain.png", 0, themeChangeTimer - 2000, 25, 0, 327, 1280, 393));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree1.png", -0.25, themeChangeTimer - 2000, 25, 999, 175, 281, 430));
-  mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_tree2.png", 0, themeChangeTimer - 2000, 25, 1084, 150, 196, 483));
-  mountain.mgImgs.add(new DisplayImage(rockFrames, 0, themeChangeTimer - 2000, 25, 0, 327, 554, 297, 4000));
+ mountain.mgImgs.add(new DisplayImage("Mountain/midground/mountain_mg_mountain2.png", 0, themeChangeTimer - 2000, 25, 0, 327, 1280, 393));
+  mountain.mgImgs.add(new DisplayImage(rockFrames, 0, themeChangeTimer - 2000, 25, 0, 310, 554, 297, 4000));
   
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
