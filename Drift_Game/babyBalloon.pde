@@ -8,6 +8,11 @@ class babyBalloon{
   PImage img;  
   boolean hit = false;
   
+  int currentFrame;
+  int numFrames;
+  
+  PImage[] poppingFrames;
+  
   babyBalloon(PVector startPos, float radius, boolean initVel, boolean balloon, color col, BodyType type, Box2DProcessing box2D){
     
     mBalloon = balloon;
@@ -48,6 +53,8 @@ class babyBalloon{
       print("unknown\n");
       img = loadImage("babyBalloon_w.png");
     }*/
+    
+    
         
     if(mCol == color(255, 255, 0)){
       img = loadImage("babyBalloon_y.png");
@@ -130,7 +137,15 @@ class babyBalloon{
     if(mBalloon){
       imageMode(CENTER);
       tint(255);
-      image(img, 0, mRadius/2, mRadius*2, mRadius*3);
+      
+      if(hit == true && currentFrame < 7){
+        currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
+        int offset = 0;
+        image(poppingFrames[(currentFrame+offset) % numFrames], 0, mRadius/2, mRadius*2, mRadius*3);
+        offset+=1;
+      }
+      else
+        image(img, 0, mRadius/2, mRadius*2, mRadius*3);
       //ellipse(0,0,mRadius*2,mRadius*2);
       //ellipse(0, mRadius*1.5, mRadius, mRadius);
       imageMode(CORNER);
@@ -140,4 +155,10 @@ class babyBalloon{
     }
     popMatrix();    
   }  
+  
+  void setPoppingFrames(PImage[] bbpopingAni){
+    poppingFrames = bbpopingAni;
+    numFrames = bbpopingAni.length;
+  }
+  
 }

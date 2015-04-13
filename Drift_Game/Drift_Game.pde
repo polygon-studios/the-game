@@ -96,6 +96,10 @@ PImage[] mushroom3Frames = new PImage[95];
 PImage[] rockFrames = new PImage[96];
 PImage[] goatFrames = new PImage[192];
 PImage[] scareCrowFrames = new PImage[96];
+PImage[] greenBBPopFrames = new PImage[7];
+PImage[] blueBBPopFrames = new PImage[7];
+PImage[] whiteBBPopFrames = new PImage[7];
+PImage[] yellowBBPopFrames = new PImage[7];
 
 boolean firstRun = false;
 
@@ -399,7 +403,7 @@ void draw() {
     string tempString= babyBalloon.get(i);
     for(int j=0; j< tempString.mString.size(); j++){
       babyBalloon tempBB = tempString.mString.get(j);
-      if(tempBB.hit == true){
+      if(tempBB.hit == true && tempBB.currentFrame == (greenBBPopFrames.length-1)){
         babyBalloon.remove(i);
         break;
       }
@@ -570,9 +574,11 @@ void beginContact(Contact cp)
       
         if (o1.getClass() == babyBalloon.class) {
           babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }else if(o2.getClass() == babyBalloon.class){
           babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }
     }
@@ -594,15 +600,17 @@ void beginContact(Contact cp)
       
         if (o1.getClass() == babyBalloon.class) {
           babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }else if(o2.getClass() == babyBalloon.class){
           babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }
     }
   }
   
-  ////lightning collision
+  ////Goat collision
   if (o1.getClass() == Goat.class || o2.getClass() == Goat.class) {
     if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
       if (o1.getClass() == Goat.class) {
@@ -618,16 +626,20 @@ void beginContact(Contact cp)
       
         if (o1.getClass() == babyBalloon.class) {
           babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }else if(o2.getClass() == babyBalloon.class){
           babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.setPoppingFrames(setBBpoppingFrames());
           tempBaby.hit = true;
         }
     }
   }
 }
 
-
+PImage[] setBBpoppingFrames(){
+  return yellowBBPopFrames;
+}
 
 /***********************
 
@@ -927,6 +939,22 @@ void loadAnimations(){
   for (int i = 0; i < goatFrames.length; i++){
     String imageName = "Mountain/foreground/goat/mountainGoat_" + (i+1) + ".png";
     goatFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < greenBBPopFrames.length; i++){
+    String imageName = "bbPop/babyBalloon_g/babyBalloon_g_" + (i+1) + ".png";
+    greenBBPopFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < blueBBPopFrames.length; i++){
+    String imageName = "bbPop/babyBalloon_b/babyBalloon_b_" + (i+1) + ".png";
+    blueBBPopFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < whiteBBPopFrames.length; i++){
+    String imageName = "bbPop/babyBalloon_w/babyBalloon_w_" + (i+1) + ".png";
+    whiteBBPopFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < yellowBBPopFrames.length; i++){
+    String imageName = "bbPop/babyBalloon_y/babyBalloon_y_" + (i+1) + ".png";
+    yellowBBPopFrames[i] = loadImage(imageName);
   }
   
 }
