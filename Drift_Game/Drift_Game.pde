@@ -268,20 +268,22 @@ void draw() {
       newTemp.bgTransFadeIn();
       newTemp.drawBgImgs();
     }
+    temp.drawBgImgs();
     if(temp.checkToFadeOutMg() == true){
       Theme newTemp = themeArray.get(nextTheme);
       newTemp.mgTransFadeIn();
       newTemp.drawMgImgs();
     }
+    temp.drawMgImgs();
+    fog.draw();
     if(temp.checkToFadeOutFg() == true){
       Theme newTemp = themeArray.get(nextTheme);
       newTemp.fgTransFadeIn();
       newTemp.drawFgImgs();
     }
     
-    temp.drawBgImgs();
-    temp.drawMgImgs();
-    fog.draw();
+    
+    
     temp.drawFireflies();
     cloudGen();
     darkCloudGen();

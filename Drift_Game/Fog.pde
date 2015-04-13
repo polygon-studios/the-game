@@ -27,9 +27,9 @@ class Fog{
       xFogLoc2 = -fogImgWidth;
     }
     //noFill();
-    //tint(255,255,255,255);
-    image(fogImg1, xFogLoc1, 220);
-    image(fogImg2, xFogLoc2, 220);  
+    tint(255,255,255,255);
+    image(fogImg1, xFogLoc1, 246);
+    image(fogImg2, xFogLoc2, 246);  
     
   }
   
