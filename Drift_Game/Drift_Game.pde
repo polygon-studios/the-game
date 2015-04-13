@@ -22,6 +22,7 @@ Rectangle           boundRect;
 Skeleton []         skeleton;
 ParticleSystem      ps;
 Goat                goat;
+Fog                 fog;
 
 // ArrayLists
 ArrayList<Rectangle>     rectangles;
@@ -68,13 +69,13 @@ int lastCloudTimeCheck      = 0;
 int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
-int themeChangeTimer        = 97000; // in milliseconds 97000
+int themeChangeTimer        = 10000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 1;
-int nextTheme               = 0;
+int currentTheme            = 0;
+int nextTheme               = 1;
 
 PImage bgImg;
 PImage fgImg;
@@ -109,6 +110,7 @@ void setup() {
   // Intialize backgound stuff
   size(1280, 720);
   skyImg = loadImage("City/background/city_bg_sky.png");
+  fog = new Fog("Fog.png");
   background(skyImg);
   frameRate(24);
   
@@ -185,6 +187,7 @@ void draw() {
   mBox2D.step();
   background(skyImg);
   
+  
   // Resetting variables each time
   maxBalloons = 0;
   numberOfPlayers = 0;
@@ -239,9 +242,9 @@ void draw() {
     }
     
     Theme temp = themeArray.get(currentTheme);
-    //temp.drawFullImg();
     temp.drawBgImgs();
     temp.drawMgImgs();
+    fog.draw();
     temp.drawFireflies();
     cloudGen();
     darkCloudGen();
@@ -278,6 +281,7 @@ void draw() {
     
     temp.drawBgImgs();
     temp.drawMgImgs();
+    fog.draw();
     temp.drawFireflies();
     cloudGen();
     darkCloudGen();
