@@ -68,7 +68,7 @@ int lastCloudTimeCheck      = 0;
 int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
-int themeChangeTimer        = 97000; // in milliseconds 97000
+int themeChangeTimer        = 10000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
@@ -528,12 +528,7 @@ void beginContact(Contact cp)
     balloon Balloon2 = (balloon)o2;
     
     Vec2 balloon1Pos = Balloon1.getPosition(); 
-    Vec2 balloon2Pos = Balloon2.getPosition();
-   
-   
-    int balloon1Red = Balloon1.getRColor();
-    int balloon1Green = Balloon1.getGColor();
-    int balloon1Blue = Balloon1.getBColor(); 
+    Vec2 balloon2Pos = Balloon2.getPosition(); 
     
     balloon1xPos = int(balloon1Pos.x);
     balloon1yPos = int(balloon1Pos.y);
@@ -582,6 +577,30 @@ void beginContact(Contact cp)
           balloon touchBalloon = (balloon)o2;
           touchBalloon.hit = true;
         }else if(o2.getClass() == Lightning.class){
+          balloon touchBalloon = (balloon)o1;
+          touchBalloon.hit = true;
+        }
+    }
+    
+    if(o1.getClass() == babyBalloon.class || o2.getClass() == babyBalloon.class){
+      
+        if (o1.getClass() == babyBalloon.class) {
+          babyBalloon tempBaby = (babyBalloon)o1;
+          tempBaby.hit = true;
+        }else if(o2.getClass() == babyBalloon.class){
+          babyBalloon tempBaby = (babyBalloon)o2;
+          tempBaby.hit = true;
+        }
+    }
+  }
+  
+  ////lightning collision
+  if (o1.getClass() == Goat.class || o2.getClass() == Goat.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      if (o1.getClass() == Goat.class) {
+          balloon touchBalloon = (balloon)o2;
+          touchBalloon.hit = true;
+        }else if(o2.getClass() == Goat.class){
           balloon touchBalloon = (balloon)o1;
           touchBalloon.hit = true;
         }
@@ -829,9 +848,13 @@ void goatGen(){
   if(currentTheme == 3){
     if(goat == null){
       goat = new Goat(600, 300, goatFrames,mBox2D, BodyType.STATIC);
-      println("empty goat");
     }else{
       goat.draw();
+    }
+  }else{
+    if(goat != null){
+      goat.killBody();
+      goat = null;
     }
   }
 }
