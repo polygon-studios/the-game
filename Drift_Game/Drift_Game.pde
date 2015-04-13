@@ -472,6 +472,16 @@ void keyPressed() {
 
   if (key == '6')
     polygonFactor -= 0.1;
+  
+  if (key == 't'){//change theme
+    lastTimeCheck = -themeChangeTimer;
+  }
+  if (key == 'b'){//bandit
+    lastBanditTimeCheck = -banditTimer;
+  }
+  if (key == 'l'){//dark cloud for lightning
+    lastDarkCloudTimeCheck = -darkCloudTimer;
+  }
 }
 
 Vec2 getHeadPos(KJoint[] joints, int jointType) {
@@ -686,22 +696,33 @@ void banditGen(){
     int balloonX = int(random(1280));
     int balloonY = int(random(720));
     
-    if(players.size() > 0){
+    if(players.size() > 0 || keyPressed){
       
-      int balloonIdx = int(random(balloons.size()));
-    
-      Player thisPlayer = players.get(balloonIdx);
-      Vec2 balloonPos = thisPlayer.getBalloonPos(); 
+      if(keyPressed){
+        balloonX = 1000;
+        balloonY = 400;
+        
+        Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
+        
+        Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
+        banditArray.add(bandit);
+      }else{
       
-      balloonX = int(balloonPos.x);
-      balloonY = int(balloonPos.y);
-      balloonX = 1000;
-      balloonY = 400;
+        int balloonIdx = int(random(balloons.size()));
       
-      Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
-      
-      Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
-      banditArray.add(bandit);
+        Player thisPlayer = players.get(balloonIdx);
+        Vec2 balloonPos = thisPlayer.getBalloonPos(); 
+        
+        balloonX = int(balloonPos.x);
+        balloonY = int(balloonPos.y);
+        //balloonX = 1000;
+        //balloonY = 400;
+        
+        Arrow arrow = new Arrow(mBox2D, banditX+67, banditY+89, balloonX, balloonY);
+        
+        Bandit bandit = new Bandit(arrow, banditFrames, bowPlayer, banditX, banditY );
+        banditArray.add(bandit);
+      }
     }
     
   }
@@ -754,7 +775,7 @@ void darkCloudGen(){
     lastDarkCloudTimeCheck = millis();
     int cloudNum = int(random(4));
     int cloudX = int(random(600));
-    if(darkCloudArray.size() < 2)//remove line
+    //if(darkCloudArray.size() < 2)//remove line
       darkCloudArray.add(new Cloud(darkCloudImages[cloudNum], int(random(20000, 60000)), (random(5)-2.5), cloudX, int(random(200)-100)));
   }
   for(Cloud darkCloud : darkCloudArray){
@@ -777,10 +798,6 @@ void darkCloudGen(){
             int centreY = int((darkCloud.centreY + darkCloud2.centreY)/2);
             lightningArray.add(new Lightning(centreX, centreY, lightningImages, mBox2D,BodyType.STATIC));
             
-            
-            println("INTERSECTION");
-            //cause lightning
-            //fade away dark clouds
           }
         }
       }
