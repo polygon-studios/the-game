@@ -68,12 +68,12 @@ int lastCloudTimeCheck      = 0;
 int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
-int themeChangeTimer        = 10000; // in milliseconds 97000
+int themeChangeTimer        = 97000; // in milliseconds 97000
 int cloudTimer              = 30000; //in milliseconds
 int darkCloudTimer          = 9000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 3;
+int currentTheme            = 1;
 int nextTheme               = 0;
 
 PImage bgImg;
@@ -81,6 +81,7 @@ PImage fgImg;
 PImage mgImg;
 PImage skyImg = new PImage();
 
+PImage[] fogFrames = new PImage[400];
 PImage[] cloudImages = new PImage[4]; //cloud type options
 PImage[] darkCloudImages = new PImage[4]; //cloud type options
 PImage[] lightningImages = new PImage[24];
@@ -93,6 +94,7 @@ PImage[] mushroom2Frames = new PImage[95];
 PImage[] mushroom3Frames = new PImage[95];
 PImage[] rockFrames = new PImage[96];
 PImage[] goatFrames = new PImage[192];
+PImage[] scareCrowFrames = new PImage[96];
 
 boolean firstRun = false;
 
@@ -868,7 +870,6 @@ BACKGROUND FUNCTIONS
 
 
 void loadAnimations(){
-  
   for(int i = 0; i < cloudImages.length; i++){
     String imageName = "lightClouds/cloud" + str(i + 1) + "_light.png";
     cloudImages[i] = loadImage(imageName);
@@ -896,6 +897,10 @@ void loadAnimations(){
   for (int i = 0; i < lampFrames.length; i++) {
     String imageName = "City/foreground/lamp/lampCycle_" + (i+1) + ".png";
     lampFrames[i] = loadImage(imageName);
+  }
+  for (int i = 0; i < scareCrowFrames.length; i++) {
+    String imageName = "Farm/foreground/scareCrow/scarecrowCycle_" + (i+1) + ".png";
+    scareCrowFrames[i] = loadImage(imageName);
   }
   for (int i = 0; i < mushroom1Frames.length; i++) {
     String imageName = "Forest/foreground/mushroom1/mushroom1_Cycle00" + (i+1) + ".png";
@@ -942,7 +947,6 @@ void updateForest(Theme forest){
   
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, 600, 1920, 134));
   forest.fgImgs.add(new DisplayImage(mushroom1Frames, 0, themeChangeTimer - 1000, 40, 0, 0, 1280, 720, 0));
-  //forest.fgImgs.add(new DisplayImage(mushroom1Frames, 0, themeChangeTimer - 1000, 40, 65, 486, 222, 190));
   forest.fgImgs.add(new DisplayImage(mushroom2Frames, 0, themeChangeTimer - 1000, 40, 209, 590, 101, 93, 0));
   forest.fgImgs.add(new DisplayImage(mushroom3Frames, 0, themeChangeTimer - 1000, 40, 65, 578, 96, 100, 0));
   forest.fgImgs.add(new DisplayImage("Forest/foreground/forest_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 793, -58, 822, 736));
@@ -959,10 +963,13 @@ void updateCity(Theme city){
   city.mgImgs.add(new DisplayImage("City/midground/city_mg_road.png", 0, themeChangeTimer - 2000, 25, 115, 444, 979, 277));
   city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseLeft.png", 0, themeChangeTimer - 2000, 25, 50, 114, 401, 485));
   city.mgImgs.add(new DisplayImage("City/midground/city_mg_houseRight.png", 0, themeChangeTimer - 2000, 25, 975, 270, 308, 397));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_mailbox1.png", 0, themeChangeTimer - 2000, 25, 433, 340, 72, 141));
+  city.mgImgs.add(new DisplayImage("City/midground/city_mg_mailbox2.png", 0, themeChangeTimer - 2000, 25, 920, 531, 84, 166));
   
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_ground_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-60, 1920, 89));
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseLeft.png", 0, themeChangeTimer - 1000, 40, 0, 0, 284, 685));
   city.fgImgs.add(new DisplayImage("City/foreground/city_fg_houseRight.png", 0, themeChangeTimer - 1000, 40, 1158, 0, 125, 720));
+  city.fgImgs.add(new DisplayImage("City/foreground/city_fg_flowers.png", 0, themeChangeTimer - 1000, 40, 1000, 549, 198, 132));
   city.fgImgs.add(new DisplayImage(lampFrames, 0, themeChangeTimer - 1000, 40, 1118, 112, 152, 113, 0));
   city.fgImgs.add(new DisplayImage(wireFrames, 0, themeChangeTimer - 1000, 40, 164, 22, 1120, 156, 0));
   
@@ -976,12 +983,12 @@ void updateFarm(Theme farm){
   farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.3, themeChangeTimer - 2000, 25, 0, 421, 1683, 280));
   
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-91, 1920, 134));
-  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_scareCrow.png", 0, themeChangeTimer - 1000, 40, 870, 325, 369, 403));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_pitchfork.png", 0, themeChangeTimer - 1000, 40, 890, 270, 80, 438));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_tree.png", 0, themeChangeTimer - 1000, 40, 0, 100, 420, 622));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayBale.png", 0, themeChangeTimer - 1000, 40, 1180, 600, 211, 111));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayBale.png", 0, themeChangeTimer - 1000, 40, 1180, 520, 211, 111));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayPile.png", 0, themeChangeTimer - 1000, 40, 110, 600, 243, 125));
+  farm.fgImgs.add(new DisplayImage(scareCrowFrames, 0, themeChangeTimer - 1000, 40, 870, 325, 369, 403, 0));
   
   themeArray.add(farm);
 }
@@ -998,7 +1005,5 @@ void updateMountain(Theme mountain){
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_grass_short.png", 0, themeChangeTimer - 1000, 40, 0, height-90, 1280, 90));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree1.png", 0, themeChangeTimer - 1000, 40, 0, 286, 160, 434));
   mountain.fgImgs.add(new DisplayImage("Mountain/foreground/mountain_fg_tree2.png", 0, themeChangeTimer - 1000, 40, 935, 7, 345, 710));
-  //mountain.fgImgs.add(new DisplayImage(goatFrames, 0 , themeChangeTimer - 2000, 40, 245, 230, 270, 385, 0));
-  
   themeArray.add(mountain);
 }
