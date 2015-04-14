@@ -21,6 +21,8 @@ class Bird {
   //PImage[] images = new PImage[numFrames];
   PImage[] images;
   
+  boolean isAlive = true;
+  
   Bird(PVector l, float ms, float mf, Box2DProcessing box2D, PImage[] birdFrames) {
     images = birdFrames;
     mBox2DRef = box2D;
@@ -242,6 +244,11 @@ class Bird {
       return steer(sum,false);  // Steer towards the location
     }
     return sum;
+  }
+  
+  void killBody() 
+  {
+    mBox2DRef.destroyBody( mBody );
   }
 }
 

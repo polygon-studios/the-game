@@ -70,12 +70,12 @@ int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
 int themeChangeTimer        = 97000; // in milliseconds 97000
-int cloudTimer              = 30000; //in milliseconds
-int darkCloudTimer          = 9000; //in milliseconds
+int cloudTimer              = 20000; //in milliseconds
+int darkCloudTimer          = 40000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 1;
-int nextTheme               = 2;
+int currentTheme            = 0;
+int nextTheme               = 1;
 
 PImage bgImg;
 PImage fgImg;
@@ -648,6 +648,21 @@ void beginContact(Contact cp)
         }
     }
   }
+  
+  ////Bird collision
+  if (o1.getClass() == Bird.class || o2.getClass() == Bird.class) {
+    if(o1.getClass() == balloon.class || o2.getClass() == balloon.class){
+      println("BIRD COLLISION");
+      if (o1.getClass() == Bird.class) {
+          
+          balloon touchBalloon = (balloon)o2;
+          touchBalloon.hit = true;
+        }else if(o2.getClass() == Bird.class){
+          balloon touchBalloon = (balloon)o1;
+          touchBalloon.hit = true;
+        }
+    }
+  }
 }
 
 PImage[] setBBpoppingFrames(){
@@ -778,9 +793,15 @@ void darkCloudGen(){
   if ( (millis() - lastDarkCloudTimeCheck > darkCloudTimer)) {
     lastDarkCloudTimeCheck = millis();
     int cloudNum = int(random(4));
-    int cloudX = int(random(600));
+    int cloudX = int(random(800)) + 200;
     //if(darkCloudArray.size() < 2)//remove line
-      darkCloudArray.add(new Cloud(darkCloudImages[cloudNum], int(random(20000, 60000)), (random(5)-2.5), cloudX, int(random(200)-100)));
+    float xDir = (random(5)-2.5);
+    
+    while(xDir < 1 && xDir > -1){
+      xDir = (random(5)-2.5);
+    }
+    
+      darkCloudArray.add(new Cloud(darkCloudImages[cloudNum], int(random(20000, 60000)), xDir, cloudX, int(random(200)-100)));
   }
   for(Cloud darkCloud : darkCloudArray){
     darkCloud.draw();
@@ -821,6 +842,13 @@ void darkCloudGen(){
       break;
     }
   }
+  /*for(int i=0; i < darkCloudArray.size(); i++){
+    Cloud cloud = darkCloudArray.get(i);
+    if( cloud.isAlive() == false){
+      darkCloudArray.remove(i);
+      break;
+    }
+  }*/
 }
 
 
@@ -835,6 +863,15 @@ void birdGen(){
     }
   
   }
+  
+  /*for(int i = 0; i < flock.birds.size(); i++){
+    Bird bird = flock.birds.get(i);
+    if(bird.isAlive == false){
+      bird.killBody();
+      flock.birds.remove(i);
+      break;
+    }
+  }*/
 }
 
 // Tree collidable generation
