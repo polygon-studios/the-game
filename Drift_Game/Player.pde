@@ -6,7 +6,7 @@ class Player{
   int skeletonID;
   Vec2 startPos;
   float polygonFactor= 1;
-  color fillColour = color(random(0, 255),random(0, 255),0);
+  color fillColour = color(0,0,0);
   
   int rVal = 0;
   int gVal = 0;
@@ -64,7 +64,7 @@ class Player{
     }  
     
     if(!alive){
-      fillColour = color(255,105,180);
+      fillColour = color(155,155,155);
     }
     else{
       //fillColour = color(0,0,0);

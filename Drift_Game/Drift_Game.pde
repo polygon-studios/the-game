@@ -60,6 +60,7 @@ float newXPos = 0;
 float newYPos = 0;
   
 boolean    contourBodyIndex = false;
+boolean    alreadyDeleted = false;
 
 int collision = 0;
 
@@ -74,8 +75,8 @@ int cloudTimer              = 20000; //in milliseconds
 int darkCloudTimer          = 40000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 0;
-int nextTheme               = 1;
+int currentTheme            = 2;
+int nextTheme               = 3;
 
 PImage bgImg;
 PImage fgImg;
@@ -264,7 +265,7 @@ void draw() {
     player[currentTheme].rewind();
     player[currentTheme].play();
 
-    
+    alreadyDeleted = false;
     println("2: CURRENTTHEME: " + currentTheme + " NEXTTHEME: " + nextTheme);
   }else{
     Theme temp = themeArray.get(currentTheme);
@@ -876,9 +877,23 @@ void birdGen(){
 
 // Tree collidable generation
 void treeGen(){
+  
+  if(alreadyDeleted == false){
+    
+    if(treeArray.size() != 0){
+      println(treeArray.size());
+      for(int i = treeArray.size() - 1; i >= 0; i--){
+        Tree thisTree = treeArray.get(i);
+        thisTree.killBody();
+        treeArray.remove(i);
+        println("Should have removed tree");
+      }
+    }
+    alreadyDeleted = true;
+  }
+  
   if(currentTheme == 0){
     for (Tree t: treeArray) {
-        //t.attract(900,200);
         t.draw();
     }
     if(treeArray.size() == 0){
@@ -891,9 +906,19 @@ void treeGen(){
     }
   }
   
+  if(currentTheme == 2){
+    for (Tree t: treeArray) {
+        t.draw();
+    }
+    if(treeArray.size() == 0){
+      treeArray.add(new Tree(new PVector(890, 275), 6.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(930, 275), 6.0f, BodyType.STATIC, mBox2D));
+      treeArray.add(new Tree(new PVector(965, 275), 6.0f, BodyType.STATIC, mBox2D));
+    }
+  }
+  
   if(currentTheme == 3){
     for (Tree t: treeArray) {
-        //t.attract(900,200);
         t.draw();
     }
     if(treeArray.size() == 0){
@@ -904,19 +929,7 @@ void treeGen(){
       treeArray.add(new Tree(new PVector(1125, 170), 40.0f, BodyType.STATIC, mBox2D));
     }
   }
-  
-  if(currentTheme != 0 && currentTheme != 3){
-    
-    if(treeArray.size() != 0){
-      println(treeArray.size());
-      for(int i = treeArray.size() - 1; i >= 0; i--){
-        Tree thisTree = treeArray.get(i);
-        thisTree.killBody();
-        treeArray.remove(i);
-        println("Should have removed tree");
-      }
-    }
-  }
+
   
 }
 
