@@ -4,11 +4,13 @@ class string{
   ArrayList<babyBalloon> mString;
   float balloonRad = 20.0;
   
-  string(PVector startPos, PVector endPos, int numSections, Box2DProcessing box2D){
+  string(PVector startPos, PVector endPos, int numSections, color col, Box2DProcessing box2D){
     PVector newStartPos = new PVector(startPos.x, startPos.y + balloonRad*1.5);
     PVector newEndPos = new PVector(endPos.x, endPos.y + balloonRad*1.5);
     PVector stringVec = PVector.sub(newEndPos, newStartPos);
     float sectionSpacing = stringVec.mag()/(float)numSections;
+    
+    passCol = col;
     
     stringVec.normalize();
     float sectionRadius = 0.5f;
@@ -26,7 +28,7 @@ class string{
         PVector sectionPos = new PVector(startPos.x, startPos.y);
         sectionPos.add(PVector.mult(stringVec, (float)i*sectionSpacing));
         
-        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y + balloonRad*1.5), sectionRadius, false, false, color(0, 0, 0), BodyType.DYNAMIC, box2D, poppingPlayer);
+        section = new babyBalloon(new PVector(sectionPos.x, sectionPos.y + balloonRad*1.5), sectionRadius, false, false, passCol, BodyType.DYNAMIC, box2D, poppingPlayer);
       }
       
       mString.add(section);

@@ -62,6 +62,16 @@ int currentBirds          = 0;
 
 float newXPos = 0;
 float newYPos = 0;
+
+color passCol = color(255, 255, 0);
+
+int balloon1R;
+int balloon1G;
+int balloon1B;
+
+int balloon2R;
+int balloon2G;
+int balloon2B;
   
 boolean    contourBodyIndex = false;
 boolean    alreadyDeleted = false;
@@ -373,7 +383,7 @@ void draw() {
     }
     
     if(collision > 0){
-      babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, mBox2D));
+      babyBalloon.add(new string(new PVector (newXPos, newYPos), new PVector (500, 250 + 15.0), 30, passCol, mBox2D));
       collision = 0;
     }
     
@@ -519,7 +529,7 @@ Vec2 getHeadPos(KJoint[] joints, int jointType) {
 
 // Add a new boid into the System
 void mousePressed() {
-  babyBalloon.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, mBox2D));
+  babyBalloon.add(new string(new PVector (mouseX, mouseY), new PVector (mouseX, mouseY + 15.0), 30, passCol, mBox2D));
 }
 
 // Add a new boid into the System
@@ -577,13 +587,36 @@ void beginContact(Contact cp)
     Vec2 balloon1Pos = Balloon1.getPosition(); 
     Vec2 balloon2Pos = Balloon2.getPosition(); 
     
-    int balloon1R = Balloon1.getRColor();
-    int balloon1G = Balloon1.getGColor();
-    int balloon1B = Balloon1.getBColor();
+    balloon1R = Balloon1.getRColor();
+    balloon1G = Balloon1.getGColor();
+    balloon1B = Balloon1.getBColor();
     
-    int balloon2R = Balloon2.getRColor();
-    int balloon2G = Balloon2.getGColor();
-    int balloon2B = Balloon2.getBColor();
+    balloon2R = Balloon2.getRColor();
+    balloon2G = Balloon2.getGColor();
+    balloon2B = Balloon2.getBColor();
+    
+    if(balloon1R == 255 && balloon1G == 255 && balloon1B == 0 && balloon2R == 255 && balloon2G == 255 && balloon2B == 0){
+      passCol = color(255, 255, 0);
+      println("Yellow BB"); 
+    }
+    if(balloon1R == 0 && balloon1G == 0 && balloon1B == 255 && balloon2R == 0 && balloon2G == 0 && balloon2B == 255){
+      passCol = color(0, 0, 255);
+      println("Blue BB"); 
+    }
+    
+    if(balloon1R == 0 && balloon1G == 0 && balloon1B == 255){
+      if(balloon2R == 255 && balloon2G == 255 && balloon2B == 0){
+        passCol = color(0, 255, 0);
+        println("Green BB"); 
+      }
+    }
+    
+    if(balloon1R == 255 && balloon1G == 255 && balloon1B == 0){
+      if(balloon2R == 0 && balloon2G == 0 && balloon2B == 255){
+        passCol = color(0, 255, 0);
+        println("Green BB"); 
+      }
+    }
     
     balloon1xPos = int(balloon1Pos.x);
     balloon1yPos = int(balloon1Pos.y);

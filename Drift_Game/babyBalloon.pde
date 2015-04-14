@@ -23,27 +23,13 @@ class babyBalloon{
     hit = false;
     soundEffect = poppingPlayer;
     
-    /*float yThreshMaxR = 255;
-    float yThreshMaxG = 255;
-    float yThreshMaxB = 220;
-    
-    float yThreshMinR = 150;
-    float yThreshMinG = 200;
-    float yThreshMinB = 0;
-    
-    float bThreshMaxR = 220;
-    float bThreshMaxG = 255;
-    float bThreshMaxB = 255;
-    
-    float bThreshMinR = 0;
-    float bThreshMinG = 0;
-    float bThreshMinB = 100;
-    
+   
+    /*
     float r = red(mCol);
     float g = green(mCol);
     float b = blue(mCol);
     
-    if(r < yThreshMaxR && g < yThreshMaxG && b < yThreshMaxB && r > yThreshMinR && g > yThreshMinG && b > yThreshMinB){
+    if(r == 255 && g == 255 && b == 0){
       print("yellow\n");
       img = loadImage("babyBalloon_y.png");
     }
@@ -54,8 +40,8 @@ class babyBalloon{
     else{
       print("unknown\n");
       img = loadImage("babyBalloon_w.png");
-    }*/
-    
+    }
+    */
     
         
     if(mCol == color(255, 255, 0)){
