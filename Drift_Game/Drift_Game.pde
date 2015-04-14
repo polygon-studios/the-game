@@ -456,10 +456,17 @@ void keyPressed() {
      //balloons.add(new balloon(new PVector(mouseX, mouseY), 20.0f, true, true, BodyType.DYNAMIC, mBox2D));
   }
   if (key == 'a') {
-    threshold+=1;
+    themeChangeTimer = 97000;
   }
   if (key == 's') {
-    threshold-=1;
+    themeChangeTimer = 10000;
+  }
+  
+  if (key == 'z') {
+    banditTimer = 15000;
+  }
+  if (key == 'x') {
+    banditTimer = 1000;
   }
 
   if (key == '1') {
@@ -477,6 +484,13 @@ void keyPressed() {
   if (key == '4') {
     maxD -= 0.1;
   }
+  
+  if (key == 'p') {
+    Flock thisFlock = flock.get(0);  
+    thisFlock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
+  }
+  
+  
 
   if (key == '5')
     polygonFactor += 0.1;
@@ -562,6 +576,14 @@ void beginContact(Contact cp)
     
     Vec2 balloon1Pos = Balloon1.getPosition(); 
     Vec2 balloon2Pos = Balloon2.getPosition(); 
+    
+    int balloon1R = Balloon1.getRColor();
+    int balloon1G = Balloon1.getGColor();
+    int balloon1B = Balloon1.getBColor();
+    
+    int balloon2R = Balloon2.getRColor();
+    int balloon2G = Balloon2.getGColor();
+    int balloon2B = Balloon2.getBColor();
     
     balloon1xPos = int(balloon1Pos.x);
     balloon1yPos = int(balloon1Pos.y);
