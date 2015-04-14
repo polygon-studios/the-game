@@ -70,6 +70,10 @@ class Bird {
     borders();
     render();
   }
+  
+  Vec2 getPosition(){
+    return mBox2D.getBodyPixelCoord(mBody);
+  }
 
   // We accumulate a new acceleration each time based on three rules
   void flock(ArrayList Birds) {

@@ -20,5 +20,11 @@ class Flock {
   void addTarget(PVector target) {
     //birds.seek(target);
   }
+  
+  Vec2 getBirdPos(){
+    Bird b = (Bird) birds.get(0);  
+    Vec2 position = b.getPosition();
+    return position;
+  }
 
 }

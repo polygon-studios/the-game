@@ -17,7 +17,7 @@ OpenCV              opencvBody;
 OpenCV              opencvBalloon;
 OpenCV              opencvColour;
 Box2DProcessing     mBox2D;
-Flock               flock;
+//Flock               flock;
 Rectangle           boundRect;
 Skeleton []         skeleton;
 ParticleSystem      ps;
@@ -38,6 +38,10 @@ ArrayList<Tree>          treeArray= new ArrayList<Tree>();
 ArrayList<string>        babyBalloon = new ArrayList<string>();
 ArrayList<balloon>       balloons = new ArrayList<balloon>();
 ArrayList<Player>        players = new ArrayList<Player>();
+ArrayList<Flock>         flock = new ArrayList<Flock>();
+
+
+//flock = new Flock();
 
 ArrayList<Contour>       balloonContours;
 ArrayList<Contour>       playerContours;
@@ -142,9 +146,10 @@ void setup() {
   bowPlayer = minim.loadFile("bow_release.mp3");
   thunderPlayer = minim.loadFile("thunder.mp3");
   poppingPlayer = minim.loadFile("pop2.mp3");
-  
-  flock = new Flock();
+ 
   ps = new ParticleSystem();
+  
+  flock.add(new Flock());
   
   smooth();
     
@@ -418,7 +423,8 @@ void draw() {
   
   
   // Drawing everything
-  flock.run();
+  Flock thisFlock = flock.get(0);  
+  thisFlock.run();
   banditGen();
   birdGen();
   treeGen();
@@ -504,7 +510,8 @@ void mousePressed() {
 
 // Add a new boid into the System
 void mouseMoved() {
-  flock.addTarget(new PVector(mouseX,mouseY));
+  Flock thisFlock = flock.get(0);  
+  thisFlock.addTarget(new PVector(mouseX,mouseY));
 }
 
 
@@ -855,24 +862,26 @@ void darkCloudGen(){
 
 //Bird generation
 void birdGen(){
+  
+  Flock thisFlock = flock.get(0);  
+  Vec2 position;
+  
   if ( (millis() - lastBirdTimeCheck > birdTimer)) {
     if(currentBirds < maxBirds){
       lastBirdTimeCheck = millis();
       
-      flock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
+      thisFlock.addBird(new Bird(new PVector(0,height/4), random(1.0, 6.0) ,0.03, mBox2D, birdFrames));
       currentBirds++;
     }
-  
   }
   
-  /*for(int i = 0; i < flock.birds.size(); i++){
-    Bird bird = flock.birds.get(i);
-    if(bird.isAlive == false){
-      bird.killBody();
-      flock.birds.remove(i);
-      break;
+  if(thisFlock.birds.size() != 0){
+    position = thisFlock.getBirdPos();
+    if(position.x > 1280 || position.y > 720){
+      thisFlock.birds.remove(0);
+      currentBirds--;
     }
-  }*/
+  }
 }
 
 // Tree collidable generation
