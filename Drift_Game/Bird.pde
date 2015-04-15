@@ -142,13 +142,13 @@ class Bird {
     // Draw a triangle rotated in the direction of velocity
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
-    fill(0);
+    /*fill(0);
     
     pushMatrix();
     translate(pos.x,pos.y);
     rotate(-angle);
     ellipse(0,0,mRadius*2,mRadius*2);
-    popMatrix();  
+    popMatrix();  */
     currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
     int offset = 0;
     //rotate(theta);

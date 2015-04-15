@@ -9,7 +9,7 @@ class Flock {
     for (int i = 0; i < birds.size(); i++) {
       Bird b = (Bird) birds.get(i);  
       b.run(birds);  // Passing the entire list of boids to each boid individually
-      b.seek(new PVector(mouseX, mouseY));
+      b.seek(new PVector(1280, 400));
     }
   }
 

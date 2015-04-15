@@ -7,12 +7,13 @@ class balloon{
   float xPos;
   float yPos;
   
-  float rando = random(0, 5);
-  
   float polygonFactor= 1;
   
   PVector boundingBoxMin;
   PVector boundingBoxMax;
+  
+  float headPositionX;
+  float headPositionY;
   
   color balloonCol = color(255, 255, 255);
   int redVal;
@@ -65,7 +66,7 @@ class balloon{
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
     float angle = mBody.getAngle();
     
-    
+    /*
     fill(0);
     
     pushMatrix();
@@ -73,7 +74,7 @@ class balloon{
     rotate(-angle);
     ellipse(0,0,mRadius*2,mRadius*2);
     popMatrix();   
-    
+    */
     if(balloonContours != null){
       for (Contour contour : balloonContours) {
         
@@ -85,8 +86,8 @@ class balloon{
           // Creating bounding box
           boundRect = new Rectangle(1280, 720, 0, 0);
           noFill();
-          stroke(0,0,255);
-          strokeWeight(2);
+          stroke(0,0,2);
+          strokeWeight(1);
           Rectangle rec = contour.getBoundingBox();
           if(rec.width > boundRect.width && rec.height > boundRect.height){
              boundRect = rec; 
@@ -98,36 +99,37 @@ class balloon{
           centerX = boundRect.x + (boundRect.width/2);
           centerY = boundRect.y + (boundRect.height/2);
           
-          
-          if(centerX < (boundingBoxMax.x + 50) && centerX > (boundingBoxMin.x - 50) && centerY < (boundingBoxMax.y + 50) && centerY > (boundingBoxMin.y - 50)) {
-            attract(centerX * 2 + 128,centerY * 1.8 + 130);
-            println(rando);
-            
-            //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
-            
-            boundingBoxMin = new PVector(boundRect.x, boundRect.y);
-            boundingBoxMax = new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height));
-            //println("Is dis being called?");
-            
-            // Should NOT draw balloon contours if it is below a certain y value
-            if(centerY < 250){
-              // Drawing the contours
-              stroke(150, 150, 0);
-              fill(balloonCol);
-              beginShape();
-           
-              //println("NEW CURVE VERTEX");
-              ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
-              for (PVector point : points) {
-                curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
-                //println(" X : " + (point.x * 2 + 128) + " Y : " + ( point.y * 1.8 + 130) );
+          // Should only follow balloon contour that is close to the body, X only matters
+          if(centerX < (headPositionX + 100) && centerX > (headPositionX - 100)){
+            if(centerX < (boundingBoxMax.x + 50) && centerX > (boundingBoxMin.x - 50) && centerY < (boundingBoxMax.y + 50) && centerY > (boundingBoxMin.y - 50)) {
+              attract(centerX * 2 + 128,centerY * 1.8 + 130);
+              
+              //rect(boundRect.x * 2 + 128, boundRect.y * 1.8 + 130, boundRect.width * 2.5, boundRect.height * 1.8 + 130);
+              
+              boundingBoxMin = new PVector(boundRect.x, boundRect.y);
+              boundingBoxMax = new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height));
+              //println("Is dis being called?");
+              
+              // Should NOT draw balloon contours if it is below a certain y value
+              if(centerY < 250){
+                // Drawing the contours
+                stroke(150, 150, 0);
+                fill(balloonCol);
+                beginShape();
+             
+                //println("NEW CURVE VERTEX");
+                ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
+                for (PVector point : points) {
+                  curveVertex(point.x * 2 + 128, point.y * 1.8 + 130 );
+                  //println(" X : " + (point.x * 2 + 128) + " Y : " + ( point.y * 1.8 + 130) );
+                }
+                
+                
+                
+                PVector firstPoint = points.get(1);
+                curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 
+                endShape();
               }
-              
-              
-              
-              PVector firstPoint = points.get(1);
-              curveVertex(firstPoint.x * 2 + 128, firstPoint.y * 1.8 + 130 ); 
-              endShape();
             }
           }
         }    
@@ -136,6 +138,11 @@ class balloon{
     
     
   }  
+  
+  void updateHeadPosition( float headPosX, float headPosY){
+    headPositionX = headPosX;
+    headPositionY = headPosY;
+  }
   
   void removeBody(){
    killBody(); 

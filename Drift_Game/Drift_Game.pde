@@ -47,7 +47,7 @@ ArrayList<Contour>       balloonContours;
 ArrayList<Contour>       playerContours;
 // Kinect related variables
 float polygonFactor       = 1;
-float maxD                = 2.5f;
+float maxD                = 3.0f;
 float minD                = 1.5f;
 PImage colorImage;
 
@@ -84,13 +84,13 @@ int lastCloudTimeCheck      = 0;
 int lastDarkCloudTimeCheck  = 0;
 int lastBanditTimeCheck     = 0;
 int lastBirdTimeCheck       = 0;
-int themeChangeTimer        = 97000; // in milliseconds 97000
+int themeChangeTimer        = 110000; // in milliseconds 97000
 int cloudTimer              = 20000; //in milliseconds
 int darkCloudTimer          = 40000; //in milliseconds
 int banditTimer             = 15000; // in milliseconds 15000
 int birdTimer               = 25000;
-int currentTheme            = 2;
-int nextTheme               = 3;
+int currentTheme            = 1;
+int nextTheme               = 2;
 
 PImage bgImg;
 PImage fgImg;
@@ -478,6 +478,14 @@ void keyPressed() {
   if (key == 'x') {
     banditTimer = 1000;
   }
+  
+  if (key == 'g') {
+    babyBalloon.add(new string(new PVector (mouseX, mouseY), new PVector (500, 250 + 15.0), 30, color(0,255,0), mBox2D));
+  }
+  if (key == 'b') {
+    babyBalloon.add(new string(new PVector (mouseX, mouseY), new PVector (500, 250 + 15.0), 30, color(0,0,255), mBox2D));
+  }
+  
 
   if (key == '1') {
     minD += 0.1;
@@ -511,7 +519,7 @@ void keyPressed() {
   if (key == 't'){//change theme
     lastTimeCheck = -themeChangeTimer;
   }
-  if (key == 'b'){//bandit
+  if (key == 'm'){//bandit
     lastBanditTimeCheck = -banditTimer;
   }
   if (key == 'l'){//dark cloud for lightning
@@ -535,7 +543,7 @@ void mousePressed() {
 // Add a new boid into the System
 void mouseMoved() {
   Flock thisFlock = flock.get(0);  
-  thisFlock.addTarget(new PVector(mouseX,mouseY));
+  thisFlock.addTarget(new PVector(1280,400));
 }
 
 

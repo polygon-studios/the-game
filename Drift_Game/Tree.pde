@@ -64,13 +64,13 @@ Tree(PVector startPos, float radius, BodyType type, Box2DProcessing box2D){
   
   void draw(){
     Vec2 pos = mBox2D.getBodyPixelCoord(mBody);
-    float angle = mBody.getAngle();
+    float angle = mBody.getAngle();/*
     noFill(); 
     stroke(255);   
     pushMatrix();
     translate(pos.x,pos.y);
     rotate(-angle);
     ellipse(0,0,mRadius*2,mRadius*2);
-    popMatrix();    
+    popMatrix();    */
   }  
 }

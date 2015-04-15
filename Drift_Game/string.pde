@@ -22,7 +22,7 @@ class string{
       babyBalloon section = null;
       
       if(i == 0){
-        section = new babyBalloon(new PVector(startPos.x, startPos.y), balloonRad, true, true, color(255, 255, 0), BodyType.DYNAMIC, mBox2D, poppingPlayer);
+        section = new babyBalloon(new PVector(startPos.x, startPos.y), balloonRad, true, true, passCol, BodyType.DYNAMIC, mBox2D, poppingPlayer);
       }
       else{
         PVector sectionPos = new PVector(startPos.x, startPos.y);

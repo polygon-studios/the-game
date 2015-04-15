@@ -58,13 +58,14 @@ class Player{
          println("Balloon array size: " + balloonsList.size() + "on skeleton ID:" + skeletonID);
       }
       else{  
+        thisBalloon.updateHeadPosition(headPositionX, headPositionY);
         thisBalloon.draw();
         println("Balloon array size: " + balloonsList.size() + "on skeleton ID:" + skeletonID);
       }
     }  
     
     if(!alive){
-      fillColour = color(155,155,155);
+      fillColour = color(255,255,255);
     }
     else{
       //fillColour = color(0,0,0);
@@ -150,46 +151,20 @@ class Player{
         
         float yThreshMaxR = 255;
         float yThreshMaxG = 255;
-        float yThreshMaxB = 220;
+        float yThreshMaxB = 150;
         
-        float yThreshMinR = 150;
-        float yThreshMinG = 200;
+        float yThreshMinR = 100;
+        float yThreshMinG = 100;
         float yThreshMinB = 0;
         
-        float bThreshMaxR = 220;
-        float bThreshMaxG = 255;
+        float bThreshMaxR = 180;
+        float bThreshMaxG = 180;
         float bThreshMaxB = 255;
         
         float bThreshMinR = 0;
         float bThreshMinG = 0;
         float bThreshMinB = 100;
 
-        float r = red(pointColour);
-        float g = green(pointColour);
-        float b = blue(pointColour);
-        
-        
-        
-        if(r < yThreshMaxR && g < yThreshMaxG && b < yThreshMaxB && r > yThreshMinR && g > yThreshMinG && b > yThreshMinB){
-          print("yellow\n");
-          rVal = 255;
-          gVal = 255;
-          bVal = 0;
-        }
-        else if(r < bThreshMaxR && g < bThreshMaxG && b < bThreshMaxB && r > bThreshMinR && g > bThreshMinG && b > bThreshMinB){
-          print("blue\n");
-          rVal = 0;
-          gVal = 0;
-          bVal = 255;
-        }
-        else{
-          print("unknown\n");
-          //color passCol = color(255,0,0);
-          rVal = 255;
-          gVal = 0;
-          bVal = 0;
-          println("Passing colour: R:" + rVal + " G:" + gVal + " B:" + bVal);
-        }
         
         // Should NOT draw balloon contours if it is below a certain y value
         if(centerY < 250){
@@ -197,6 +172,35 @@ class Player{
           if( centerY < (headPositionY + 100) && centerY > (headPositionY - 100) && centerX < (headPositionX + 150) && centerX > (headPositionX - 150) ){
             println("Sorta within");  
             if(balloonsList.size() < 1){
+              float r = red(pointColour);
+              float g = green(pointColour);
+              float b = blue(pointColour);
+              
+              println("The created ballon colour has the following values, R: " + r + " G: " + g + " B: " + b);
+              
+              
+              if(r < yThreshMaxR && g < yThreshMaxG && b < yThreshMaxB && r > yThreshMinR && g > yThreshMinG && b > yThreshMinB){
+                print("yellow\n");
+                rVal = 255;
+                gVal = 255;
+                bVal = 0;
+              }
+              else if(r < bThreshMaxR && g < bThreshMaxG && b < bThreshMaxB && r > bThreshMinR && g > bThreshMinG && b > bThreshMinB){
+                print("blue\n");
+                rVal = 0;
+                gVal = 0;
+                bVal = 255;
+              }
+              else{
+                print("unknown\n");
+                //color passCol = color(255,0,0);
+                rVal = 255;
+                gVal = 0;
+                bVal = 0;
+                println("Passing colour: R:" + rVal + " G:" + gVal + " B:" + bVal);
+              }
+              
+              
               balloonsList.add(new balloon(new PVector(centerX, centerY), new PVector(boundRect.x, boundRect.y), new PVector((boundRect.x + boundRect.width), (boundRect.y + boundRect.height)), 60.0f, rVal, gVal, bVal, true, true, BodyType.DYNAMIC, mBox2D));
               println("Balloon Created");  
           }

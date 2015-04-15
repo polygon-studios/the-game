@@ -73,7 +73,6 @@ class Arrow{
        //rotate(a + sin(2*PI - currentAngle));
        rotate(angle);
        if(hit == true){
-         println("IT twas hit");
          trans -= 0.04;
          //fill(255, 0, 0, trans*255); // trans *255 because transparency is out of 255
          tint(255, 255, 255, trans*255);   
