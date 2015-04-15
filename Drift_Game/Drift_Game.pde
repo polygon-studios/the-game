@@ -317,7 +317,7 @@ void draw() {
   kinect.setLowThresholdPC(minD);
   kinect.setHighThresholdPC(maxD);
   
-  image(kinect.getPointCloudDepthImage(), 0, 0); 
+  //image(kinect.getPointCloudDepthImage(), 0, 0); 
   //image(kinect.getColorImage(), 0, 0);
   //image(dst, 0, 0); 
   
@@ -1158,7 +1158,7 @@ void updateFarm(Theme farm){
  
   farm.mgImgs.add(new DisplayImage("Farm/midground/farm_mg_crops.png", -0.3, themeChangeTimer - 2000, 25, 0, 421, 1683, 280));
   
-  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass_long.png", 0.7, themeChangeTimer - 1000, 40, -640, height-91, 1920, 134));
+  farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_grass_long.png", 0.4, themeChangeTimer - 1000, 40, -640, height-91, 1920, 134));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_pitchfork.png", 0, themeChangeTimer - 1000, 40, 890, 270, 80, 438));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_tree.png", 0, themeChangeTimer - 1000, 40, 0, 100, 420, 622));
   farm.fgImgs.add(new DisplayImage("Farm/foreground/farm_fg_hayBale.png", 0, themeChangeTimer - 1000, 40, 1180, 600, 211, 111));
